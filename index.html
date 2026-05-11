@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fancy Design</title>
+    <link rel="icon" href="imges/fancy1.jfif" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <style>
+      .hero-slider {
+    position: relative;
+    width: 90%; /* يمكنك تقليل النسبة حسب الرغبة، مثلاً 80% */
+    max-width: 1200px; /* يمنع السلايدر من التمدد بشكل مفرط في الشاشات الكبيرة جداً */
+    height: 80vh; /* يمكنك أيضاً تقليل الارتفاع ليناسب العرض الجديد */
+    margin: 20px auto; /* auto تقوم بتوسيط السلايدر في المنتصف أفقياً */
+    border-radius: 15px; /* اختيارياً: إضافة زوايا منحنية تعطي شكلاً عصرياً */
+    overflow: hidden;
+}
+
+      .slider-container {
+        width: 100%;
+        height: 100%;
+      }
+
+      .slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 0.8s ease-in-out;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .slide.active {
+        opacity: 1;
+      }
+
+      .slide-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        z-index: -1;
+      }
+
+      /* طبقة تعتيم خفيفة لتحسين رؤية النص */
+      .slide-bg::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.2);
+      }
+
+      .slide-content {
+        color: #fff;
+        max-width: 800px;
+        padding: 20px;
+      }
+
+      .slide-content h1 {
+        font-size: 4rem;
+        margin-bottom: 10px;
+        letter-spacing: 2px;
+      }
+
+      .slide-content p {
+        font-size: 1.2rem;
+        font-weight: 300;
+      }
+
+      /* أزرار التحكم */
+      .prev-btn,
+      .next-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.3);
+        color: white;
+        border: none;
+        padding: 15px;
+        cursor: pointer;
+        font-size: 20px;
+        border-radius: 50%;
+        transition: 0.3s;
+      }
+
+      .prev-btn {
+        left: 20px;
+      }
+      .next-btn {
+        right: 20px;
+      }
+
+      .prev-btn:hover,
+      .next-btn:hover {
+        background: rgba(255, 255, 255, 0.6);
+      }
+
+      /* النقاط */
+      .dots-container {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 50%;
+        cursor: pointer;
+      }
+
+      .dot.active {
+        background: #fff;
+      }
+
+      /**/
+      .projects-section {
+    padding: 60px 0;
+    background-color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 أعمدة متساوية */
+    gap: 30px; /* المسافة بين البطاقات */
+}
+
+.project-card {
+    background: #fff;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.project-card:hover {
+    transform: translateY(-5px); /* حركة خفيفة عند تمرير الماوس */
+}
+
+.card-image {
+    width: 100%;
+    aspect-ratio: 16 / 10; /* يحافظ على تناسق أبعاد الصور */
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* يضمن عدم تمدد الصورة بشكل خاطئ */
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 10px 0;
+    line-height: 1.4;
+    /* تحديد النص بـ سطرين فقط لتناسق الارتفاع */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.card-meta span {
+    font-size: 12px;
+    color: #999;
+}
+
+.category::after {
+    content: "";
+    margin-left: 5px;
+}
+
+.tag {
+    display: block;
+    width: 100%; /* لجعل التاج الفرعي يظهر في سطر جديد كالمثال */
+    color: #ccc !important;
+    margin-top: 5px;
+}
+
+/* استجابة الموبايل */
+@media (max-width: 992px) {
+    .projects-grid {
+        grid-template-columns: repeat(2, 1fr); /* عمودين في الأجهزة المتوسطة */
+    }
+}
+
+@media (max-width: 600px) {
+    .projects-grid {
+        grid-template-columns: 1fr; /* عمود واحد في الموبايل */
+    }
+}
+    </style>
+
+    <div id="header-placeholder"></div>
+
+    <section class="hero-slider">
+      <div class="slider-container">
+        <div class="slide active">
+          <div
+            class="slide-bg"
+            style="background-image: url(&quot;imges/img/img17.jfif&quot;)"
+          ></div>
+          <div class="slide-content">
+            <h1>pic1</h1>
+            <p>وصف الصورة الأولى هنا</p>
+          </div>
+        </div>
+
+        <div class="slide">
+          <div
+            class="slide-bg"
+            style="background-image: url(&quot;imges/img/b5.jpg&quot;)"
+          ></div>
+          <div class="slide-content">
+            <h1>pic2</h1>
+            <p>وصف الصورة الثانية هنا</p>
+          </div>
+        </div>
+
+        <div class="slide">
+          <div
+            class="slide-bg"
+            style="background-image: url(&quot;imges/img/img2.jfif&quot;)"
+          ></div>
+          <div class="slide-content">
+            <h1>pic3</h1>
+            <p>وصف الصورة الثالثة هنا</p>
+          </div>
+        </div>
+      </div>
+
+      <button class="prev-btn">&#10094;</button>
+      <button class="next-btn">&#10095;</button>
+
+      <div class="dots-container">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </section>
+
+    <!---->
+    <div class="prodact-category">
+    <p class="title">interior design</p>
+</div>
+    <section class="projects-section">
+    <div class="container">
+        <div class="projects-grid">
+            
+            <div class="project-card">
+                <div class="card-image">
+                    <img src="imges/img/img4.jfif" alt="Project Name">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">العنوان</h3>
+                    <div class="card-meta">
+                        <span class="category">الفئة</span>
+                        <span class="category">Interior Design</span>
+                        <span class="tag">Office</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="card-image">
+                    <img src="imges/img/img7.jfif" alt="Project Name">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">العنوان</h3>
+                    <div class="card-meta">
+                        <span class="category">الفئة</span>
+                        <span class="tag">Restaurant</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="card-image">
+                    <img src="imges/img/img21.jfif" alt="Project Name">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">العنوان</h3>
+                    <div class="card-meta">
+                        <span class="category">الفئة</span>
+                        <span class="category">Interior Design</span>
+                        <span class="tag">Office</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<div class="read-more"><button>see more</button></div>
+
+<div class="prodact-category">
+    <p class="title">prodact</p>
+</div>
+    <section class="projects-section">
+    <div class="container">
+        <div class="projects-grid">
+            
+            <div class="project-card">
+                <div class="card-image">
+                    <img src="imges/img/img14.jfif" alt="Project Name">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">New Spaces for Desjardins at the Montréal Tower</h3>
+                    <div class="card-meta">
+                        <span class="category">Architecture</span>
+                        <span class="category">Interior Design</span>
+                        <span class="tag">Office</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="card-image">
+                    <img src="imges/img/img5.jfif" alt="Project Name">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Restaurant Jérôme Ferrer by Europea</h3>
+                    <div class="card-meta">
+                        <span class="category">Interior Design</span>
+                        <span class="tag">Restaurant</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="card-image">
+                    <img src="imges/img/img13.jfif" alt="Project Name">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Îlot Balmoral Energizes Montreal’s Creative Economy...</h3>
+                    <div class="card-meta">
+                        <span class="category">Architecture</span>
+                        <span class="category">Interior Design</span>
+                        <span class="tag">Office</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<div class="read-more"><button>see more</button></div>
+
+    <div id="footer-placeholder"></div>
+
+    <script>
+      const slides = document.querySelectorAll(".slide");
+      const dots = document.querySelectorAll(".dot");
+      let currentSlide = 0;
+
+      function showSlide(index) {
+        slides.forEach((slide) => slide.classList.remove("active"));
+        dots.forEach((dot) => dot.classList.remove("active"));
+
+        slides[index].classList.add("active");
+        dots[index].classList.add("active");
+      }
+
+      document.querySelector(".next-btn").addEventListener("click", () => {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+      });
+
+      document.querySelector(".prev-btn").addEventListener("click", () => {
+        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+        showSlide(currentSlide);
+      });
+
+      // التنقل التلقائي كل 5 ثوانٍ
+      setInterval(() => {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+      }, 5000);
+    </script>
+
+    <script src="js/script.js"></script>
+  </body>
+</html>
