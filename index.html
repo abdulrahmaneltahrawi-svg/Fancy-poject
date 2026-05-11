@@ -138,11 +138,24 @@
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       }
 
-      .title {
-        margin-left: 150px;
-        font-weight: bold;
-        font-size: 28px;
-      }
+.title {
+    margin-left: 150px;
+    font-weight: bold;
+    font-size: 28px;
+    
+    /* الحل هنا */
+    display: flex;
+    align-items: center; /* لتوسيط الخط عمودياً مع النص تماماً */
+    gap: 15px;           /* مسافة بين الخط والكلمة */
+}
+
+.title::before {
+    content: "";
+    width: 5px;
+    height: 35px;
+    background-color: #000;
+    display: inline-block; /* نغيرها من block إلى inline-block */
+}
 
       .projects-grid {
         display: grid;
@@ -274,107 +287,21 @@
     </section>
 
     <!---->
-    <section class="projects-section">
-      <p class="title">prodact</p>
-      <div class="container">
-        <div class="projects-grid">
-          <div class="project-card">
-            <div class="card-image">
-              <img src="imges/img/img4.jpg" alt="Project Name" />
-            </div>
-            <div class="card-content">
-              <h3 class="card-title">العنوان</h3>
-              <div class="card-meta">
-                <span class="category">الفئة</span>
-                <span class="category">Interior Design</span>
-                <span class="tag">Office</span>
-              </div>
-            </div>
-          </div>
+<section class="projects-section">
+    <p class="title">Product</p>
+    <div class="container">
+        <div id="projects-container" class="projects-grid"></div>
+    </div>
+    <div class="read-more"><button>see more</button></div>
+</section>
 
-          <div class="project-card">
-            <div class="card-image">
-              <img src="imges/img/img7.jfif" alt="Project Name" />
-            </div>
-            <div class="card-content">
-              <h3 class="card-title">العنوان</h3>
-              <div class="card-meta">
-                <span class="category">الفئة</span>
-                <span class="tag">Restaurant</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="project-card">
-            <div class="card-image">
-              <img src="imges/img/img21.jfif" alt="Project Name" />
-            </div>
-            <div class="card-content">
-              <h3 class="card-title">العنوان</h3>
-              <div class="card-meta">
-                <span class="category">الفئة</span>
-                <span class="category">Interior Design</span>
-                <span class="tag">Office</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="read-more"><button>see more</button></div>
-    </section>
-
-    <section class="projects-section">
-        <p class="title">interior design</p>
-      <div class="container">
-        <div class="projects-grid">
-          <div class="project-card">
-            <div class="card-image">
-              <img src="imges/img/img14.jfif" alt="Project Name" />
-            </div>
-            <div class="card-content">
-              <h3 class="card-title">
-                title
-              </h3>
-              <div class="card-meta">
-                <span class="category">Architecture</span>
-                <span class="category">Interior Design</span>
-                <span class="tag">Office</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="project-card">
-            <div class="card-image">
-              <img src="imges/img/img5.jfif" alt="Project Name" />
-            </div>
-            <div class="card-content">
-              <h3 class="card-title">title</h3>
-              <div class="card-meta">
-                <span class="category">Interior Design</span>
-                <span class="tag">Restaurant</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="project-card">
-            <div class="card-image">
-              <img src="imges/img/img13.jfif" alt="Project Name" />
-            </div>
-            <div class="card-content">
-              <h3 class="card-title">
-                title
-              </h3>
-              <div class="card-meta">
-                <span class="category">Architecture</span>
-                <span class="category">Interior Design</span>
-                <span class="tag">Office</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="read-more"><button>see more</button></div>
-    </section>
+<section class="projects-section">
+    <p class="title">Interior Design</p>
+    <div class="container">
+        <div id="interior-container" class="projects-grid"></div>
+    </div>
+    <div class="read-more"><button>see more</button></div>
+</section>
 
 
     <div id="footer-placeholder"></div>
@@ -407,7 +334,59 @@
         currentSlide = (currentSlide + 1) % slides.length;
         showSlide(currentSlide);
       }, 5000);
+
+
+// انشاء الكروت وعرضها
+// مراجع الحاويات في الصفحة
+const projectsContainer = document.getElementById('projects-container');
+const interiorContainer = document.getElementById('interior-container');
+
+function displayProjects() {
+    // 1. عرض مشاريع المنتجات (Product)
+    if (projectsContainer && typeof projectsData !== 'undefined') {
+        projectsContainer.innerHTML = ""; 
+        projectsData.forEach(project => {
+            projectsContainer.innerHTML += createCardHTML(project);
+        });
+    }
+
+    // 2. عرض مشاريع التصميم الداخلي (Interior Design)
+    if (interiorContainer && typeof interiorData !== 'undefined') {
+        interiorContainer.innerHTML = "";
+        interiorData.forEach(item => {
+            interiorContainer.innerHTML += createCardHTML(item);
+        });
+    }
+}
+
+// دالة موحدة لإنشاء تصميم الكرت (لضمان تشابه الشكل في القسمين)
+function createCardHTML(data) {
+    return `
+        <div class="project-card">
+            <div class="card-image">
+                <a href="view.html?id=${data.id}">
+                    <img src="${data.image}" alt="${data.title}">
+                </a>
+            </div>
+            <div class="card-content">
+                <h3 class="card-title">${data.title}</h3>
+                <p class="card-description" style="font-size: 14px; color: #666;">
+                    ${data.description.substring(0, 70)}...
+                </p>
+                <div class="card-meta">
+                    <span class="category">${data.category}</span>
+                </div>      
+            </div>
+        </div>
+    `;
+}
+
+// تشغيل الدالة عند تحميل الصفحة
+window.addEventListener('load', displayProjects);
+    
     </script>
+    <script src="js/data.js"></script>
+    <script src="js/data_interior.js"></script>
 
     <script src="js/script.js"></script>
   </body>

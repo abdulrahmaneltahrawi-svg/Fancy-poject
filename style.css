@@ -328,3 +328,28 @@
   color: #333;
   border: 1px solid #333
 }
+
+
+
+
+
+
+
+
+
+
+
+.card-desc-short {
+    font-size: 14px;
+    color: #777;
+    margin: 5px 0 15px 0;
+    line-height: 1.5;
+    /* لجعل النص ينتهي بنقاط إذا كان طويلاً جداً */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.card-title {
+    margin-bottom: 5px; /* تقليل المسافة لتناسب الوصف */
+}

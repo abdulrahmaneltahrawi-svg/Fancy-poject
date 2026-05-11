@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fancy Design - View Project</title>
+    <link rel="icon" href="imges/img/fancy1.jfif" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        /* التنسيقات الخاصة بالصفحة */
+        .view-container { max-width: 1200px; margin: 100px auto; padding: 0 20px; }
+        .view-content { display: flex; gap: 50px; align-items: flex-start; }
+        .view-image-section { flex: 1.5; }
+        .view-image-section img { width: 100%; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .view-details-section { flex: 1; }
+        .view-details-section h1 { font-size: 36px; margin-bottom: 20px; position: relative; padding-left: 20px; min-height: 40px; }
+        .view-details-section h1::before { content: ""; position: absolute; left: 0; top: 10%; width: 3px; height: 80%; background: #000; }
+        .category-tag { color: #999; text-transform: uppercase; font-size: 14px; letter-spacing: 1px; display: block; margin-bottom: 10px; }
+        .description-box { color: #666; line-height: 1.8; margin-bottom: 40px; margin-top: 20px; }
+        .price-btn { display: inline-flex; align-items: center; background: #000; color: #fff; padding: 15px 30px; text-decoration: none; border-radius: 5px; gap: 15px; transition: 0.3s; font-weight: bold; }
+        .price-btn:hover { background: #333; transform: translateY(-3px); }
+        .price-btn img { width: 20px; }
+        .back-link { display: block; margin-top: 20px; color: #999; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <div id="header-placeholder"></div>
+
+    <div class="view-container">
+        <div class="view-content">
+            <div class="view-image-section">
+                <img id="project-image" src="" alt="Project Image">
+            </div>
+
+            <div class="view-details-section">
+                <span id="project-category" class="category-tag"></span>
+                <h1 id="project-name"></h1> 
+                <div class="description-box">
+                    <p id="project-desc"></p>
+                </div>
+                
+                <a id="whatsapp-btn" href="#" class="price-btn">
+                    <span>الاستفسار عن السعر</span>
+                    <img src="imges/icons/whatsapp-color.png" alt="whatsapp">
+                </a>
+                
+                <a href="index.html" class="back-link">← Back to Projects</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/data.js"></script> 
+    <script src="js/data_interior.js"></script>
+    <script>
+// 1. جلب المعرف من الرابط
+const params = new URLSearchParams(window.location.search);
+const projectId = params.get('id');
+
+// 2. دمج المصفوفتين للبحث في كل البيانات المتاحة
+// نقوم بدمج مصفوفة المنتجات مع مصفوفة التصميم الداخلي
+const allData = [...(typeof projectsData !== 'undefined' ? projectsData : []), 
+                 ...(typeof interiorData !== 'undefined' ? interiorData : [])];
+
+// 3. البحث عن العنصر المطابق للـ ID
+const project = allData.find(p => p.id === projectId);
+
+if (project) {
+    // عرض البيانات الأساسية
+    document.getElementById('project-name').innerText = project.title;
+    document.getElementById('project-image').src = project.image;
+    document.getElementById('project-desc').innerText = project.description;
+    
+    // التعامل مع التصنيف والوسم (Tags) بحذر في حال عدم وجود tag
+    const categoryText = project.category;
+    const tagText = project.tag ? ` | ${project.tag}` : "";
+    document.getElementById('project-category').innerText = categoryText + tagText;
+    
+    // إعداد رابط الواتساب ديناميكياً
+    const message = encodeURIComponent(`السلام عليكم، أود الاستفسار عن تفاصيل وسعر: ${project.title}`);
+    document.getElementById('whatsapp-btn').href = `https://wa.me/${project.whatsapp}?text=${message}`;
+    
+} else {
+    // في حال عدم العثور على المشروع
+    document.querySelector('.view-content').innerHTML = `
+        <div style="text-align:center; width:100%; padding: 50px;">
+            <h2>المشروع غير موجود</h2>
+            <a href="index.html" class="back-link">العودة للرئيسية</a>
+        </div>
+    `;
+}
+    </script>
+    <script src="js/script.js"></script>
+</body>
+</html>
