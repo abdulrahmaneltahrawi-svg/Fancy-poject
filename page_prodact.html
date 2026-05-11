@@ -132,10 +132,8 @@
 
     <div id="footer-placeholder"></div>
 
-    <script>
-
-
-// دالة موحدة لإنشاء تصميم الكرت (لضمان تشابه الشكل في القسمين)
+<script>
+// 1. دالة موحدة لإنشاء تصميم الكرت
 function createCardHTML(data) {
     return `
         <div class="project-card">
@@ -146,22 +144,37 @@ function createCardHTML(data) {
             </div>
             <div class="card-content">
                 <h3 class="card-title">${data.title}</h3>
-                <p class="card-description" style="font-size: 14px; color: #666;">
+                <p class="card-description" style="font-size: 14px; color: #666; margin: 10px 0;">
                     ${data.description.substring(0, 70)}...
                 </p>
                 <div class="card-meta">
-                    <span class="category">${data.category}</span>
+                    <span class="category" style="color: #999; font-size: 12px;">${data.category}</span>
                 </div>      
             </div>
         </div>
     `;
 }
 
-// تشغيل الدالة عند تحميل الصفحة
-window.addEventListener('load', displayProjects);
+// 2. دالة عرض المشاريع الخاصة بالمنتجات
+function displayProjects() {
+    // استهداف الحاوية الخاصة بالمنتجات
+    const container = document.getElementById('projects-container');
     
-    </script>
+    // التأكد من وجود الحاوية ومن أن البيانات محملة من ملف js/data.js
+    if (container && typeof projectsData !== 'undefined') {
+        container.innerHTML = ""; // مسح أي محتوى تجريبي
+        
+        projectsData.forEach(project => {
+            container.innerHTML += createCardHTML(project);
+        });
+    } else {
+        console.error("خطأ: لم يتم العثور على projectsData أو حاوية العرض.");
+    }
+}
 
+// 3. تشغيل الدالة فور تحميل الصفحة
+window.addEventListener('load', displayProjects);
+</script>
     <script src="js/data.js"></script>
 
     <script src="js/script.js"></script>
