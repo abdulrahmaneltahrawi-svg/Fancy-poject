@@ -8,8 +8,187 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <style>
+      .about-section {
+    padding: 80px 0;
+    background-color: #f4f4f4; /* خلفية رمادية فاتحة مثل الصورة */
+    direction: rtl; /* اتجاه النص من اليمين لليسار */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.about-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 50px;
+    padding: 0 20px;
+}
+
+/* تنسيق النص */
+.about-text {
+    flex: 1;
+    text-align: right;
+}
+
+.about-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: #1a1a1a;
+    position: relative;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+/* الخط الأصفر تحت "من نحن" */
+.about-title::after {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    right: 0;
+    width: 60px;
+    height: 3px;
+    background-color: #d4af37; /* اللون الذهبي/الأصفر الموضح بالصورة */
+}
+
+.about-description {
+    font-size: 18px;
+    color: #666;
+    line-height: 1.8;
+    max-width: 450px;
+}
+
+/* تنسيق الصورة */
+.about-image {
+    flex: 1;
+}
+
+.about-image img {
+    width: 100%;
+    max-width: 550px;
+    border-radius: 20px; /* زوايا منحنية كما في الصورة */
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1); /* ظل خفيف تحت الصورة */
+    display: block;
+}
+
+/* استجابة الموبايل */
+@media (max-width: 768px) {
+    .about-container {
+        flex-direction: column-reverse; /* الصورة تظهر فوق النص في الموبايل */
+        text-align: center;
+    }
+    
+    .about-text {
+        text-align: center;
+    }
+
+    .about-title::after {
+        right: 50%;
+        transform: translateX(50%);
+    }
+
+    .about-description {
+        margin: 0 auto;
+    }
+}
+
+
+
+
+
+.solutions {
+  background-color: #f4f4f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px;
+  padding: 30px;
+}
+/* From Uiverse.io by eslam-hany */ 
+.card {
+  position: relative;
+  width: 220px;
+  height: 320px;
+  background: black;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+  font-weight: bold;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.card::before,
+.card::after {
+  position: absolute;
+  content: "";
+  width: 20%;
+  height: 20%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+  font-weight: bold;
+  background-color: gray;
+  transition: all 0.5s;
+}
+
+.card::before {
+  top: 0;
+  right: 0;
+  border-radius: 0 15px 0 100%;
+}
+
+.card::after {
+  bottom: 0;
+  left: 0;
+  border-radius: 0 100%  0 15px;
+}
+
+.card:hover::before,
+.card:hover:after {
+  width: 100%;
+  height: 100%;
+  border-radius: 15px;
+  transition: all 0.5s;
+}
+
+.card:hover:after {
+  content: "";
+  color: white;
+
+}
+    </style>
 
     <div id="header-placeholder"></div>
+
+<section class="about-section">
+    <div class="about-container">
+        <div class="about-image">
+            <img src="imges/img/fancy3.jfif" alt="About Fancy Design">
+        </div>
+
+        <div class="about-text">
+            <h2 class="about-title">من نحن</h2>
+            <p class="about-description">
+                فانسي ديزاين هي شركة سعودية رائدة متخصصة في الحلول المتكاملة للتصميم الداخلي والأثاث.
+            </p>
+            <p class="about-description"> نبتكر مساحات. دقة في التصميم، صدق في الحرفة، والتزام بالجودة في كل مرة.</p>
+        </div>
+    </div>
+</section>
+<!-- From Uiverse.io by eslam-hany --> 
+ <div class="solutions">
+<div class="card">Workspaces</div>
+<div class="card">Hospitality</div>
+<div class="card">Educaional</div>
+<div class="card">Residential</div>
+<div class="card">Custom Design</div>
+</div>
 
 
 
