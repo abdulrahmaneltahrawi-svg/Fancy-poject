@@ -16,11 +16,12 @@ const interiorData = [
         whatsapp: "966530559095"
     },
         {
-        id: "interior-2",
+        id: "interior-3",
         title: "صالة استقبال فاخرة",
         image: "imges/img/img5.jfif",
         category: "Interior Design",
         description: "وصف الصالة هنا بالتفصيل...",
         whatsapp: "966530559095"
-    },
+    }
+
 ];
