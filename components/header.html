@@ -1,18 +1,28 @@
 <header class="main-header">
   <div class="container">
     <div class="logo">
-      <h1>Fancy Design</h1>
+      <h1><a href="index.html">Fancy Design</a></h1>
     </div>
 
-    <div class="search-container">
-      <div class="search-box">
-        <div class="category-select">
-          <span>All Items</span>
-          <i class="arrow-down"></i>
-        </div>
-        <input type="text" placeholder="Search all" />
+<div class="header-bottom-part">
+  <div class="search-container">
+    <div class="search-box">
+      <div class="category-select" id="dropdown-toggle">
+        <span id="selected-text">All Items</span>
+        <i class="arrow-down"></i>
+        
+        <ul class="dropdown-menu">
+          <li>All Items</li>
+          <li>Products</li>
+          <li>interior design</li>
+        </ul>
       </div>
+      <input type="text" placeholder="Search all" />
     </div>
+  </div>
+
+
+</div>
 
     <div class="auth-links">
       <a href="#" class="join-link">Join</a>

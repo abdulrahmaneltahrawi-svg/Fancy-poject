@@ -20,14 +20,20 @@
   justify-content: space-between;
   padding: 0 20px;
 }
-
+.logo h1 a {
+    text-decoration: none; /* إزالة الخط السفلي */
+    color: #000;          /* التأكد من اللون الأسود */
+    outline: none;        /* إزالة أي إطار عند الضغط */
+}
 /* الشعار */
 .logo h1 {
   font-size: 24px;
   font-weight: bold;
   margin: 0;
   letter-spacing: -1px;
+  color: #000; 
 }
+
 
 
 
@@ -46,14 +52,14 @@
   padding: 5px 15px;
 }
 
+
+/* الحاوية الأب لضمان الالتصاق */
 .category-select {
-  display: flex;
-  align-items: center;
-  padding-right: 15px;
-  border-right: 1px solid #ccc;
-  cursor: pointer;
-  font-size: 14px;
-  white-space: nowrap;
+    position: relative; /* ضروري جداً ليكون التموضع بالنسبة له */
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    height: 100%; /* ليأخذ نفس ارتفاع شريط البحث */
 }
 
 .arrow-down {
@@ -63,6 +69,51 @@
   padding: 3px;
   margin-left: 8px;
   transform: rotate(45deg);
+}
+
+/* القائمة المنسدلة */
+.dropdown-menu {
+    display: none; 
+    position: absolute;
+    /* يلتصق أسفل مربع البحث تماماً */
+    top: 200%; 
+    left: -10px;
+    width: 100%; /* ليأخذ نفس عرض الـ category-select تماماً */
+    min-width: 130px; /* لضمان مساحة كافية للنص */
+    background: #fff;
+    /* ظل خفيف يعطي إيحاء بالعمق لكن دون فصلها */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+    z-index: 1000;
+    list-style: none;
+    padding: 5px 0;
+    margin: 0; /* حذفنا المارجن لضمان الالتصاق */
+    border: 1px solid #eee; /* حدود خفيفة جداً لتحديدها */
+    border-top: none; /* إزالة الحد العلوي لتظهر كأنها تابعة للمربع فوقها */
+}
+
+/* العناصر داخل القائمة */
+.dropdown-menu li {
+    padding: 10px 15px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.dropdown-menu li:hover {
+    background-color: #f8f8f8;
+}
+
+/* عندما تأخذ القائمة هذا الكلاس تظهر */
+.dropdown-menu.show {
+    display: block;
+}
+
+/* تدوير السهم عند الفتح (اختياري) */
+.category-select.active .arrow-down {
+    transform: rotate(-135deg);
+    margin-top: 5px;
 }
 
 
