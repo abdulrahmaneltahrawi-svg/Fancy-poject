@@ -218,22 +218,54 @@
 
 
 
-.social-icons {
+.footer-col h4 {
+  font-size: 20px;
+  color: #fff;
+  text-transform: uppercase;
+  margin-bottom: 25px;
+  font-weight: 500;
+  position: relative;
+}
+
+/* الحاوية الأساسية */
+.contact-links {
   display: flex;
-  gap: 15px;
-  font-size: 18px;
+  flex-direction: column;
+  gap: 15px; /* مسافة بين كل وسيلة اتصال وأخرى */
 }
 
-.social-icons img {
-  width: 30px;
+/* تنسيق الصف الواحد */
+.contact-item {
+  display: flex;
+  align-items: flex-start; /* محاذاة الأيقونة مع أعلى النص */
+  gap: 12px;
 }
 
-.social-icons img:hover {
-  cursor: pointer;
-  transform: scale(1.2);
+.contact-item img {
+  width: 22px; /* توحيد حجم الأيقونات */
+  height: auto;
+  margin-top: 4px;
+}
+
+/* تنسيق النصوص والروابط */
+.contact-item .details {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-item a, 
+.contact-item span {
+  color: #aaa;
+  text-decoration: none;
+  font-size: 14px;
+  line-height: 1.6;
   transition: 0.3s;
 }
 
+.contact-item a:hover {
+  color: #ffb400; /* اللون الذهبي عند التمرير */
+  padding-left: 5px; /* حركة بسيطة لليمين */
+}
 /* 3. شريط الحقوق السفلي */
 .footer-bottom {
   background-color: #000;
