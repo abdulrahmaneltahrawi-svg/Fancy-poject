@@ -34,9 +34,6 @@
   color: #000; 
 }
 
-
-
-
 /* شريط البحث */
 .search-container {
   flex: 1;
@@ -99,6 +96,16 @@
     color: #333;
     cursor: pointer;
     transition: background 0.2s;
+    
+}
+
+.dropdown-menu a {
+    text-decoration: none; /* هذا السطر هو المسؤول عن إزالة الخط */
+    color: inherit;        /* يجعل لون النص يتبع لون القائمة ولا يتحول للأزرق التقليدي */
+}
+
+.dropdown-menu li {
+    list-style: none;      /* لإزالة النقاط إذا كانت موجودة */
 }
 
 .dropdown-menu li:hover {
