@@ -126,59 +126,6 @@
   padding: 0 20px;
 }
 
-/* 1. قسم الاشتراك (خلفية رمادية فاتحة) */
-.footer-newsletter {
-  background-color: #e0e0e0;
-  color: #333;
-  padding: 40px 0;
-}
-
-.footer-newsletter .footer-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 40px;
-}
-
-.newsletter-text h3 {
-  font-size: 18px;
-  margin: 0;
-  line-height: 1.4;
-}
-
-.newsletter-form {
-  flex: 1;
-  max-width: 600px;
-}
-
-.input-group {
-  display: flex;
-  margin-bottom: 15px;
-}
-
-.input-group input {
-  flex: 1;
-  padding: 12px;
-  border: 1px solid #ccc;
-  outline: none;
-}
-
-.input-group button {
-  background-color: #c00; /* أحمر داكن */
-  color: white;
-  border: none;
-  padding: 0 25px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.consent-checkbox {
-  display: flex;
-  gap: 10px;
-  font-size: 12px;
-  color: #666;
-  align-items: flex-start;
-}
 
 /* 2. قسم الروابط الرئيسي (خلفية سوداء/داكنة) */
 .footer-main {
@@ -279,13 +226,14 @@
 
 
 
-/*read more and prodact category*/
+/*read more*/
 .read-more {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .read-more button{
+  margin-top: 30px;
   padding: 10px 30px;
   background: #333;
   color: white;
@@ -296,24 +244,4 @@
   background: white;
   color: #333;
   border: 1px solid #333
-}
-
-.prodact-category{
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  font-weight: bold;
-  font-size: 24px;
-  margin-left: 150px;
-  margin-top: 150px;
-
-}
-
-.prodact-category::before{
-  content: "";
-    position: relative;
-    right: 5px;
-    width: 3px; /* عرض الخط */
-    height: 30px; /* طول الخط العمودي */
-    background-color: #000; /* لون الخط */
 }
