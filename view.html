@@ -71,9 +71,7 @@ if (project) {
     document.getElementById('project-desc').innerText = project.description;
     
     // التعامل مع التصنيف والوسم (Tags) بحذر في حال عدم وجود tag
-    const categoryText = project.category;
-    const tagText = project.tag ? ` | ${project.tag}` : "";
-    document.getElementById('project-category').innerText = categoryText + tagText;
+    document.getElementById('project-category').innerText = project.tag || "";
     
     // إعداد رابط الواتساب ديناميكياً
     const message = encodeURIComponent(`السلام عليكم، أود الاستفسار عن تفاصيل وسعر: ${project.title}`);

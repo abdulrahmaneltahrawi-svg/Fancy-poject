@@ -5,6 +5,7 @@ const interiorData = [
         image: "imges/magazine/cover_152.png",
         category: "Interior Design",
         description: "Architecuture interior design",
+        type: "office",
         whatsapp: "966530559095",
         gallery: [
         "imges/magazine/1/64062-full_952-30_64062_sc_v2com_68ca1e1df25cd.webp",
@@ -21,6 +22,7 @@ const interiorData = [
         image: "imges/magazine/cover_153.png",
         category: "Interior Design",
         description: "interior design",
+        type: "Restaurant",
         whatsapp: "966530559095"
     },
         {
@@ -29,6 +31,7 @@ const interiorData = [
         image: "imges/magazine/cover_155.png",
         category: "Interior Design",
         description: "Architecuture interior design",
+        type: "office",
         whatsapp: "966530559095"
     },
         {
@@ -37,6 +40,7 @@ const interiorData = [
         image: "imges/magazine/blob_68c93499e3d3c..png",
         category: "Interior Design",
         description: "Architecuture interior design",
+        type: "Schoole",
         whatsapp: "966530559095"
     },
     {
@@ -44,7 +48,8 @@ const interiorData = [
         title: "Pôle Multimodal Vendôme Wins the International Architecture MasterPrize in the Transportation Category",
         image: "imges/magazine/blob_68c9331e2777b..png",
         category: "Interior Design",
-        description: "Architecuture interior design",
+        description: "Architecuture Landscape",
+        type: "office",
         whatsapp: "966530559095"
     },
         {
@@ -53,6 +58,7 @@ const interiorData = [
         image: "imges/magazine/blob_68c9306df0fdd..png",
         category: "Interior Design",
         description: "interior design",
+        type: "Hotel",
         whatsapp: "966530559095"
     }
 

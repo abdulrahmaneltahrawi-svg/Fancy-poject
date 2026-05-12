@@ -117,7 +117,7 @@
         if (currentItem) {
             // تعبئة البيانات في اليسار
             document.getElementById('mag-title').innerText = currentItem.title;
-            document.getElementById('mag-category').innerText = currentItem.category;
+            document.getElementById('mag-category').innerText = currentItem.type || "";
             document.getElementById('mag-desc').innerText = currentItem.description || "Description coming soon...";
 
             // 2. معرض الصور (بافتراض أن الصور بأسماء متسلسلة أو مصفوفة)

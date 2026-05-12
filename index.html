@@ -34,8 +34,8 @@
       .hero-slider {
         position: relative;
         width: 90%; /* يمكنك تقليل النسبة حسب الرغبة، مثلاً 80% */
-        max-width: 1600px; /* يمنع السلايدر من التمدد بشكل مفرط في الشاشات الكبيرة جداً */
-        height: 110vh; /* يمكنك أيضاً تقليل الارتفاع ليناسب العرض الجديد */
+        max-width: 1450px; /* يمنع السلايدر من التمدد بشكل مفرط في الشاشات الكبيرة جداً */
+        height: 90vh; /* يمكنك أيضاً تقليل الارتفاع ليناسب العرض الجديد */
         margin: 20px auto; /* auto تقوم بتوسيط السلايدر في المنتصف أفقياً */
         border-radius: 15px; /* اختيارياً: إضافة زوايا منحنية تعطي شكلاً عصرياً */
         overflow: hidden;
@@ -229,18 +229,21 @@
     <div class="container">
         <div id="interior-container" class="projects-grid"></div>
     </div>
+    <div class="read-more"><button>GO TO MAGAZINE</button></div>
 </section>
 
 <section class="projects-section">
     <p class="title">Product</p>
     <div class="container">
         <div id="product-container" class="projects-grid"></div> </div>
+        <div class="read-more"><button>SEE MORE PRODUCTS</button></div>
 </section>
 
 <section class="projects-section">
     <p class="title">Brand</p>
     <div class="container">
         <div id="brand-container" class="projects-grid"></div> </div>
+        <div class="read-more"><button>SEE ALL BRANDS</button></div>
 </section>
 
 
@@ -320,7 +323,9 @@ function createCardHTML(data, type) {
         targetPage = "view_brand.html";
     }
 
-    const description = data.description ? data.description.substring(0, 70) + '...' : 'Explore our collection';
+    const description = data.description ? data.description.substring(0, 70) + '...' : 'Brand';
+    // تحديد الوسم المراد عرضه (tag للمنتجات، type للمجلات، brand للبراندات)
+    const badge = data.type || data.tag || data.brand || "";
     
     return `
         <div class="project-card">
@@ -331,9 +336,11 @@ function createCardHTML(data, type) {
             </div>
             <div class="card-content">
                 <h3 class="card-title">${data.title}</h3>
+                
                 <p class="card-description" style="font-size: 14px; color: #666;">
                     ${description}
                 </p>
+                ${badge ? `<span class="category" style="color: #ccc; font-weight: bold; text-transform: uppercase; font-size: 12px; display: block; margin-bottom: 5px;">${badge}</span>` : ''}
             </div>
         </div>
     `;
