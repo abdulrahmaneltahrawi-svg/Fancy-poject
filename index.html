@@ -9,6 +9,27 @@
   </head>
   <body>
     <style>
+      .category-nav {
+    display: flex;
+    justify-content: center; /* لتوسيط القائمة في الصفحة */
+    gap: 30px;              /* المسافة بين الكلمات */
+    padding: 20px;
+    font-family: Arial, sans-serif; /* نوع الخط القريب من الصورة */
+}
+
+.category-nav a {
+    text-decoration: none;  /* إزالة الخط اللي تحت الرابط */
+    color: #333;            /* لون الخط */
+    font-size: 18px;        /* حجم الخط */
+    font-weight: 400;       /* سمك الخط */
+    transition: color 0.3s ease;
+}
+
+/* تأثير بسيط عند تمرير الماوس */
+.category-nav a:hover {
+    color: #007bff; 
+}
+
       .hero-slider {
         position: relative;
         width: 90%; /* يمكنك تقليل النسبة حسب الرغبة، مثلاً 80% */
@@ -167,6 +188,7 @@
         background: #fff;
         transition: transform 0.3s ease;
         cursor: pointer;
+        min-height: 500px;
       }
 
       .project-card:hover {
@@ -175,7 +197,7 @@
 
       .card-image {
         width: 100%;
-        aspect-ratio: 16 / 10; /* يحافظ على تناسق أبعاد الصور */
+        height: 400px;
         overflow: hidden;
         margin-bottom: 15px;
       }
@@ -183,7 +205,7 @@
       .card-image img {
         width: 100%;
         height: 100%;
-        object-fit: cover; /* يضمن عدم تمدد الصورة بشكل خاطئ */
+        object-fit: contain; /* يضمن عدم تمدد الصورة بشكل خاطئ */
       }
 
       .card-title {
@@ -240,35 +262,45 @@
 
     <div id="header-placeholder"></div>
 
+    <nav class="category-nav">
+    <a href="#">Furniture</a>
+    <a href="#">Lighting</a>
+    <a href="#">Decore</a>
+    <a href="#">Finishes</a>
+    <a href="#">Kitchen</a>
+    <a href="#">Bathroom</a>
+    <a href="#">Wellness</a>
+</nav>
+
 <section class="hero-slider">
   <div class="slider-container">
     
     <div class="slide active">
-      <div class="slide-bg" style="background-image: url('imges/img/img17.jfif')"></div>
+      <div class="slide-bg" style="background-image: url('imges/img/topslider04.webp')"></div>
       <div class="slide-content">
         <a href="view.html?id=interior-4" style="text-decoration: none; color: inherit;">
-          <h1>title </h1>
-          <p>اضغط لمشاهدة تفاصيل مشروع الفيلا المودرن</p>
+          <h1>The RAIN FLOWER </h1>
+          <p>A modern masterpiece that seemlessly blends comfort and style.</p>
         </a>
       </div>
     </div>
 
     <div class="slide">
-      <div class="slide-bg" style="background-image: url('imges/img/b5.jpg')"></div>
+      <div class="slide-bg" style="background-image: url('imges/img/topslider03.webp')"></div>
       <div class="slide-content">
         <a href="view.html?id=interior-2" style="text-decoration: none; color: inherit;">
-          <h1>title </h1>
-          <p>استكشف تفاصيل صالة الاستقبال الفاخرة</p>
+          <h1>Flower Sofa </h1>
+          <p>A versatile and inviting seating solution that blooms into endless configurations.</p>
         </a>
       </div>
     </div>
 
     <div class="slide">
-      <div class="slide-bg" style="background-image: url('imges/img/img2.jfif')"></div>
+      <div class="slide-bg" style="background-image: url('imges/img/topslider05.webp')"></div>
       <div class="slide-content">
         <a href="view.html?id=prod-1" style="text-decoration: none; color: inherit;">
-          <h1>title </h1>
-          <p>وصف المنتج الثالث هنا بالتفصيل</p>
+          <h1>The Koji Sofa </h1>
+          <p>a sculptural seating experience that redefines modern minimalism.</p>
         </a>
       </div>
     </div>
@@ -293,11 +325,11 @@
     <div class="container">
         <div id="projects-container" class="projects-grid"></div>
     </div>
-    <div class="read-more"><a href="page_prodact.html"><button>see more</button></a></div>
+    <div class="read-more"><a href="page_prodact.html"><button>SEE MORE PRODUCTS</button></a></div>
 </section>
 
 <section class="projects-section">
-    <p class="title">Interior Design</p>
+    <p class="title">brands</p>
     <div class="container">
         <div id="interior-container" class="projects-grid"></div>
     </div>

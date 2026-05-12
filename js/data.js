@@ -2,56 +2,56 @@
 const projectsData = [
     {
         id: "buffet",
-        title: "كرسي",
-        image: "imges/img/img4.jpg",
+        title: "aarkee contract",
+        image: "imges/prodact/2 Large_67c9515e71832.webp",
         category: "Interior Design",
         tag: "Restaurant",
-        description: "تصميم داخلي متكامل يعتمد على الإضاءة المخفية والخامات الطبيعية ليعطي تجربة فخمة للزوار.",
+        description: "ROMA PHONE BOTH",
         whatsapp: "966530559095"
     },
     {
         id: "office",
-        title: "مكتب إداري فاخر",
-        image: "imges/img/img21.jfif",
+        title: "aarkee contract",
+        image: "imges/prodact/AR-PC-TB-11 Large_67c965620e7ec.webp",
         category: "Interior Design",
         tag: "Office",
-        description: "مساحة عمل ذكية بتصميم يجمع بين العملية والأناقة، مع استخدام قواطع زجاجية لزيادة الإضاءة.",
+        description: "PLANK",
         whatsapp: "966571778989"
     },
     {
         id: "classic-restaurant",
-        title: "سرير نوم",
-        image: "imges/img/img7.jfif",
+        title: "aarkee contract",
+        image: "imges/prodact/AR-SHE-SO-03 Large_67c9581def87f.webp",
         category: "Architecture",
         tag: "Restaurant",
-        description: "دمج بين الهوية التقليدية واللمسات العصرية لتقديم تجربة بصرية فريدة للزوار.",
+        description: "SHEEP",
         whatsapp: "966530559095"
     },
         {
         id: "classic-sad",
-        title: "كرسي استرخاء",
-        image: "imges/img/img1.jpg",
+        title: "Joys Living",
+        image: "imges/prodact/CH-283A (5)_67ce822be6d7a.webp",
         category: "Architecture",
         tag: "prodact",
-        description: "دمج بين الهوية التقليدية واللمسات العصرية لتقديم تجربة بصرية فريدة للزوار.",
+        description: "TOFU",
         whatsapp: "966530559095"
     },
         {
         id: "classic-df",
-        title: "مكتب اجتماعات",
-        image: "imges/img/img3.jfif",
+        title: "aarkee office",
+        image: "imges/prodact/CH-511黄棕拼 (2)_67ce93d7c2964.webp",
         category: "Architecture",
         tag: "prodact",
-        description: "دمج بين الهوية التقليدية واللمسات العصرية لتقديم تجربة بصرية فريدة للزوار.",
+        description: "PIVOT - LEATHER CHAIR",
         whatsapp: "966530559095"
     },
         {
         id: "classic-w",
-        title: "مكتب انيق",
-        image: "imges/img/img16.jfif",
+        title: "aarkee office",
+        image: "imges/prodact/JY-FXL-1-¥Û∫¸¿Í (3) Large 2_673ff62c50095.webp",
         category: "Architecture",
         tag: "Restaurant",
-        description: "دمج بين الهوية التقليدية واللمسات العصرية لتقديم تجربة بصرية فريدة للزوار.",
+        description: "SPIRE - MESH CHAIR",
         whatsapp: "966530559095"
     },
 ];
