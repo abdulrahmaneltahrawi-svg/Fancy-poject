@@ -1,4 +1,4 @@
-const interiorData = [
+const brand = [
     {
         id: "interior-1",
         title: "Îlot Balmoral Energizes Montreal’s Creative Economy as a New Addition to Downtown Skyline",
