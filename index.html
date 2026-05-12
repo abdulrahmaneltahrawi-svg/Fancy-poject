@@ -154,119 +154,15 @@
       }
 
       /**/
-      .projects-section {
-        padding: 60px 0;
-        background-color: #fff;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      }
-
-.title {
-    margin-left: 150px;
-    font-weight: bold;
-    font-size: 28px;
-    
-    /* الحل هنا */
-    display: flex;
-    align-items: center; /* لتوسيط الخط عمودياً مع النص تماماً */
-    gap: 15px;           /* مسافة بين الخط والكلمة */
-}
-
-.title::before {
-    content: "";
-    width: 5px;
-    height: 35px;
-    background-color: #000;
-    display: inline-block; /* نغيرها من block إلى inline-block */
-}
-
-      .projects-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr); /* 3 أعمدة متساوية */
-        gap: 30px; /* المسافة بين البطاقات */
-      }
-
-      .project-card {
-        background: #fff;
-        transition: transform 0.3s ease;
-        cursor: pointer;
-        min-height: 500px;
-      }
-
-      .project-card:hover {
-        transform: translateY(-5px); /* حركة خفيفة عند تمرير الماوس */
-      }
-
-      .card-image {
-        width: 100%;
-        height: 400px;
-        overflow: hidden;
-        margin-bottom: 15px;
-      }
-
-      .card-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain; /* يضمن عدم تمدد الصورة بشكل خاطئ */
-      }
-
-      .card-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: #1a1a1a;
-        margin: 10px 0;
-        line-height: 1.4;
-        /* تحديد النص بـ سطرين فقط لتناسق الارتفاع */
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
-
-      .card-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-
-      .card-meta span {
-        font-size: 12px;
-        color: #999;
-      }
-
-      .category::after {
-        content: "";
-        margin-left: 5px;
-      }
-
-      .tag {
-        display: block;
-        width: 100%; /* لجعل التاج الفرعي يظهر في سطر جديد كالمثال */
-        color: #ccc !important;
-        margin-top: 5px;
-      }
-
-      /* استجابة الموبايل */
-      @media (max-width: 992px) {
-        .projects-grid {
-          grid-template-columns: repeat(
-            2,
-            1fr
-          ); /* عمودين في الأجهزة المتوسطة */
-        }
-      }
-
-      @media (max-width: 600px) {
-        .projects-grid {
-          grid-template-columns: 1fr; /* عمود واحد في الموبايل */
-        }
-      }
+   
     </style>
 
     <div id="header-placeholder"></div>
 
     <nav class="category-nav">
     <a href="filter_Furniture.html">Furniture</a>
-    <a href="">Decore</a>
-    <a href="">Finishes</a>
+    <a href="filter_Decore.html">Decore</a>
+    <a href="filter_Finishes.html">Finishes</a>
     <a href="#">Lighting</a>
     <a href="#">Kitchen</a>
     <a href="#">Bathroom</a>

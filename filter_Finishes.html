@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fancy Design</title>
+    <link rel="icon" href="imges/img/fancy1.jfif" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+
+
+
+    <div id="header-placeholder"></div>
+
+
+
+<div id="projects-grid" class="projects-grid">
+    </div>
+    
+
+    <script>
+      function renderProjects(filterCategory) {
+    const grid = document.getElementById('projects-grid');
+    grid.innerHTML = ""; // تصفية الصفحة
+
+    // فلترة المصفوفة بناءً على القسم
+    const filteredData = myProjects.filter(item => item.category === filterCategory);
+
+    // إرسال البيانات للدالة لرسمها
+    filteredData.forEach(project => {
+        // هنا السحر: الدالة تأخذ "project" (الكائن) وتوزع بياناته داخل الـ HTML
+        grid.innerHTML += createCardHTML(project);
+    });
+}
+
+function createCardHTML(data) {
+    return `
+        <div class="project-card"> <div class="card-image"> <img src="${data.image}" alt="${data.title}">
+                <div class="status-badges">
+                    <span class="badge">3D</span>
+                    <span class="badge">CAD</span>
+                </div>
+            </div>
+            <div class="card-content"> <h3 class="card-title">${data.title}</h3> <div class="card-meta">
+                    <span class="brand">${data.brand || 'aarkee contract'}</span>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// أضف هذا السطر أسفل دوالك مباشرة
+document.addEventListener("DOMContentLoaded", () => {
+    // تأكد إن الكلمة 'Finishes' مطابقة للـ category في المصفوفة فوق
+    renderProjects('Finishes'); 
+});
+    </script>
+
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/data_finishes.js"></script>
+
+    <script src="js/script.js"></script>
+  </body>
+</html>
