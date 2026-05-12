@@ -281,7 +281,7 @@ function displayProjects() {
     // 1. عرض أول 3 من قسم Magazine (Interior)
     if (interiorContainer && typeof interiorData !== 'undefined') {
         interiorContainer.innerHTML = "";
-        interiorData.slice(0, 3).forEach(item => {
+        interiorData.slice(0, 6).forEach(item => {
             interiorContainer.innerHTML += createCardHTML(item);
         });
     }
@@ -289,7 +289,7 @@ function displayProjects() {
     // 2. عرض أول 3 من قسم Product
     if (productContainer && typeof projectsData !== 'undefined') {
         productContainer.innerHTML = "";
-        projectsData.slice(0, 3).forEach(project => {
+        projectsData.slice(0, 6).forEach(project => {
             productContainer.innerHTML += createCardHTML(project);
         });
     }

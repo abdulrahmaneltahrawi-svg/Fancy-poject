@@ -193,7 +193,7 @@
 
 .grid-columns {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
 
@@ -249,9 +249,10 @@
 }
 
 .contact-item img {
-  width: 22px; /* توحيد حجم الأيقونات */
+  width: 30px; /* توحيد حجم الأيقونات */
   height: auto;
   margin-top: 4px;
+  filter: brightness(0) invert(1);
 }
 
 /* تنسيق النصوص والروابط */
