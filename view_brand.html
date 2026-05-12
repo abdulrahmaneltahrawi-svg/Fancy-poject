@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brand View - Fancy Design</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        .brand-view { max-width: 1200px; margin: 120px auto; padding: 0 20px; text-align: center; }
+        .brand-logo-large { width: 300px; height: auto; margin-bottom: 40px; }
+        .brand-info h1 { font-size: 48px; margin-bottom: 20px; }
+        .brand-cat { color: #ffb400; font-weight: bold; letter-spacing: 2px; }
+        .brand-desc { max-width: 700px; margin: 30px auto; line-height: 2; color: #555; }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <div class="brand-view">
+        <div id="brand-content">
+            <span class="brand-cat">OFFICIAL BRAND</span>
+            <h1 id="brand-title"></h1>
+            <img id="brand-img" src="" alt="" class="brand-logo-large">
+            <p id="brand-desc" class="brand-desc">This brand offers high-quality furniture solutions and innovative designs.</p>
+            <a href="brand.html" class="price-btn" style="background:#000; color:#fff; padding:15px 40px; text-decoration:none;">VIEW COLLECTION</a>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/data_brand.js"></script>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const brandId = params.get('id');
+        const brand = brandsData.find(b => b.id == brandId);
+
+        if (brand) {
+            document.getElementById('brand-title').innerText = brand.title;
+            document.getElementById('brand-img').src = brand.image;
+        } else {
+            window.location.href = "index.html";
+        }
+    </script>
+    <script src="js/script.js"></script>
+</body>
+</html>

@@ -290,7 +290,7 @@ function displayProjects() {
     if (interiorContainer && typeof interiorData !== 'undefined') {
         interiorContainer.innerHTML = "";
         interiorData.slice(0, 6).forEach(item => {
-            interiorContainer.innerHTML += createCardHTML(item);
+            interiorContainer.innerHTML += createCardHTML(item, 'magazine');
         });
     }
 
@@ -298,7 +298,7 @@ function displayProjects() {
     if (productContainer && typeof projectsData !== 'undefined') {
         productContainer.innerHTML = "";
         projectsData.slice(0, 6).forEach(project => {
-            productContainer.innerHTML += createCardHTML(project);
+            productContainer.innerHTML += createCardHTML(project, 'product');
         });
     }
 
@@ -306,20 +306,27 @@ function displayProjects() {
     if (brandContainer && typeof brandsData !== 'undefined') {
         brandContainer.innerHTML = "";
         brandsData.slice(0, 3).forEach(brand => {
-            brandContainer.innerHTML += createCardHTML(brand);
+            brandContainer.innerHTML += createCardHTML(brand, 'brand');
         });
     }
 }
 
 // دالة التصميم الموحدة
-function createCardHTML(data) {
-    // أضفنا فحص بسيط للـ description عشان لو مش موجود الكود ما يضرب
+function createCardHTML(data, type) {
+    let targetPage = "view.html"; // الصفحة الافتراضية للمنتجات
+
+    if (type === "magazine") {
+        targetPage = "view_interior.html"; 
+    } else if (type === "brand") {
+        targetPage = "view_brand.html";
+    }
+
     const description = data.description ? data.description.substring(0, 70) + '...' : 'Explore our collection';
     
     return `
         <div class="project-card">
             <div class="card-image">
-                <a href="view.html?id=${data.id}">
+                <a href="${targetPage}?id=${data.id}">
                     <img src="${data.image}" alt="${data.title}">
                 </a>
             </div>
@@ -332,7 +339,6 @@ function createCardHTML(data) {
         </div>
     `;
 }
-
 // تشغيل عند التحميل
 window.addEventListener('load', displayProjects);
     </script>

@@ -53,16 +53,13 @@
     <div id="footer-placeholder"></div>
 
     <script src="js/data.js"></script> 
-    <script src="js/data_interior.js"></script>
     <script>
 // 1. جلب المعرف من الرابط
 const params = new URLSearchParams(window.location.search);
 const projectId = params.get('id');
 
-// 2. دمج المصفوفتين للبحث في كل البيانات المتاحة
-// نقوم بدمج مصفوفة المنتجات مع مصفوفة التصميم الداخلي
-const allData = [...(typeof projectsData !== 'undefined' ? projectsData : []), 
-                 ...(typeof interiorData !== 'undefined' ? interiorData : [])];
+// 2. البحث في بيانات المنتجات فقط
+const allData = typeof projectsData !== 'undefined' ? projectsData : [];
 
 // 3. البحث عن العنصر المطابق للـ ID
 const project = allData.find(p => p.id === projectId);

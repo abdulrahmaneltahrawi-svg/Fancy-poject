@@ -5,7 +5,15 @@ const interiorData = [
         image: "imges/magazine/cover_152.png",
         category: "Interior Design",
         description: "Architecuture interior design",
-        whatsapp: "966530559095"
+        whatsapp: "966530559095",
+        gallery: [
+        "imges/magazine/1/64062-full_952-30_64062_sc_v2com_68ca1e1df25cd.webp",
+        "imges/magazine/1/64075-full_952-30_64075_sc_v2com(1)_68ca1e21ebe76.webp",
+        "imges/magazine/1/64070-full_952-30_64070_sc_v2com_68ca1e2094c68.webp",
+        "imges/magazine/1/64067-full_952-30_64067_sc_v2com_68ca1e1f8ad75.webp",
+        "imges/magazine/1/64066-full_952-30_64066_sc_v2com_68ca1e1f8be13.webp"
+    ]
+        
     },
     {
         id: "interior-2",

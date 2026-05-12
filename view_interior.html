@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interior View - Fancy Design</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        .view-wrapper {
+            max-width: 1400px;
+            margin: 100px auto;
+            padding: 0 40px;
+            display: flex;
+            gap: 60px;
+        }
+
+        /* الجزء الأيسر: المعلومات (Fixed) */
+        .info-sidebar {
+            flex: 1;
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .info-sidebar .category {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #999;
+            font-size: 13px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .info-sidebar h1 {
+            font-size: 42px;
+            margin-bottom: 25px;
+            line-height: 1.2;
+        }
+
+        .info-sidebar .description {
+            color: #666;
+            line-height: 1.8;
+            font-size: 16px;
+            margin-bottom: 40px;
+        }
+
+        /* الجزء الأيمن: معرض الصور اللامحدود */
+        .image-gallery {
+            flex: 1.5;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .image-gallery img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        /* قسم You May Also Like */
+        .related-section {
+            max-width: 1400px;
+            margin: 100px auto;
+            padding: 0 40px;
+            border-top: 1px solid #eee;
+            padding-top: 60px;
+        }
+
+        .related-section h2 {
+            font-size: 24px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        /* الموبايل */
+        @media (max-width: 992px) {
+            .view-wrapper { flex-direction: column; }
+            .info-sidebar { position: static; }
+        }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <div class="view-wrapper">
+        <aside class="info-sidebar">
+            <span id="mag-category" class="category"></span>
+            <h1 id="mag-title"></h1>
+            <div id="mag-desc" class="description"></div>
+            
+            <a id="whatsapp-link" href="#" class="price-btn" style="background:#000; color:#fff; padding:15px 30px; text-decoration:none; display:inline-block;">
+                CONTACT FOR DETAILS
+            </a>
+        </aside>
+
+        <main class="image-gallery" id="image-gallery">
+            </main>
+    </div>
+
+    <section class="related-section">
+        <h2>YOU MAY ALSO LIKE</h2>
+        <div id="related-grid" class="projects-grid"></div>
+    </section>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/data_interior.js"></script>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const magId = params.get('id');
+
+        // 1. جلب البيانات
+        const currentItem = interiorData.find(m => m.id == magId);
+
+        if (currentItem) {
+            // تعبئة البيانات في اليسار
+            document.getElementById('mag-title').innerText = currentItem.title;
+            document.getElementById('mag-category').innerText = currentItem.category;
+            document.getElementById('mag-desc').innerText = currentItem.description || "Description coming soon...";
+
+            // 2. معرض الصور (بافتراض أن الصور بأسماء متسلسلة أو مصفوفة)
+            const galleryContainer = document.getElementById('image-gallery');
+            
+            // إضافة الصورة الرئيسية أولاً
+            galleryContainer.innerHTML = `<img src="${currentItem.image}" alt="${currentItem.title}">`;
+            
+            // إضافة صور إضافية إذا كانت موجودة في الداتا (مثلاً حقل gallery)
+            if (currentItem.gallery && currentItem.gallery.length > 0) {
+                currentItem.gallery.forEach(imgSrc => {
+                    galleryContainer.innerHTML += `<img src="${imgSrc}" alt="Gallery Image">`;
+                });
+            } else {
+                // إذا لم تكن هناك مصفوفة صور، نكرر صور افتراضية للجمالية فقط (تجريبي)
+                for(let i=0; i<2; i++) {
+                   galleryContainer.innerHTML += `<img src="${currentItem.image}" style="opacity:0.8">`;
+                }
+            }
+
+            // 3. قسم You May Like (عرض 3 عناصر عشوائية من نفس الفئة)
+            const relatedGrid = document.getElementById('related-grid');
+            const relatedItems = interiorData
+                .filter(item => item.id != magId)
+                .slice(0, 3);
+
+            relatedItems.forEach(item => {
+                relatedGrid.innerHTML += `
+                    <div class="project-card">
+                        <div class="card-image">
+                            <a href="view_interior.html?id=${item.id}">
+                                <img src="${item.image}" alt="${item.title}">
+                            </a>
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">${item.title}</h3>
+                        </div>
+                    </div>
+                `;
+            });
+
+        } else {
+            window.location.href = "index.html";
+        }
+    </script>
+    <script src="js/script.js"></script>
+</body>
+</html>
