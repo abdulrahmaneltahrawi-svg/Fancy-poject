@@ -34,8 +34,8 @@
       .hero-slider {
         position: relative;
         width: 90%; /* يمكنك تقليل النسبة حسب الرغبة، مثلاً 80% */
-        max-width: 1200px; /* يمنع السلايدر من التمدد بشكل مفرط في الشاشات الكبيرة جداً */
-        height: 90vh; /* يمكنك أيضاً تقليل الارتفاع ليناسب العرض الجديد */
+        max-width: 1600px; /* يمنع السلايدر من التمدد بشكل مفرط في الشاشات الكبيرة جداً */
+        height: 110vh; /* يمكنك أيضاً تقليل الارتفاع ليناسب العرض الجديد */
         margin: 20px auto; /* auto تقوم بتوسيط السلايدر في المنتصف أفقياً */
         border-radius: 15px; /* اختيارياً: إضافة زوايا منحنية تعطي شكلاً عصرياً */
         overflow: hidden;
@@ -116,7 +116,6 @@
         cursor: pointer;
         font-size: 20px;
         border-radius: 60%;
-        transition: 0.3s;
       }
 
       .prev-btn {
@@ -171,34 +170,43 @@
 
 <section class="hero-slider">
   <div class="slider-container">
+        <div class="slide active">
+      <div class="slide-bg" style="background-image: url('imges/img/fancy3.jfif')"></div>
+      <div class="slide-content">
+     
+          <h1>Fancy Design </h1>
+          <p>Fancy Design is a leading Saudi company specializing in integrated interior design and furniture solutions.</p>
+       
+      </div>
+    </div>
     
-    <div class="slide active">
+    <div class="slide">
       <div class="slide-bg" style="background-image: url('imges/img/topslider04.webp')"></div>
       <div class="slide-content">
-        <a href="view.html?id=interior-4" style="text-decoration: none; color: inherit;">
+      
           <h1>The RAIN FLOWER </h1>
           <p>A modern masterpiece that seemlessly blends comfort and style.</p>
-        </a>
+       
       </div>
     </div>
 
     <div class="slide">
       <div class="slide-bg" style="background-image: url('imges/img/topslider03.webp')"></div>
       <div class="slide-content">
-        <a href="view.html?id=interior-2" style="text-decoration: none; color: inherit;">
+        
           <h1>Flower Sofa </h1>
           <p>A versatile and inviting seating solution that blooms into endless configurations.</p>
-        </a>
+        
       </div>
     </div>
 
     <div class="slide">
       <div class="slide-bg" style="background-image: url('imges/img/topslider05.webp')"></div>
       <div class="slide-content">
-        <a href="view.html?id=prod-1" style="text-decoration: none; color: inherit;">
+        
           <h1>The Koji Sofa </h1>
           <p>a sculptural seating experience that redefines modern minimalism.</p>
-        </a>
+        
       </div>
     </div>
 
