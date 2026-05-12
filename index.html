@@ -217,31 +217,24 @@
     </section>
 
     <!---->
-    <section class="projects-section">
+<section class="projects-section">
     <p class="title">Magazine</p>
     <div class="container">
         <div id="interior-container" class="projects-grid"></div>
     </div>
-    <div class="read-more"><a href="page_interior.html"><button>Go TO MAGAZINE</button></a></div>
 </section>
-
 
 <section class="projects-section">
     <p class="title">Product</p>
     <div class="container">
-        <div id="projects-container" class="projects-grid"></div>
-    </div>
-    <div class="read-more"><a href="page_prodact.html"><button>SEE MORE PRODUCTS</button></a></div>
+        <div id="product-container" class="projects-grid"></div> </div>
 </section>
 
 <section class="projects-section">
     <p class="title">Brand</p>
     <div class="container">
-        <div id="projects-container" class="projects-grid"></div>
-    </div>
-    <div class="read-more"><a href="page_prodact.html"><button>SEE ALL BRANDS</button></a></div>
+        <div id="brand-container" class="projects-grid"></div> </div>
 </section>
-
 
 
 
@@ -279,30 +272,42 @@
 
 
 // انشاء الكروت وعرضها
-// مراجع الحاويات في الصفحة
-const projectsContainer = document.getElementById('projects-container');
+// مراجع الحاويات الفريدة (تأكد أن هذه الـ IDs موجودة في الـ HTML)
 const interiorContainer = document.getElementById('interior-container');
+const productContainer = document.getElementById('product-container');
+const brandContainer = document.getElementById('brand-container');
 
 function displayProjects() {
-    // 1. عرض مشاريع المنتجات (Product)
-    if (projectsContainer && typeof projectsData !== 'undefined') {
-        projectsContainer.innerHTML = ""; 
-        projectsData.forEach(project => {
-            projectsContainer.innerHTML += createCardHTML(project);
+    // 1. عرض أول 3 من قسم Magazine (Interior)
+    if (interiorContainer && typeof interiorData !== 'undefined') {
+        interiorContainer.innerHTML = "";
+        interiorData.slice(0, 3).forEach(item => {
+            interiorContainer.innerHTML += createCardHTML(item);
         });
     }
 
-    // 2. عرض مشاريع التصميم الداخلي (Interior Design)
-    if (interiorContainer && typeof interiorData !== 'undefined') {
-        interiorContainer.innerHTML = "";
-        interiorData.forEach(item => {
-            interiorContainer.innerHTML += createCardHTML(item);
+    // 2. عرض أول 3 من قسم Product
+    if (productContainer && typeof projectsData !== 'undefined') {
+        productContainer.innerHTML = "";
+        projectsData.slice(0, 3).forEach(project => {
+            productContainer.innerHTML += createCardHTML(project);
+        });
+    }
+
+    // 3. عرض أول 3 من قسم Brand
+    if (brandContainer && typeof brandsData !== 'undefined') {
+        brandContainer.innerHTML = "";
+        brandsData.slice(0, 3).forEach(brand => {
+            brandContainer.innerHTML += createCardHTML(brand);
         });
     }
 }
 
-// دالة موحدة لإنشاء تصميم الكرت (لضمان تشابه الشكل في القسمين)
+// دالة التصميم الموحدة
 function createCardHTML(data) {
+    // أضفنا فحص بسيط للـ description عشان لو مش موجود الكود ما يضرب
+    const description = data.description ? data.description.substring(0, 70) + '...' : 'Explore our collection';
+    
     return `
         <div class="project-card">
             <div class="card-image">
@@ -313,19 +318,19 @@ function createCardHTML(data) {
             <div class="card-content">
                 <h3 class="card-title">${data.title}</h3>
                 <p class="card-description" style="font-size: 14px; color: #666;">
-                    ${data.description.substring(0, 70)}...
+                    ${description}
                 </p>
             </div>
         </div>
     `;
 }
 
-// تشغيل الدالة عند تحميل الصفحة
+// تشغيل عند التحميل
 window.addEventListener('load', displayProjects);
-    
     </script>
     <script src="js/data.js"></script>
     <script src="js/data_interior.js"></script>
+    <script src="js/data_brand.js"></script>
 
     <script src="js/script.js"></script>
   </body>

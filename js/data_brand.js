@@ -1,51 +1,30 @@
-const brand = [
+const brandsData = [
     {
-        id: "interior-1",
-        title: "Îlot Balmoral Energizes Montreal’s Creative Economy as a New Addition to Downtown Skyline",
-        image: "imges/magazine/cover_152.png",
-        category: "Interior Design",
-        description: "Architecuture interior design",
-        whatsapp: "966530559095"
-    },
-    {
-        id: "interior-2",
-        title: "Restaurant Jérôme Ferrer by Europea",
-        image: "imges/magazine/cover_153.png",
-        category: "Interior Design",
-        description: "interior design",
-        whatsapp: "966530559095"
-    },
-        {
-        id: "interior-3",
-        title: "New Spaces for Desjardins at the Montréal Tower",
-        image: "imges/magazine/cover_155.png",
-        category: "Interior Design",
-        description: "Architecuture interior design",
-        whatsapp: "966530559095"
-    },
-        {
-        id: "interior-1",
-        title: "HEC Montréal’s Hélène Desmarais Building: A Contemporary Face for an Historic Institution",
-        image: "imges/magazine/blob_68c93499e3d3c..png",
-        category: "Interior Design",
-        description: "Architecuture interior design",
-        whatsapp: "966530559095"
+        id: 401,
+        category: "Brand",
+        brand: "Global Design",
+        title: "AARKEE CONTRACT",
+        image: "imges/brand/ROMA-03 Large_67c953180e8f9.webp" // تأكد من المسار بدون ../
     },
     {
-        id: "interior-2",
-        title: "Pôle Multimodal Vendôme Wins the International Architecture MasterPrize in the Transportation Category",
-        image: "imges/magazine/blob_68c9331e2777b..png",
-        category: "Interior Design",
-        description: "Architecuture interior design",
-        whatsapp: "966530559095"
+        id: 402,
+        category: "Brand",
+        brand: "Italian Craft",
+        title: "MINOTTI STYLE",
+        image: "imges/brand/EMX-01C72-7200X2400X750                        EMX-01C54-5400X2200X750            EMX-01C42-4200X2000X750_6753d86ea8e19.webp"
     },
-        {
-        id: "interior-3",
-        title: "Puro Hotel",
-        image: "imges/magazine/blob_68c9306df0fdd..png",
-        category: "Interior Design",
-        description: "interior design",
-        whatsapp: "966530559095"
+    {
+        id: 403,
+        category: "Brand",
+        brand: "Modern Living",
+        title: "B&B ITALIA",
+        image: "imges/brand/-–˝º∏_674eb7b1c4353.webp"
+    },
+    {
+        id: 404,
+        category: "Brand",
+        brand: "Office Solutions",
+        title: "STEELCASE",
+        image: "imges/brand/3D185 - Copy_687f057325ef2.webp"
     }
-
 ];
