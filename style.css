@@ -326,10 +326,11 @@
       }
 
 .title {
-    margin-left: 150px;
+    max-width: 1200px;    /* جعل العرض الأقصى متطابق مع الكروت */
+    margin: 0 auto 30px auto; /* توسيط العنوان وإضافة مسافة أسفله */
+    padding: 0 20px;      /* إضافة نفس الحواف الجانبية للكروت */
     font-weight: bold;
     font-size: 28px;
-    
     /* الحل هنا */
     display: flex;
     align-items: center; /* لتوسيط الخط عمودياً مع النص تماماً */
