@@ -8,21 +8,56 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <style>
-        .title1 {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            font-size: 40px;
-            font-weight: bold;
-        }
-
-    </style>
     <div id="header-placeholder"></div>
-    <p class="title1">"This site will be updated later"</p>
+
+    <section class="projects-section">
+        <p class="title">Brands</p>
+        <div class="container">
+            <div id="brand-container" class="projects-grid"></div>
+        </div>
+    </section>
+
     <div id="footer-placeholder"></div>
 
+    <script src="js/data_brand.js"></script>
     <script src="js/script.js"></script>
+    <script>
+        // دالة إنشاء تصميم الكرت الخاص بالبراندات
+        function createBrandCardHTML(data) {
+            // استخدام وصف افتراضي في حال عدم وجود وصف في البيانات
+            const description = data.description ? data.description.substring(0, 70) + '...' : 'Explore our high-quality furniture solutions and innovative designs.';
+            
+            return `
+                <div class="project-card">
+                    <div class="card-image">
+                        <a href="view_brand.html?id=${data.id}">
+                            <img src="${data.image}" alt="${data.title}">
+                        </a>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">${data.title}</h3>
+                        <p class="card-description" style="font-size: 14px; color: #666; margin-bottom: 10px;">
+                            ${description}
+                        </p>
+                        <div class="card-meta">
+                            <span class="category" style="color: #ffb400; font-weight: bold; text-transform: uppercase;">${data.brand || 'Official Brand'}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayBrands() {
+            const container = document.getElementById('brand-container');
+            if (container && typeof brandsData !== 'undefined') {
+                container.innerHTML = "";
+                brandsData.forEach(brand => {
+                    container.innerHTML += createBrandCardHTML(brand);
+                });
+            }
+        }
+
+        window.addEventListener('load', displayBrands);
+    </script>
 </body>
 </html>
