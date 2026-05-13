@@ -466,3 +466,68 @@
 .card-title {
     margin-bottom: 5px; /* تقليل المسافة لتناسب الوصف */
 }
+
+
+
+
+/*filters*/
+/* التنسيق العام للشريط */
+.filter-container {
+  display: flex;
+  gap: 10px;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+/* تصميم الأزرار */
+.dropbtn, .filter-btn {
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  border-radius: 20px; /* حواف دائرية مثل الصورة */
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* القائمة المنسدلة */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none; /* مخفية افتراضياً */
+  position: absolute;
+  background-color: #fff;
+  min-width: 180px;
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  z-index: 1;
+  padding: 10px;
+}
+
+/* إظهار القائمة عند التحويم (Hover) أو الضغط */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* تنسيق حقل البحث داخل القائمة */
+.search-input {
+  width: 90%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+
+.dropdown-content a {
+  color: #333;
+  padding: 8px 12px;
+  text-decoration: none;
+  display: block;
+  font-size: 14px;
+}
+
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}

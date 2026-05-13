@@ -8,47 +8,108 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-
     <div id="header-placeholder"></div>
 
-<div id="projects-grid" class="projects-grid">
+    <div class="filter-container">
+      <!-- قائمة الأثاث -->
+      <div class="dropdown">
+        <button class="dropbtn">
+          All Furniture <i class="arrow down"></i>
+        </button>
+        <div class="dropdown-content">
+          <input
+            type="text"
+            placeholder="Type to filter"
+            class="search-input"
+          />
+          <a href="#">Cabinets</a>
+          <a href="#">Beds</a>
+          <a href="#">Benches</a>
+          <a href="#">Blinds</a>
+          <a href="#">Chairs</a>
+          <a href="#">Sofa</a>
+          <a href="#">Table</a>
+          <a href="#">Poufs</a>
+        </div>
+      </div>
+
+      <div class="dropdown">
+        <button class="dropbtn">Materials<i class="arrow down"></i></button>
+        <div class="dropdown-content">
+          <input
+            type="text"
+            placeholder="Type to filter"
+            class="search-input"
+          />
+          <a href="#">Fabric</a>
+          <a href="#">Velvet</a>
+          <a href="#">Synthetic fiber</a>
+          <a href="#">Polyester</a>
+          <a href="#">Dacron®</a>
+          <a href="#">Microfiber</a>
+          <a href="#">Janus-fiber®</a>
+          <a href="#">Sunbrella®</a>
+        </div>
+      </div>
+
+      <div class="dropdown">
+        <button class="dropbtn">Styles<i class="arrow down"></i></button>
+        <div class="dropdown-content">
+          <input
+            type="text"
+            placeholder="Type to filter"
+            class="search-input"
+          />
+          <a href="#">Contemporary</a>
+          <a href="#">Eclectic</a>
+          <a href="#">Modern</a>
+          <a href="#">Traditional</a>
+          <a href="#">Asian</a>
+          <a href="#">Beach Style</a>
+          <a href="#">Craftsman</a>
+          <a href="#">Farmhouse</a>
+        </div>
+      </div>
+      
     </div>
-    
+
+    <div id="projects-grid" class="projects-grid"></div>
 
     <script>
       function renderProjects(filterCategory) {
-    const grid = document.getElementById('projects-grid');
-    grid.innerHTML = ""; // تصفية الصفحة
+        const grid = document.getElementById("projects-grid");
+        grid.innerHTML = ""; // تصفية الصفحة
 
-    // فلترة المصفوفة بناءً على القسم
-    const filteredData = myProjects.filter(item => item.category === filterCategory);
+        // فلترة المصفوفة بناءً على القسم
+        const filteredData = myProjects.filter(
+          (item) => item.category === filterCategory,
+        );
 
-    // إرسال البيانات للدالة لرسمها
-    filteredData.forEach(project => {
-        // هنا السحر: الدالة تأخذ "project" (الكائن) وتوزع بياناته داخل الـ HTML
-        grid.innerHTML += createCardHTML(project);
-    });
-}
+        // إرسال البيانات للدالة لرسمها
+        filteredData.forEach((project) => {
+          // هنا السحر: الدالة تأخذ "project" (الكائن) وتوزع بياناته داخل الـ HTML
+          grid.innerHTML += createCardHTML(project);
+        });
+      }
 
-function createCardHTML(data) {
-    return `
+      function createCardHTML(data) {
+        return `
         <div class="project-card"> <div class="card-image"> <img src="${data.image}" alt="${data.title}">
             </div>
             <div class="card-content"> <h3 class="card-title">${data.title}</h3> <div class="card-meta">
-                    <span class="brand">${data.brand || 'aarkee contract'}</span>
+                    <span class="brand">${data.brand || "aarkee contract"}</span>
                 </div>
             </div>
         </div>
     `;
-}
+      }
 
-// أضف هذا السطر أسفل دوالك مباشرة
-document.addEventListener("DOMContentLoaded", () => {
-    // افترضنا أن اسم القسم في ملف البيانات هو "Furniture"
-    renderProjects('Furniture'); 
-});
+      // أضف هذا السطر أسفل دوالك مباشرة
+      document.addEventListener("DOMContentLoaded", () => {
+        // افترضنا أن اسم القسم في ملف البيانات هو "Furniture"
+        renderProjects("Furniture");
+      });
     </script>
-
 
     <div id="footer-placeholder"></div>
 
