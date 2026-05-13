@@ -8,19 +8,59 @@
     <link rel="stylesheet" href="style.css" />
     <style>
         /* التنسيقات الخاصة بالصفحة */
-        .view-container { max-width: 1200px; margin: 100px auto; padding: 0 20px; }
-        .view-content { display: flex; gap: 50px; align-items: flex-start; }
+        .view-container { max-width: 1100px; margin: 100px auto; padding: 0 20px; }
+        .view-content { display: flex; gap: 80px; align-items: center; }
         .view-image-section { flex: 1.5; }
-        .view-image-section img { width: 100%; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .view-image-section { display: flex; flex-direction: column; gap: 20px; }
+        .view-image-section img { width: 100%; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);}
         .view-details-section { flex: 1; }
         .view-details-section h1 { font-size: 36px; margin-bottom: 20px; position: relative; padding-left: 20px; min-height: 40px; }
         .view-details-section h1::before { content: ""; position: absolute; left: 0; top: 10%; width: 3px; height: 80%; background: #000; }
         .category-tag { color: #999; text-transform: uppercase; font-size: 14px; letter-spacing: 1px; display: block; margin-bottom: 10px; }
-        .description-box { color: #666; line-height: 1.8; margin-bottom: 40px; margin-top: 20px; }
+        .description-box { color: #666; line-height: 1.8; margin-bottom: 40px; margin-top: 20px; white-space: pre-line; }
         .price-btn { display: inline-flex; align-items: center; background: #000; color: #fff; padding: 15px 30px; text-decoration: none; border-radius: 5px; gap: 15px; transition: 0.3s; font-weight: bold; }
         .price-btn:hover { background: #333; transform: translateY(-3px); }
         .price-btn img { width: 20px; }
         .back-link { display: block; margin-top: 20px; color: #999; text-decoration: none; }
+
+        /* تنسيق معرض الصور المصغر */
+.thumbnails-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    overflow-x: auto;
+}
+.thumb-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: 0.3s;
+    border-radius: 4px;
+}
+.thumb-img.active { border-color: #000; }
+
+/* تنسيق اختيار الألوان */
+.color-option {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #eee;
+    transition: 0.2s;
+}
+.color-option.selected {
+    border-color: #000;
+    transform: scale(1.1);
+}
+
+/* قسم You May Also Like */
+.related-section { margin-top: 80px; border-top: 1px solid #eee; padding-top: 40px; }
+.related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
+.related-item { text-decoration: none; color: #000; font-size: 14px; }
+.related-item img { width: 100%; border-radius: 5px; margin-bottom: 10px; max-height: 400px;}
+.related-item img :hover{ box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
@@ -29,7 +69,7 @@
 
     <div class="view-container">
         <div class="view-content">
-            <div class="view-image-section">
+            <div class="view-image-section" id="image-gallery">
                 <img id="project-image" src="" alt="Project Image">
             </div>
 
@@ -39,15 +79,27 @@
                 <div class="description-box">
                     <p id="project-desc"></p>
                 </div>
+
+                <div class="view-image-section">
+    
+    <div id="thumbnails" class="thumbnails-container"></div> </div>
+
+
+
                 
-                <a id="whatsapp-btn" href="#" class="price-btn">
+                <a id="whatsapp-btn" href="#" class="price-btn" style="margin-top: 30px;">
                     <span>الاستفسار عن السعر</span>
                     <img style="filter: brightness(0) invert(1);" src="imges/icons/phone-call.png" alt="whatsapp">
                 </a>
                 
                 <a href="index.html" class="back-link">← Back to Projects</a>
             </div>
+            
         </div>
+        <div class="related-section">
+    <h3>You may also like</h3>
+    <div id="related-products" class="related-grid"></div>
+</div>
     </div>
 
     <div id="footer-placeholder"></div>
@@ -65,26 +117,70 @@ const allData = typeof projectsData !== 'undefined' ? projectsData : [];
 const project = allData.find(p => p.id === projectId);
 
 if (project) {
-    // عرض البيانات الأساسية
+    const mainImg = document.getElementById('project-image');
+    mainImg.src = project.image;
     document.getElementById('project-name').innerText = project.title;
-    document.getElementById('project-image').src = project.image;
-    document.getElementById('project-desc').innerText = project.category;
-    
-    // التعامل مع التصنيف والوسم (Tags) بحذر في حال عدم وجود tag
+    document.getElementById('project-desc').innerText = project.description;
     document.getElementById('project-category').innerText = project.tag || "";
+
+    // 1. نظام معرض الصور (Thumbnails)
+    const thumbContainer = document.getElementById('thumbnails');
+    const allImages = [project.image, ...(project.gallery || [])];
     
-    // إعداد رابط الواتساب ديناميكياً
+    allImages.forEach((imgSrc, index) => {
+        const img = document.createElement('img');
+        img.src = imgSrc;
+        img.className = `thumb-img ${index === 0 ? 'active' : ''}`;
+        img.onclick = function() {
+            mainImg.src = imgSrc;
+            document.querySelectorAll('.thumb-img').forEach(t => t.classList.remove('active'));
+            img.classList.add('active');
+        };
+        thumbContainer.appendChild(img);
+    });
+
+    // 2. اختيار الألوان (Interactive Colors)
+    if (project.colors && project.colors.length > 0) {
+        const colorBox = document.createElement('div');
+        colorBox.innerHTML = '<p style="font-weight:bold; margin: 20px 0 10px;">Select Color:</p>';
+        const circlesContainer = document.createElement('div');
+        circlesContainer.style.display = "flex";
+        circlesContainer.style.gap = "15px";
+
+        project.colors.forEach((color, index) => {
+            const circle = document.createElement('div');
+            circle.className = `color-option ${index === 0 ? 'selected' : ''}`;
+            circle.style.backgroundColor = color;
+            circle.onclick = function() {
+                document.querySelectorAll('.color-option').forEach(c => c.classList.remove('selected'));
+                circle.classList.add('selected');
+                // هنا يمكنك إضافة منطق لتغيير صورة المنتج بناءً على اللون إذا توفرت
+            };
+            circlesContainer.appendChild(circle);
+        });
+        colorBox.appendChild(circlesContainer);
+        document.querySelector('.description-box').appendChild(colorBox);
+    }
+
+    // 3. قسم You May Also Like (عشوائي أو من نفس التصنيف)
+    const relatedContainer = document.getElementById('related-products');
+    const relatedItems = allData
+        .filter(p => p.id !== projectId) // استبعاد المنتج الحالي
+        .slice(0, 4); // عرض 4 منتجات فقط
+
+    relatedItems.forEach(item => {
+        relatedContainer.innerHTML += `
+            <a href="view.html?id=${item.id}" class="related-item">
+                <img src="${item.image}" alt="${item.title}">
+                <p>${item.title}</p>
+            </a>
+        `;
+    });
+
+    // رابط الواتساب
     const message = encodeURIComponent(`السلام عليكم، أود الاستفسار عن تفاصيل وسعر: ${project.title}`);
     document.getElementById('whatsapp-btn').href = `https://wa.me/${project.whatsapp}?text=${message}`;
-    
-} else {
-    // في حال عدم العثور على المشروع
-    document.querySelector('.view-content').innerHTML = `
-        <div style="text-align:center; width:100%; padding: 50px;">
-            <h2>المشروع غير موجود</h2>
-            <a href="index.html" class="back-link">العودة للرئيسية</a>
-        </div>
-    `;
+
 }
     </script>
     <script src="js/script.js"></script>

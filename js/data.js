@@ -5,7 +5,22 @@ const projectsData = [
         title: "aarkee contract",
         image: "imges/prodact/2 Large_67c9515e71832.webp",
         category: "ROMA PHONE BOTH",
-        whatsapp: "966530559095"
+        whatsapp: "966530559095",
+        colors: ["#000000",  "#FFFFFF"],
+        gallery: [
+        "imges/prodact/1/AR-ROM-ST-01-01 Large_67c9516df1748.webp",
+        "imges/prodact/1/AR-ROM-ST-01-02 Large_67c9516e3d94b.webp",
+        "imges/prodact/1/AR-ROM-ST-01-04 Large_67c9516e69082.webp",
+    ],
+        description: `
+       ☆Chair back: PA+GF30% back frame, with PA net fabric, equipped with ergonomic 8-level adjustable upper and lower lumbar support
+☆Chair seat: PA+GF chair frame, equipped with PA special net, equipped with front and rear 5-speed sliding function
+☆Arrest: black PU armrest surface, gray 3D lifting armrest support, 7-level lifting
+☆Chassis: Black four-speed wire-controlled locking chassis
+☆Air rod: 60mm stroke, 50mm countersunk three-stage air pressure rod
+☆Chair legs: 340mmPA five-star legs
+☆Chair wheel: 60/25 black PU wheel
+    `,  
     },
     {
         id: "office",
