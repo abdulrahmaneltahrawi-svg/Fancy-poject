@@ -353,6 +353,26 @@ function createCardHTML(data, type) {
 }
 // تشغيل عند التحميل
 window.addEventListener('load', displayProjects);
+
+
+
+// تحديد الروابط داخل القائمة
+const categoryLinks = document.querySelectorAll('.category-nav a');
+
+categoryLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+        // الحصول على قيمة href للرابط
+        const hrefValue = this.getAttribute('href');
+
+        // التحقق ما إذا كان الرابط فارغاً أو يحتوي على # فقط
+        if (hrefValue === "#" || hrefValue === "") {
+            // منع التحديث فقط للروابط التي ليس لها مسار
+            e.preventDefault();
+            alert("لم يتم تحديث الصفحة (هذا القسم قيد التطوير)");
+        }
+        // الروابط الأخرى التي تحتوي على صفحات مثل filter_Furniture.html ستعمل بشكل طبيعي
+    });
+});
     </script>
     <script src="js/data.js"></script>
     <script src="js/data_interior.js"></script>
