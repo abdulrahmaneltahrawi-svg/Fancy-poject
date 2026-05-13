@@ -42,7 +42,7 @@
                 
                 <a id="whatsapp-btn" href="#" class="price-btn">
                     <span>الاستفسار عن السعر</span>
-                    <img src="imges/icons/whatsapp-color.png" alt="whatsapp">
+                    <img style="filter: brightness(0) invert(1);" src="imges/icons/phone-call.png" alt="whatsapp">
                 </a>
                 
                 <a href="index.html" class="back-link">← Back to Projects</a>
@@ -68,7 +68,7 @@ if (project) {
     // عرض البيانات الأساسية
     document.getElementById('project-name').innerText = project.title;
     document.getElementById('project-image').src = project.image;
-    document.getElementById('project-desc').innerText = project.description;
+    document.getElementById('project-desc').innerText = project.category;
     
     // التعامل مع التصنيف والوسم (Tags) بحذر في حال عدم وجود tag
     document.getElementById('project-category').innerText = project.tag || "";

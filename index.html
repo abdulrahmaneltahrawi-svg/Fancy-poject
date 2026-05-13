@@ -329,7 +329,7 @@ function createCardHTML(data, type) {
         targetPage = "view_brand.html";
     }
 
-    const category = data.category ? data.category.substring(0, 70) + '...' : 'Brand';
+    const category = data.category;
     // تحديد الوسم المراد عرضه (tag للمنتجات، type للمجلات، brand للبراندات)
     const badge = data.type || data.tag || data.brand || "";
     
@@ -343,10 +343,10 @@ function createCardHTML(data, type) {
             <div class="card-content">
                 <h3 class="card-title">${data.title}</h3>
                 
-                <p class="card-description" style="font-size: 14px; color: #666;">
+                <p class="card-description"  style="font-size: 14px; color: #666; margin: 10px 0;">
                     ${category}
                 </p>
-                ${badge ? `<span class="category" style="color: #ccc; font-weight: bold; text-transform: uppercase; font-size: 12px; display: block; margin-bottom: 5px;">${badge}</span>` : ''}
+                ${badge ? `<span class="category" style=" color: gray; text-transform: uppercase; font-size: 12px;">${badge}</span>` : ''}
             </div>
         </div>
     `;

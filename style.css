@@ -1,3 +1,8 @@
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 :root {
   --bg-light: #f5f5f5;
   --text-main: #333;
@@ -188,7 +193,7 @@
 /* 2. قسم الروابط الرئيسي (خلفية سوداء/داكنة) */
 .footer-main {
   padding: 60px 0;
-  border-bottom: 1px solid #333;
+  border-bottom: 5px solid #333;
 }
 
 .grid-columns {
