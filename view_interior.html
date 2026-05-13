@@ -153,6 +153,33 @@ if (currentItem) {
 
     document.getElementById('mag-desc').innerHTML = formattedDesc;
 
+    // 4. القسم الرابع: العناصر المشابهة (Related Items)
+    const relatedGrid = document.getElementById('related-grid');
+    if (relatedGrid) {
+        // تصفية البيانات لجلب العناصر التي لها نفس النوع باستثناء العنصر الحالي
+        const relatedItems = interiorData
+            .filter(item => item.id != currentItem.id && item.type === currentItem.type)
+            .slice(0, 3); // عرض 3 عناصر فقط
+
+        relatedItems.forEach(item => {
+            relatedGrid.innerHTML += `
+                <div class="project-card">
+                    <div class="card-image">
+                        <a href="view_interior.html?id=${item.id}">
+                            <img src="${item.image}" alt="${item.title}">
+                        </a>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">${item.title}</h3>
+                        <div class="card-meta">
+                            <span class="category" style="color: gray; font-weight: bold; text-transform: uppercase; font-size: 12px;">${item.type || ""}</span>
+                        </div>      
+                    </div>
+                </div>
+            `;
+        });
+    }
+
 } else {
     // إذا لم يجد الآيدي يرجع للصفحة الرئيسية
     window.location.href = "index.html";
