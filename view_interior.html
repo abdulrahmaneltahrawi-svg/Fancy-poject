@@ -17,11 +17,22 @@
 
         /* الجزء الأيسر: المعلومات (Fixed) */
         .info-sidebar {
-            flex: 1;
-            position: sticky;
-            top: 100px;
-            height: fit-content;
-        }
+    flex: 1;
+    position: sticky;
+    top: 50px; /* تقليل المسافة من الأعلى لزيادة مساحة العرض */
+    height: calc(100vh - 100px); /* جعل الارتفاع مساوياً لطول الشاشة تقريباً */
+    overflow-y: auto; /* إضافة شريط تمرير داخلي عند الحاجة */
+    padding-right: 15px; /* مسافة بسيطة لمنع التصاق النص بشريط التمرير */
+}
+
+/* إخفاء شريط التمرير الافتراضي وتجميله (اختياري) */
+.info-sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+.info-sidebar::-webkit-scrollbar-thumb {
+    background: #eee;
+    border-radius: 10px;
+}
 
         .info-sidebar .category {
             text-transform: uppercase;
@@ -51,10 +62,12 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            margin-left: 100px;
         }
 
         .image-gallery img {
             width: 100%;
+            max-width: 600px;
             height: auto;
             object-fit: cover;
             border-radius: 4px;
@@ -90,10 +103,7 @@
             <span id="mag-category" class="category"></span>
             <h1 id="mag-title"></h1>
             <div id="mag-desc" class="description"></div>
-            
-            <a id="whatsapp-link" href="#" class="price-btn" style="background:#000; color:#fff; padding:15px 30px; text-decoration:none; display:inline-block;">
-                CONTACT FOR DETAILS
-            </a>
+
         </aside>
 
         <main class="image-gallery" id="image-gallery">
@@ -109,60 +119,44 @@
 
     <script src="js/data_interior.js"></script>
     <script>
-        const params = new URLSearchParams(window.location.search);
-        const magId = params.get('id');
+       const params = new URLSearchParams(window.location.search);
+const magId = params.get('id');
 
-        // 1. جلب البيانات
-        const currentItem = interiorData.find(m => m.id == magId);
+// البحث عن العنصر في المصفوفة
+const currentItem = interiorData.find(m => m.id == magId);
 
-        if (currentItem) {
-            // تعبئة البيانات في اليسار
-            document.getElementById('mag-title').innerText = currentItem.title;
-            document.getElementById('mag-category').innerText = currentItem.type || "";
-            document.getElementById('mag-desc').innerText = currentItem.description || "Description coming soon...";
+if (currentItem) {
+    // 1. القسم الأول: العنوان والنوع
+    document.getElementById('mag-title').innerText = currentItem.title;
+    document.getElementById('mag-category').innerText = currentItem.type || "Office";
 
-            // 2. معرض الصور (بافتراض أن الصور بأسماء متسلسلة أو مصفوفة)
-            const galleryContainer = document.getElementById('image-gallery');
-            
-            // إضافة الصورة الرئيسية أولاً
-            galleryContainer.innerHTML = `<img src="${currentItem.image}" alt="${currentItem.title}">`;
-            
-            // إضافة صور إضافية إذا كانت موجودة في الداتا (مثلاً حقل gallery)
-            if (currentItem.gallery && currentItem.gallery.length > 0) {
-                currentItem.gallery.forEach(imgSrc => {
-                    galleryContainer.innerHTML += `<img src="${imgSrc}" alt="Gallery Image">`;
-                });
-            } else {
-                // إذا لم تكن هناك مصفوفة صور، نكرر صور افتراضية للجمالية فقط (تجريبي)
-                for(let i=0; i<2; i++) {
-                   galleryContainer.innerHTML += `<img src="${currentItem.image}" style="opacity:0.8">`;
-                }
-            }
+    // 2. القسم الثاني: معرض الصور (Gallery)
+    const galleryContainer = document.getElementById('image-gallery');
+    galleryContainer.innerHTML = ""; // تنظيف الحاوية
 
-            // 3. قسم You May Like (عرض 3 عناصر عشوائية من نفس الفئة)
-            const relatedGrid = document.getElementById('related-grid');
-            const relatedItems = interiorData
-                .filter(item => item.id != magId)
-                .slice(0, 3);
+    // عرض الصورة الرئيسية أولاً
+    galleryContainer.innerHTML += `<img src="${currentItem.image}" alt="${currentItem.title}" class="main-img">`;
 
-            relatedItems.forEach(item => {
-                relatedGrid.innerHTML += `
-                    <div class="project-card">
-                        <div class="card-image">
-                            <a href="view_interior.html?id=${item.id}">
-                                <img src="${item.image}" alt="${item.title}">
-                            </a>
-                        </div>
-                        <div class="card-content">
-                            <h3 class="card-title">${item.title}</h3>
-                        </div>
-                    </div>
-                `;
-            });
+    // إضافة باقي الصور من مصفوفة الـ gallery
+    if (currentItem.gallery && currentItem.gallery.length > 0) {
+        currentItem.gallery.forEach(imgSrc => {
+            galleryContainer.innerHTML += `<img src="${imgSrc}" alt="Gallery Image">`;
+        });
+    }
 
-        } else {
-            window.location.href = "index.html";
-        }
+    // 3. القسم الثالث: الوصف الطويل (Description)
+    // نستخدم innerHTML هنا لأن الوصف يحتوي على وسم ### وعلامات سطر جديدة
+    // ملاحظة: إذا كنت تريد تحويل ### إلى وسم <h3> حقيقي، يمكنك استخدام replace بسيط:
+    let formattedDesc = currentItem.description
+        .replace(/### (.*)/g, '<h3>$1</h3>') // تحويل العناوين
+        .replace(/\n/g, '<br>'); // الحفاظ على الفواصل
+
+    document.getElementById('mag-desc').innerHTML = formattedDesc;
+
+} else {
+    // إذا لم يجد الآيدي يرجع للصفحة الرئيسية
+    window.location.href = "index.html";
+}
     </script>
     <script src="js/script.js"></script>
 </body>

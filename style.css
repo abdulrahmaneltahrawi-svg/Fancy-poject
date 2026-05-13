@@ -493,6 +493,17 @@
   border-radius: 20px; /* حواف دائرية مثل الصورة */
   cursor: pointer;
   font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.arrow.down {
+  border: solid #666;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 3px;
+  transform: rotate(45deg);
 }
 
 /* القائمة المنسدلة */
@@ -536,4 +547,22 @@
 
 .dropdown-content a:hover {
   background-color: #f1f1f1;
+}
+
+/* زر مسح الفلاتر */
+.clear-filters-btn {
+  background-color: #f5f5f5;
+  border: 1px dashed #ccc;
+  color: #666;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.clear-filters-btn:hover {
+  background-color: #eee;
+  color: #000;
+  border-color: #999;
 }

@@ -13,7 +13,7 @@
     <div class="filter-container">
       <!-- قائمة الأثاث -->
       <div class="dropdown">
-        <button class="dropbtn">
+        <button class="dropbtn" data-original-text="All Furniture">
           All Furniture <i class="arrow down"></i>
         </button>
         <div class="dropdown-content">
@@ -22,6 +22,7 @@
             placeholder="Type to filter"
             class="search-input"
           />
+          <a href="#" class="all-option">All Furniture</a>
           <a href="#">Cabinets</a>
           <a href="#">Beds</a>
           <a href="#">Benches</a>
@@ -34,13 +35,14 @@
       </div>
 
       <div class="dropdown">
-        <button class="dropbtn">Materials<i class="arrow down"></i></button>
+        <button class="dropbtn" data-original-text="Materials">Materials<i class="arrow down"></i></button>
         <div class="dropdown-content">
           <input
             type="text"
             placeholder="Type to filter"
             class="search-input"
           />
+          <a href="#" class="all-option">All Materials</a>
           <a href="#">Fabric</a>
           <a href="#">Velvet</a>
           <a href="#">Synthetic fiber</a>
@@ -53,13 +55,14 @@
       </div>
 
       <div class="dropdown">
-        <button class="dropbtn">Styles<i class="arrow down"></i></button>
+        <button class="dropbtn" data-original-text="Styles">Styles<i class="arrow down"></i></button>
         <div class="dropdown-content">
           <input
             type="text"
             placeholder="Type to filter"
             class="search-input"
           />
+          <a href="#" class="all-option">All Styles</a>
           <a href="#">Contemporary</a>
           <a href="#">Eclectic</a>
           <a href="#">Modern</a>
@@ -71,6 +74,7 @@
         </div>
       </div>
       
+      <button class="clear-filters-btn" id="clear-all">Clear All</button>
     </div>
 
     <section class="projects-section">
@@ -80,38 +84,82 @@
     </section>
 
     <script>
-      function renderProjects(filterCategory) {
-        const grid = document.getElementById("projects-grid");
-        grid.innerHTML = ""; // تصفية الصفحة
+      const mainCategory = 'Furniture';
 
-        // فلترة المصفوفة بناءً على القسم
-        const filteredData = myProjects.filter(
-          (item) => item.category === filterCategory,
-        );
-
-        // إرسال البيانات للدالة لرسمها
-        filteredData.forEach((project) => {
-          // هنا السحر: الدالة تأخذ "project" (الكائن) وتوزع بياناته داخل الـ HTML
+      function renderProjects(data) {
+        const grid = document.getElementById('projects-grid');
+        if (!grid) return;
+        grid.innerHTML = "";
+        data.forEach(project => {
           grid.innerHTML += createCardHTML(project);
         });
       }
 
       function createCardHTML(data) {
         return `
-        <div class="project-card"> <div class="card-image"> <img src="${data.image}" alt="${data.title}">
+          <div class="project-card">
+            <div class="card-image">
+              <img src="${data.image}" alt="${data.title}">
             </div>
-            <div class="card-content"> <h3 class="card-title">${data.title}</h3> <div class="card-meta">
-                    <span class="brand">${data.brand || "aarkee contract"}</span>
-                </div>
+            <div class="card-content">
+              <h3 class="card-title">${data.title}</h3>
+              <div class="card-meta">
+                <span class="brand">${data.brand || "aarkee contract"}</span>
+              </div>
             </div>
-        </div>
-    `;
+          </div>
+        `;
       }
 
-      // أضف هذا السطر أسفل دوالك مباشرة
       document.addEventListener("DOMContentLoaded", () => {
-        // افترضنا أن اسم القسم في ملف البيانات هو "Furniture"
-        renderProjects("Furniture");
+        const initialData = myProjects.filter(item => item.category === mainCategory);
+        renderProjects(initialData);
+
+        document.querySelectorAll('.search-input').forEach(input => {
+          input.addEventListener('input', function() {
+            const val = this.value.toLowerCase();
+            const links = this.closest('.dropdown-content').querySelectorAll('a');
+            links.forEach(link => {
+              link.style.display = link.textContent.toLowerCase().includes(val) ? "" : "none";
+            });
+          });
+        });
+
+        document.querySelectorAll('.dropdown-content a').forEach(link => {
+          link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const filterText = this.textContent.trim();
+            const filterValue = filterText.toLowerCase();
+            
+            const btn = this.closest('.dropdown').querySelector('.dropbtn');
+            btn.innerHTML = `${filterText} <i class="arrow down"></i>`;
+
+            const filtered = myProjects.filter(item => {
+              const matchesMain = item.category === mainCategory;
+              if (filterValue.includes('all')) return matchesMain;
+              
+              const textMatch = item.title.toLowerCase().includes(filterValue) || 
+                                (item.tag && item.tag.toLowerCase().includes(filterValue)) ||
+                                (item.brand && item.brand.toLowerCase().includes(filterValue));
+              return matchesMain && textMatch;
+            });
+            renderProjects(filtered);
+          });
+        });
+
+        // وظيفة زر مسح الكل
+        document.getElementById('clear-all').addEventListener('click', function() {
+          // إعادة النصوص الأصلية للأزرار
+          document.querySelectorAll('.dropbtn').forEach(btn => {
+            const original = btn.getAttribute('data-original-text');
+            btn.innerHTML = `${original} <i class="arrow down"></i>`;
+          });
+          // إعادة تعيين البحث
+          document.querySelectorAll('.search-input').forEach(i => i.value = "");
+          // عرض كل المنتجات
+          const initialData = myProjects.filter(item => item.category === mainCategory);
+          renderProjects(initialData);
+        });
       });
     </script>
 
