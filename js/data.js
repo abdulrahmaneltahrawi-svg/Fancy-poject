@@ -13,13 +13,10 @@ const projectsData = [
         "imges/prodact/1/AR-ROM-ST-01-04 Large_67c9516e69082.webp",
     ],
         description: `
-       ☆Chair back: PA+GF30% back frame, with PA net fabric, equipped with ergonomic 8-level adjustable upper and lower lumbar support
-☆Chair seat: PA+GF chair frame, equipped with PA special net, equipped with front and rear 5-speed sliding function
-☆Arrest: black PU armrest surface, gray 3D lifting armrest support, 7-level lifting
-☆Chassis: Black four-speed wire-controlled locking chassis
-☆Air rod: 60mm stroke, 50mm countersunk three-stage air pressure rod
-☆Chair legs: 340mmPA five-star legs
-☆Chair wheel: 60/25 black PU wheel
+ Surface material: imported fabrics or high-quality domestic fabrics
+Internal material: 1. High-quality 15MM thick environmentally friendly multi-layer board; 2. Use high-density environmentally friendly sponge;
+Desktop material: equipped with melamine table board;
+Process: Use benzene-free adhesive to bond the sponge; the internal hanging board is equipped with an LED light source.
     `,  
     },
     {
