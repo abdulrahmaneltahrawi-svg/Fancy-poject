@@ -348,18 +348,20 @@
       .projects-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr); /* 3 أعمدة متساوية */
-        gap: 30px; /* المسافة بين البطاقات */
+        gap: 50px; /* المسافة بين البطاقات */
       }
 
       .project-card {
         background: #fff;
-        transition: transform 0.3s ease;
+        transition: transform 0.9s ease;
         cursor: pointer;
         min-height: 500px;
+        
       }
 
       .project-card:hover {
-        transform: translateY(-5px); /* حركة خفيفة عند تمرير الماوس */
+        box-shadow: 0px 8px 16px rgba(0,0,0,0.1);
+        padding: 5px;
       }
 
       .card-image {
