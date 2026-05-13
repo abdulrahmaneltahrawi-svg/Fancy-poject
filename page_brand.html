@@ -1,63 +1,198 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="imges/img/fancy1.jfif" />
     <title>Fancy Design</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <style>
+      /* الحاوية الكبرى */
+      .brands-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 40px; /* مسافات واسعة بين البراندات */
+        padding: 40px;
+        background-color: #fff;
+      }
+
+      /* بطاقة البراند */
+      .brand-card {
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* شبكة الصور داخل البطاقة */
+      .brand-images-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr; /* الصورة الكبيرة تأخذ مساحة أكبر */
+        gap: 2px; /* فواصل رقيقة جداً بين الصور */
+        height: 300px;
+        background-color: #f9f9f9;
+        overflow: hidden;
+      }
+
+      .brand-images-grid img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* لضمان عدم تشوه الصور */
+      }
+
+      /* تنسيق الصور الجانبية */
+      .side-imgs {
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+        gap: 2px;
+      }
+
+      /* حالة الصورة الواحدة الكبيرة (مثل الكرسي في الصورة) */
+      .single-layout {
+        grid-template-columns: 1fr;
+      }
+
+      /* منطقة المعلومات أسفل الصور */
+      .brand-info {
+        display: flex;
+        align-items: center;
+        margin-top: 15px;
+        gap: 12px;
+      }
+
+      .brand-logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 4px;
+        object-fit: contain;
+      }
+
+      .brand-text h3 {
+        font-size: 16px;
+        font-weight: 700;
+        margin: 0;
+        color: #111;
+        text-transform: capitalize;
+      }
+
+      .brand-text p {
+        font-size: 12px;
+        color: #888;
+        margin: 2px 0;
+      }
+
+      .brand-text span {
+        font-size: 11px;
+        color: #aaa;
+        display: block;
+      }
+    </style>
     <div id="header-placeholder"></div>
 
-    <section class="projects-section">
-        <p class="title">Brands</p>
-        <div class="container">
-            <div id="brand-container" class="projects-grid"></div>
+    <div class="brands-container">
+      <div class="brand-card">
+        <div class="brand-images-grid">
+          <div class="main-img">
+            <img
+              src="imges/brand/Seahawk Building Materials Co.Ltd/3D198_687f057374c08.webp"
+              alt="table"
+            />
+          </div>
+          <div class="side-imgs">
+            <img
+              src="imges/brand/Seahawk Building Materials Co.Ltd/3D122 - Copy_687f045c62a59.webp"
+              alt="item"
+            />
+            <img
+              src="imges/brand/Seahawk Building Materials Co.Ltd/33MUT218 - Copy_687f02f768ae0.webp"
+              alt="item"
+            />
+          </div>
         </div>
-    </section>
+        <div class="brand-info">
+          <img
+            src="imges/brand/company/rtdvatlqfzvvs9kizi52.png"
+            alt="logo"
+            class="brand-logo"
+          />
+          <div class="brand-text">
+            <h3>Seahawk Building Materials Co.Ltd.</h3>
+            <p>China | Foshan</p>
+            <span>Furniture</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-card">
+        <div class="brand-images-grid">
+          <div class="main-img">
+            <img
+              src="imges/brand/aarkee contract/AR-ORI-TB-01-06_69c4e8b5f2829.webp"
+              alt="table"
+            />
+          </div>
+          <div class="side-imgs">
+            <img
+              src="imges/brand/aarkee contract/AR-MOO-SO-01-04_69c4db530206f.webp"
+              alt="item"
+            />
+            <img
+              src="imges/brand/aarkee contract/AR-MEL-TB-03-02_69c4eacabf7e2 (1).webp"
+              alt="item"
+            />
+          </div>
+        </div>
+        <div class="brand-info">
+          <img
+            src="imges/brand/company/coqmldukz2nytg9eqohu.png"
+            alt="logo"
+            class="brand-logo"
+          />
+          <div class="brand-text">
+            <h3>aarkee contract</h3>
+            <p>China | Shenzhen</p>
+            <span>Furniture</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-card">
+        <div class="brand-images-grid">
+          <div class="main-img">
+            <img
+              src="imges/brand/Joys Living/CROSSTABLE+Fiona“Œ (4)_674ec5f685372.webp"
+              alt="table"
+            />
+          </div>
+          <div class="side-imgs">
+            <img
+              src="imges/brand/Joys Living/JY-LK∫˛≤¥_1 Large_680ca4ad65d29.webp"
+              alt="item"
+            />
+            <img
+              src="imges/brand/Joys Living/JY-ZD-1 Zº∏∑Ω_1 Large(1)_674ec8ad4e854.webp"
+              alt="item"
+            />
+          </div>
+        </div>
+        <div class="brand-info">
+          <img
+            src="imges/brand/company/a0ducguvswaydmnuhmyb.png"
+            alt="logo"
+            class="brand-logo"
+          />
+          <div class="brand-text">
+            <h3>Joys Living</h3>
+            <p>China | Shenzhen</p>
+            <span>Furniture</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div id="footer-placeholder"></div>
 
     <script src="js/data_brand.js"></script>
     <script src="js/script.js"></script>
-    <script>
-        // دالة إنشاء تصميم الكرت الخاص بالبراندات
-        function createBrandCardHTML(data) {
-            // استخدام وصف افتراضي في حال عدم وجود وصف في البيانات
-            const description = data.description ? data.description.substring(0, 70) + '...' : 'Explore our high-quality furniture solutions and innovative designs.';
-            
-            return `
-                <div class="project-card">
-                    <div class="card-image">
-                        <a href="view_brand.html?id=${data.id}">
-                            <img src="${data.image}" alt="${data.title}">
-                        </a>
-                    </div>
-                    <div class="card-content">
-                        <h3 class="card-title">${data.title}</h3>
-                        <p class="card-description" style="font-size: 14px; color: #666; margin-bottom: 10px;">
-                            ${description}
-                        </p>
-                        <div class="card-meta">
-                            <span class="category" style="color: #ffb400; font-weight: bold; text-transform: uppercase;">${data.brand || 'Official Brand'}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function displayBrands() {
-            const container = document.getElementById('brand-container');
-            if (container && typeof brandsData !== 'undefined') {
-                container.innerHTML = "";
-                brandsData.forEach(brand => {
-                    container.innerHTML += createBrandCardHTML(brand);
-                });
-            }
-        }
-
-        window.addEventListener('load', displayBrands);
-    </script>
-</body>
+  </body>
 </html>
