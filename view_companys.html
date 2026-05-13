@@ -7,10 +7,10 @@
     <link rel="icon" href="imges/img/fancy1.jfif" />
     <link rel="stylesheet" href="style.css" />
     <style>
-        .brand-header { position: relative; background: #fff; }
+.brand-header { position: relative; background: #fff; }
 
 .cover-photo {
-  height: 350px;
+  height: 400px;
   width: 100%;
   overflow: hidden;
 }
@@ -19,7 +19,6 @@
 
 .brand-profile-bar {
   padding: 0 5%;
-  border-bottom: 1px solid #eee;
   position: relative;
   height: 100px;
 }
@@ -36,6 +35,24 @@
 }
 
 .brand-logo-container img { width: 100%; height: 100%; border-radius: 50%; }
+
+.container-flex {
+  display: flex;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.brand-tabs {
+    margin-top: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
+    border-bottom: 1px solid black;
+}
 
 .brand-main-info { margin-left: 170px; padding-top: 15px; }
 
@@ -87,19 +104,13 @@
         <p id="brandLocation"><i class="pin-icon"></i> </p>
         <span class="type-tag">Brand</span>
       </div>
-      <div class="brand-actions">
-        <button class="icon-btn">✉️</button>
-        <button class="icon-btn">🔗</button>
-        <button class="follow-btn">Follow</button>
-      </div>
+    
     </div>
   </div>
 </section>
 
 <nav class="brand-tabs">
-  <button class="tab-item active">Overview</button>
-  <button class="tab-item">Products</button>
-  <button class="tab-item">Collections</button>
+  <p>Overview</p>
 </nav>
 
 <main class="brand-content">
@@ -129,20 +140,24 @@ function loadBrandPage() {
   if(data) {
     document.getElementById('brandName').innerText = data.name;
     document.getElementById('brandLocation').innerText = data.location;
-    document.getElementById('brandAbout').innerText = data.about;
-    document.getElementById('brandCover').src = data.cover;
+    
+    // تحديث الوصف (إذا لم يوجد في البيانات نضع نصاً افتراضياً)
+    const aboutText = data.about || "Leading company in furniture and design solutions, providing high-quality materials and innovative concepts.";
+    document.getElementById('brandAbout').innerText = aboutText;
+
+    document.getElementById('brandCover').src = data.mainImg;
     document.getElementById('brandLogo').src = data.logo;
     
-    // عرض المنتجات
+    // عرض الصور الجانبية من مصفوفة sideImgs
     let productsHtml = '';
-    data.products.forEach(p => {
-      productsHtml += `
-        <div class="product-item">
-          <img src="assets/imge/${p.img}">
-          <h4>${p.name}</h4>
-          <p>${p.category}</p>
-        </div>`;
-    });
+    if (data.sideImgs) {
+        data.sideImgs.forEach(imgSrc => {
+            productsHtml += `
+                <div class="product-item">
+                    <img src="${imgSrc}" alt="Brand Product">
+                </div>`;
+        });
+    }
     document.getElementById('productsGrid').innerHTML = productsHtml;
   }
 }
