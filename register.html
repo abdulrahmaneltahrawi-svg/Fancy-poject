@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل حساب جديد</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="header-placeholder"></div> <!-- مكان تحميل الهيدر -->
+
+    <main style="max-width: 500px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h2>تسجيل حساب جديد</h2>
+        <form id="registrationForm" style="display: flex; flex-direction: column; gap: 15px;">
+            <input type="text" name="first_name" placeholder="الاسم الأول" required style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+            <input type="text" name="last_name" placeholder="الاسم الأخير" required style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+            <input type="email" name="email" placeholder="البريد الإلكتروني" required style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+            <input type="tel" name="phone" placeholder="رقم الهاتف (اختياري)" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+            <input type="password" name="password" placeholder="كلمة المرور (8 أحرف على الأقل)" required style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+            <select name="account_type" required style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                <option value="">اختر نوع الحساب</option>
+                <option value="personal">شخصي</option>
+                <option value="designer">مصمم</option>
+                <option value="brand">علامة تجارية</option>
+            </select>
+            <button type="submit" style="padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">تسجيل</button>
+        </form>
+        <div id="registrationMessage" style="margin-top: 20px; text-align: center;"></div>
+        <p style="text-align: center; margin-top: 20px;">
+            لديك حساب بالفعل؟ <a href="login.html">تسجيل الدخول</a>
+        </p>
+    </main>
+
+    <div id="footer-placeholder"></div> <!-- مكان تحميل الفوتر -->
+
+    <script src="js/script.js"></script>
+</body>
+</html>

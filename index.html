@@ -9,7 +9,7 @@
   </head>
   <body>
     <style>
-      .category-nav {
+   .category-nav {
     display: flex;
     justify-content: center; /* لتوسيط القائمة في الصفحة */
     margin-top: 30px;
@@ -220,6 +220,7 @@
         <span class="dot active"></span>
         <span class="dot"></span>
         <span class="dot"></span>
+        <span class="dot"></span>
       </div>
     </section>
 
@@ -263,11 +264,21 @@
       let currentSlide = 0;
 
       function showSlide(index) {
+        // إضافة تحققات لمنع الأخطاء إذا كانت العناصر غير موجودة أو الـ index غير صالح
+        if (!slides || slides.length === 0) {
+            console.warn("Slider elements with class 'slide' not found.");
+            return;
+        }
+        if (!dots || dots.length === 0) {
+            console.warn("Dot elements with class 'dot' not found.");
+            return;
+        }
+        if (isNaN(index) || index < 0 || index >= slides.length || index >= dots.length) return; // تأكد أن الـ index ضمن النطاق لجميع العناصر
         slides.forEach((slide) => slide.classList.remove("active"));
         dots.forEach((dot) => dot.classList.remove("active"));
 
-        slides[index].classList.add("active");
-        dots[index].classList.add("active");
+        if (slides[index]) slides[index].classList.add("active");
+        if (dots[index]) dots[index].classList.add("active");
       }
 
       document.querySelector(".next-btn").addEventListener("click", () => {

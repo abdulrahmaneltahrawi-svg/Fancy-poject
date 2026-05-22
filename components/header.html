@@ -32,3 +32,50 @@
     </div>
   </div>
 </header>
+
+<!-- نافذة التسجيل والدخول (Auth Modal) -->
+<div id="authModal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="close-modal">&times;</button>
+        
+        <div class="auth-form-toggle">
+            <button id="showLogin" class="active">تسجيل الدخول</button>
+            <button id="showRegister">إنشاء حساب</button>
+        </div>
+
+        <!-- قسم تسجيل الدخول -->
+        <div id="loginSection">
+            <form id="loginForm">
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <input type="email" name="email" placeholder="البريد الإلكتروني" required style="padding: 12px; border: 1px solid #ddd; border-radius: 6px;">
+                    <input type="password" name="password" placeholder="كلمة المرور" required style="padding: 12px; border: 1px solid #ddd; border-radius: 6px;">
+                    <button type="submit" style="padding: 12px; background: #000; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">دخول</button>
+                </div>
+            </form>
+            <div id="loginMessage" style="margin-top: 15px; text-align: center;"></div>
+        </div>
+
+        <!-- قسم إنشاء حساب -->
+        <div id="registerSection" class="hidden">
+            <form id="registrationForm">
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" name="first_name" placeholder="الاسم الأول" required style="flex:1; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                        <input type="text" name="last_name" placeholder="الاسم الأخير" required style="flex:1; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                    </div>
+                    <input type="email" name="email" placeholder="البريد الإلكتروني" required style="padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                    <input type="tel" name="phone" placeholder="رقم الهاتف (اختياري)" style="padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                    <input type="password" name="password" placeholder="كلمة المرور (8 أحرف فأكثر)" required style="padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                    <select name="account_type" required style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; background: #fff;">
+                        <option value="">اختر نوع الحساب</option>
+                        <option value="personal">شخصي</option>
+                        <option value="designer">مصمم</option>
+                        <option value="brand">علامة تجارية</option>
+                    </select>
+                    <button type="submit" style="padding: 12px; background: #000; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">إنشاء حساب</button>
+                </div>
+            </form>
+            <div id="registrationMessage" style="margin-top: 15px; text-align: center;"></div>
+        </div>
+    </div>
+</div>
