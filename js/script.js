@@ -1,3 +1,34 @@
+// تعريف كائن FancyAPI لمعالجة طلبات الـ API بشكل موحد وتجنب تكرار الكود
+const FancyAPI = {
+    baseUrl: '/Fancy-Design/fancy/api',
+    async request(endpoint, options = {}) {
+        const url = `${this.baseUrl}${endpoint}`;
+        const headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            ...options.headers
+        };
+
+        try {
+            const response = await fetch(url, { ...options, headers });
+            const text = await response.text();
+            let result;
+            try {
+                result = JSON.parse(text);
+            } catch (e) {
+                // في حال رجوع خطأ PHP أو استجابة ليست JSON
+                return { success: false, message: 'استجابة غير صالحة من السيرفر', status: response.status, error: text };
+            }
+            return { ok: response.ok, status: response.status, ...result };
+        } catch (error) {
+            console.error(`API Error (${endpoint}):`, error);
+            return { success: false, message: 'حدث خطأ في الاتصال بالسيرفر' };
+        }
+    },
+    get(endpoint) { return this.request(endpoint, { method: 'GET' }); },
+    post(endpoint, data) { return this.request(endpoint, { method: 'POST', body: JSON.stringify(data) }); }
+};
+
 // وظيفة لجلب ملف الهيدر وحقنه في الصفحة
 function loadHeader() {
     // استخدام مسار يبدأ بـ / لضمان العمل من أي صفحة
@@ -45,9 +76,18 @@ document.addEventListener('DOMContentLoaded', () => {
 // وظيفه جلب الارجل
 function loadFooter() {
     fetch('/Fancy-Design/components/footer.html')
-        .then(res => res.text())
+        .then(res => {
+            if (!res.ok) throw new Error('فشل تحميل الفوتر');
+            return res.text();
+        })
         .then(data => {
-            document.getElementById('footer-placeholder').innerHTML = data;
+            const footerPlaceholder = document.getElementById('footer-placeholder');
+            if (footerPlaceholder) {
+                footerPlaceholder.innerHTML = data;
+            }
+        })
+        .catch(error => {
+            console.error('حدث خطأ أثناء تحميل الفوتر:', error);
         });
 }
 // نستخدم هذا الكود لضمان العمل حتى لو تم تحميل الهيدر بـ fetch
@@ -89,7 +129,7 @@ document.addEventListener('click', function (e) {
     if (e.target.id === 'logout-btn') {
         e.preventDefault();
         // استدعاء API تسجيل الخروج لتنظيف الجلسة في السيرفر
-        fetch('/Fancy-Design/fancy/api/auth/logout.php')
+        FancyAPI.get('/auth/logout.php')
             .finally(() => {
                 localStorage.removeItem('userData'); // حذف البيانات محلياً
                 location.reload(); // إعادة تحميل الصفحة
@@ -179,10 +219,9 @@ async function loadUserProfile() {
     const profileMsg = document.getElementById('profileMessage');
     
     try {
-        const response = await fetch('/Fancy-Design/fancy/api/auth/me.php');
-        const result = await response.json();
+        const result = await FancyAPI.get('/auth/me.php');
 
-        if (result.success) {
+        if (result && result.success) {
             const user = result.data.user;
             document.getElementById('prof-name').textContent = `${user.first_name} ${user.last_name}`;
             document.getElementById('prof-email').textContent = user.email;
@@ -191,7 +230,7 @@ async function loadUserProfile() {
             document.getElementById('prof-status').textContent = user.status;
             document.getElementById('prof-date').textContent = new Date(user.created_at).toLocaleDateString('ar-SA');
             profileMsg.textContent = '';
-        } else {
+        } else if (result) {
             displayMessage('profileMessage', 'فشل جلب البيانات: ' + result.message, false);
             if (result.code === 'UNAUTHORIZED') {
                 localStorage.removeItem('userData');
@@ -209,12 +248,8 @@ async function resendVerificationCode(email) {
     const msgDiv = 'emailVerificationMessage';
     displayMessage(msgDiv, 'جاري إعادة إرسال الرمز...', true);
     try {
-        const response = await fetch('/Fancy-Design/fancy/api/auth/resend-verification-code.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email })
-        });
-        const result = await response.json();
+        const result = await FancyAPI.post('/auth/resend-verification-code.php', { email: email });
+        
         if (result.success) {
             displayMessage(msgDiv, result.message || 'تم إرسال رمز جديد لبريدك.', true);
         } else {
@@ -248,39 +283,9 @@ document.addEventListener('submit', async (event) => {
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData.entries());
         try {
-            // تسجيل البيانات المرسلة للتصحيح
-            console.log('Sending registration data:', data);
+            displayMessage('registrationMessage', 'جاري إرسال البيانات...', true);
 
-            const response = await fetch('/Fancy-Design/fancy/api/auth/register.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-
-            const responseText = await response.text();
-            
-            if (!response.ok) {
-                if (response.status === 404) {
-                    displayMessage('registrationMessage', 'خطأ 404: ملف api/auth/register.php غير موجود.', false);
-                } else if (response.status === 403) {
-                    displayMessage('registrationMessage', 'خطأ 403: الوصول ممنوع. تحقق من إعدادات السيرفر.', false);
-                } else if (response.status === 400) {
-                    displayMessage('registrationMessage', 'خطأ 400: طلب غير صالح. تأكد من الحقول المطلوبة.', false);
-                } else {
-                    displayMessage('registrationMessage', `خطأ من الخادم: ${response.status}`, false);
-                }
-                console.error('Server error response:', responseText);
-                return;
-            }
-
-            let result;
-            try {
-                result = JSON.parse(responseText);
-            } catch (jsonError) {
-                console.error('فشل تحليل JSON:', responseText);
-                displayMessage('registrationMessage', 'استجابة الخادم ليست JSON صالح.', false);
-                return;
-            }
+            const result = await FancyAPI.post('/auth/register.php', data);
 
             if (result && result.success) {
                 displayMessage('registrationMessage', result.message, true);
@@ -288,11 +293,10 @@ document.addEventListener('submit', async (event) => {
                 // الانتقال تلقائياً لقسم التحقق بعد ثانيتين من النجاح
                 setTimeout(() => {
                     showAuthModal('verify', data.email);
+                    const regMsg = document.getElementById('registrationMessage');
+                    if (regMsg) regMsg.textContent = ''; 
                 }, 2000);
             } else if (result) {
-                // هذا يغطي:
-                // 1. response.ok هي false (حالة خطأ HTTP مثل 400, 401, 500)
-                // 2. response.ok هي true، ولكن result.success هي false (مثل خطأ التحقق من الصحة)
                 const errorMessage = result.message || 'حدث خطأ غير معروف.';
                 const errorCode = result.data && result.data.code ? ` (${result.data.code})` : '';
                 displayMessage('registrationMessage', errorMessage + errorCode, false);
@@ -310,36 +314,9 @@ document.addEventListener('submit', async (event) => {
         try {
             // تسجيل البيانات المرسلة للتصحيح
             console.log('Sending login data:', data);
+            const result = await FancyAPI.post('/auth/login.php', data);
 
-            const response = await fetch('/Fancy-Design/fancy/api/auth/login.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            
-            const responseText = await response.text();
-
-            let result;
-            try {
-                result = JSON.parse(responseText); 
-            } catch (jsonError) {
-                if (!response.ok) {
-                    if (response.status === 403) {
-                        displayMessage('loginMessage', 'خطأ 403: الوصول ممنوع.', false);
-                        return;
-                    } else if (response.status === 400) {
-                        displayMessage('loginMessage', 'خطأ 400: البيانات المرسلة غير صحيحة.', false);
-                        return;
-                    }
-                    displayMessage('loginMessage', `خطأ في الخادم (${response.status})`, false);
-                } else {
-                    displayMessage('loginMessage', 'استجابة الخادم غير صالحة.', false);
-                }
-                console.error('Error parsing response:', responseText);
-                return;
-            }
-
-            if (result.success) {
+            if (result && result.success) {
                 displayMessage('loginMessage', result.message, true);
                 localStorage.setItem('userData', JSON.stringify(result.data.user));
                 // إغلاق النافذة بعد ثانية واحدة من النجاح
@@ -370,40 +347,7 @@ document.addEventListener('submit', async (event) => {
             // تسجيل البيانات المرسلة للتصحيح - تحقق من أسماء الحقول هنا
             console.log('Sending verification data:', data);
 
-            // التأكد من استخدام المسار الصحيح للـ API الموجود
-            const response = await fetch('/Fancy-Design/fancy/api/auth/verify-email.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-
-            const responseText = await response.text();
-            
-            if (!response.ok) {
-                if (response.status === 400) {
-                    displayMessage('emailVerificationMessage', 'خطأ 400: الرمز أو الإيميل غير صحيح أو مفقود.', false);
-                } else if (response.status === 403) {
-                    displayMessage('emailVerificationMessage', 'خطأ 403: السيرفر يرفض معالجة الطلب.', false);
-                } else {
-                    displayMessage('emailVerificationMessage', `خطأ من الخادم: ${response.status}`, false);
-                }
-                console.error('Full server response:', responseText);
-                return;
-            }
-
-            let result;
-
-            try {
-                result = JSON.parse(responseText);
-            } catch (jsonError) {
-                if (!response.ok) {
-                    displayMessage('emailVerificationMessage', `خطأ في الخادم (${response.status})`, false);
-                } else {
-                    displayMessage('emailVerificationMessage', 'استجابة الخادم غير صالحة.', false);
-                }
-                console.error('Error parsing verification response:', responseText);
-                return;
-            }
+            const result = await FancyAPI.post('/auth/verify-email.php', data);
 
             if (result.success) {
                 displayMessage('emailVerificationMessage', result.message + '. يمكنك الآن تسجيل الدخول.', true);
