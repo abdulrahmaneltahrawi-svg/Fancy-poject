@@ -1,6 +1,7 @@
 // وظيفة لجلب ملف الهيدر وحقنه في الصفحة
 function loadHeader() {
-    fetch('components/header.html')
+    // استخدام مسار يبدأ بـ / لضمان العمل من أي صفحة
+    fetch('/Fancy-Design/components/header.html')
         .then(response => {
             if (!response.ok) {
                 throw new Error('لم يتم العثور على ملف الهيدر');
@@ -9,30 +10,46 @@ function loadHeader() {
         })
         .then(data => {
             document.getElementById('header-placeholder').innerHTML = data;
+            updateAuthUI(); // تحديث أزرار تسجيل الدخول بناءً على حالة المستخدم
         })
         .catch(error => {
             console.error('حدث خطأ أثناء تحميل الهيدر:', error);
         });
 }
 
-// تنفيذ الوظيفة عند تحميل الصفحة
-document.addEventListener('DOMContentLoaded', loadHeader);
+// وظيفة لتغيير أزرار الهيدر (Login/Join) إلى اسم المستخدم عند تسجيل الدخول
+function updateAuthUI() {
+    const authLinks = document.querySelector('.auth-links');
+    if (!authLinks) return;
 
+    const userData = localStorage.getItem('userData');
+    if (userData) {
+        try {
+            const user = JSON.parse(userData);
+            authLinks.innerHTML = `
+                <span style="margin-left: 15px; font-size: 14px; font-weight: 500;">أهلاً، ${user.first_name || 'مستخدم'}</span>
+                <a href="#" id="logout-btn" style="color: #d9534f; font-weight: bold;">خروج</a>
+            `;
+        } catch (e) {
+            console.error('خطأ في قراءة بيانات المستخدم:', e);
+        }
+    }
+}
+
+// تنفيذ الوظيفة عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', () => {
+    loadHeader();
+    loadFooter();
+});
 
 // وظيفه جلب الارجل
 function loadFooter() {
-    fetch('components/footer.html')
+    fetch('/Fancy-Design/components/footer.html')
         .then(res => res.text())
         .then(data => {
             document.getElementById('footer-placeholder').innerHTML = data;
         });
 }
-loadFooter();
-
-
-
-
-
 // نستخدم هذا الكود لضمان العمل حتى لو تم تحميل الهيدر بـ fetch
 document.addEventListener('click', function (e) {
     const toggle = document.getElementById('dropdown-toggle');
@@ -60,6 +77,13 @@ document.addEventListener('click', function (e) {
     } else if (e.target.closest('.join-link')) {
         e.preventDefault();
         showAuthModal('register');
+    }
+
+    // معالجة الضغط على زر تسجيل الخروج
+    if (e.target.id === 'logout-btn') {
+        e.preventDefault();
+        localStorage.removeItem('userData'); // حذف البيانات
+        location.reload(); // إعادة تحميل الصفحة للعودة للحالة الأصلية
     }
 
     // إغلاق النافذة
@@ -120,23 +144,34 @@ document.addEventListener('submit', async (event) => {
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData.entries());
         try {
-            const response = await fetch('api/auth/register.php', {
+            const response = await fetch('/Fancy-Design/fancy/api/auth/register.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
 
             const responseText = await response.text();
-            let result = null;
-            try {
-                result = JSON.parse(responseText);
-            } catch (jsonError) {
-                console.error('فشل تحليل استجابة JSON. الاستجابة الخام من الخادم:', responseText);
-                displayMessage('registrationMessage', 'حدث خطأ غير متوقع من الخادم. تفقد الكونسول.', false);
+            
+            if (!response.ok) {
+                if (response.status === 404) {
+                    displayMessage('registrationMessage', 'خطأ 404: ملف api/auth/register.php غير موجود.', false);
+                } else {
+                    displayMessage('registrationMessage', `خطأ من الخادم: ${response.status}`, false);
+                }
+                console.error('Server error response:', responseText);
                 return;
             }
 
-            if (result && response.ok && result.success) {
+            let result;
+            try {
+                result = JSON.parse(responseText);
+            } catch (jsonError) {
+                console.error('فشل تحليل JSON:', responseText);
+                displayMessage('registrationMessage', 'استجابة الخادم ليست JSON صالح.', false);
+                return;
+            }
+
+            if (result && result.success) {
                 displayMessage('registrationMessage', result.message, true);
                 event.target.reset();
             } else if (result) {
@@ -158,28 +193,34 @@ document.addEventListener('submit', async (event) => {
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData.entries());
         try {
-            const response = await fetch('api/auth/login.php', {
+            const response = await fetch('/Fancy-Design/fancy/api/auth/login.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
             
             const responseText = await response.text();
+
             let result;
             try {
                 result = JSON.parse(responseText); 
             } catch (jsonError) {
-                console.error('فشل تحليل استجابة JSON. الاستجابة الخام من الخادم:', responseText);
-                displayMessage('loginMessage', 'حدث خطأ غير متوقع من الخادم. تفقد الكونسول.', false);
-                return; // توقف هنا ولا تحاول قراءة result.success
+                if (!response.ok) {
+                    displayMessage('loginMessage', `خطأ في الخادم (${response.status})`, false);
+                } else {
+                    displayMessage('loginMessage', 'استجابة الخادم غير صالحة.', false);
+                }
+                console.error('Error parsing response:', responseText);
+                return;
             }
 
-            // الآن، تعامل مع نتيجة JSON المحللة
-            if (response.ok && result.success) { // تحقق مما إذا كانت حالة HTTP هي 2xx (نجاح) ونجاح منطقي من API
+            if (result.success) {
                 displayMessage('loginMessage', result.message, true);
                 localStorage.setItem('userData', JSON.stringify(result.data.user));
                 // إغلاق النافذة بعد ثانية واحدة من النجاح
-                setTimeout(() => { document.getElementById('authModal').classList.remove('show'); }, 1500);
+                setTimeout(() => { 
+                    location.reload(); // إعادة تحميل الصفحة لتحديث حالة الهيدر
+                }, 1500);
             } else {
                 const errorMessage = result.message || 'حدث خطأ غير معروف.';
                 const errorCode = result.data && result.data.code ? ` (${result.data.code})` : '';
