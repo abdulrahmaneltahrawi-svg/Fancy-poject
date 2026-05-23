@@ -77,5 +77,20 @@
             </form>
             <div id="registrationMessage" style="margin-top: 15px; text-align: center;"></div>
         </div>
+
+        <!-- قسم التحقق من البريد الإلكتروني -->
+        <div id="verifyEmailSection" class="hidden">
+            <h3 style="text-align: center; margin-bottom: 20px;">التحقق من البريد الإلكتروني</h3>
+            <p style="text-align: center; margin-bottom: 15px; font-size: 0.9em; color: #666;">الرجاء إدخال رمز التحقق الذي تم إرساله إلى بريدك الإلكتروني.</p>
+            <form id="emailVerificationForm">
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <input type="email" name="email" placeholder="البريد الإلكتروني" required readonly style="padding: 12px; border: 1px solid #ddd; border-radius: 6px; background-color: #f8f8f8; cursor: not-allowed;">
+                    <input type="text" name="token_code" placeholder="رمز التحقق (Token)" required style="padding: 12px; border: 1px solid #ddd; border-radius: 6px;">
+                    <button type="submit" style="padding: 12px; background: #000; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">تأكيد الرمز</button>
+                </div>
+            </form>
+            <p style="text-align: center; margin-top: 15px; font-size: 0.85em;"><a href="#" id="backToLogin" style="color: #007bff; text-decoration: none;">العودة لتسجيل الدخول</a></p>
+            <div id="emailVerificationMessage" style="margin-top: 15px; text-align: center;"></div>
+        </div>
     </div>
 </div>

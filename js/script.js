@@ -94,31 +94,55 @@ document.addEventListener('click', function (e) {
     // التبديل داخل النافذة
     if (e.target.id === 'showLogin') switchAuthTab('login');
     if (e.target.id === 'showRegister') switchAuthTab('register');
+
+    // العودة لتسجيل الدخول من شاشة التحقق
+    if (e.target.id === 'backToLogin') {
+        e.preventDefault();
+        switchAuthTab('login');
+    }
 });
 
-function showAuthModal(type) {
+function showAuthModal(type, email = '') { // Added email parameter
     const modal = document.getElementById('authModal');
     if (!modal) return;
     modal.classList.add('show');
     switchAuthTab(type);
+    // Pre-fill email if type is 'verify'
+    if (type === 'verify' && email) {
+        const emailInput = document.querySelector('#emailVerificationForm input[name="email"]');
+        if (emailInput) {
+            emailInput.value = email;
+        }
+    }
 }
 
 function switchAuthTab(type) {
     const loginSec = document.getElementById('loginSection');
     const regSec = document.getElementById('registerSection');
+    const verifySec = document.getElementById('verifyEmailSection'); // Get the new verification section
     const loginBtn = document.getElementById('showLogin');
     const regBtn = document.getElementById('showRegister');
+    // No button for 'verify' tab, as it's usually triggered by login flow
+
+    // Hide all sections first
+    loginSec.classList.add('hidden');
+    regSec.classList.add('hidden');
+    if (verifySec) verifySec.classList.add('hidden'); // Ensure verification section is hidden
+
+    // Deactivate all buttons
+    loginBtn.classList.remove('active');
+    regBtn.classList.remove('active');
 
     if (type === 'login') {
         loginSec.classList.remove('hidden');
-        regSec.classList.add('hidden');
         loginBtn.classList.add('active');
-        regBtn.classList.remove('active');
-    } else {
-        loginSec.classList.add('hidden');
+    } else if (type === 'register') {
         regSec.classList.remove('hidden');
         loginBtn.classList.remove('active');
         regBtn.classList.add('active');
+    } else if (type === 'verify') { // Handle 'verify' type
+        if (verifySec) verifySec.classList.remove('hidden');
+        // No active button for 'verify' as it's a flow-triggered state
     }
 }
 
@@ -144,6 +168,9 @@ document.addEventListener('submit', async (event) => {
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData.entries());
         try {
+            // تسجيل البيانات المرسلة للتصحيح
+            console.log('Sending registration data:', data);
+
             const response = await fetch('/Fancy-Design/fancy/api/auth/register.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -155,6 +182,10 @@ document.addEventListener('submit', async (event) => {
             if (!response.ok) {
                 if (response.status === 404) {
                     displayMessage('registrationMessage', 'خطأ 404: ملف api/auth/register.php غير موجود.', false);
+                } else if (response.status === 403) {
+                    displayMessage('registrationMessage', 'خطأ 403: الوصول ممنوع. تحقق من إعدادات السيرفر.', false);
+                } else if (response.status === 400) {
+                    displayMessage('registrationMessage', 'خطأ 400: طلب غير صالح. تأكد من الحقول المطلوبة.', false);
                 } else {
                     displayMessage('registrationMessage', `خطأ من الخادم: ${response.status}`, false);
                 }
@@ -174,6 +205,10 @@ document.addEventListener('submit', async (event) => {
             if (result && result.success) {
                 displayMessage('registrationMessage', result.message, true);
                 event.target.reset();
+                // الانتقال تلقائياً لقسم التحقق بعد ثانيتين من النجاح
+                setTimeout(() => {
+                    showAuthModal('verify', data.email);
+                }, 2000);
             } else if (result) {
                 // هذا يغطي:
                 // 1. response.ok هي false (حالة خطأ HTTP مثل 400, 401, 500)
@@ -193,6 +228,9 @@ document.addEventListener('submit', async (event) => {
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData.entries());
         try {
+            // تسجيل البيانات المرسلة للتصحيح
+            console.log('Sending login data:', data);
+
             const response = await fetch('/Fancy-Design/fancy/api/auth/login.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -206,6 +244,13 @@ document.addEventListener('submit', async (event) => {
                 result = JSON.parse(responseText); 
             } catch (jsonError) {
                 if (!response.ok) {
+                    if (response.status === 403) {
+                        displayMessage('loginMessage', 'خطأ 403: الوصول ممنوع.', false);
+                        return;
+                    } else if (response.status === 400) {
+                        displayMessage('loginMessage', 'خطأ 400: البيانات المرسلة غير صحيحة.', false);
+                        return;
+                    }
                     displayMessage('loginMessage', `خطأ في الخادم (${response.status})`, false);
                 } else {
                     displayMessage('loginMessage', 'استجابة الخادم غير صالحة.', false);
@@ -223,12 +268,79 @@ document.addEventListener('submit', async (event) => {
                 }, 1500);
             } else {
                 const errorMessage = result.message || 'حدث خطأ غير معروف.';
+                // If login fails due to unverified email, switch to verification tab
+                if (result.data && result.data.code === "EMAIL_NOT_VERIFIED") {
+                    showAuthModal('verify', data.email); // Pass the email to pre-fill the verification form
+                }
                 const errorCode = result.data && result.data.code ? ` (${result.data.code})` : '';
                 displayMessage('loginMessage', errorMessage + errorCode, false);
             }
         } catch (error) {
             displayMessage('loginMessage', 'حدث خطأ أثناء الاتصال بالخادم. تفقد الكونسول لمزيد من التفاصيل.', false);
             console.error('Network or server error during login:', error);
+        }
+    }
+
+    // New: Handle email verification form submission
+    if (event.target.id === 'emailVerificationForm') {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData.entries());
+        try {
+            // تسجيل البيانات المرسلة للتصحيح - تحقق من أسماء الحقول هنا
+            console.log('Sending verification data:', data);
+
+            // التأكد من استخدام المسار الصحيح للـ API الموجود
+            const response = await fetch('/Fancy-Design/fancy/api/auth/verify-email.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const responseText = await response.text();
+            
+            if (!response.ok) {
+                if (response.status === 400) {
+                    displayMessage('emailVerificationMessage', 'خطأ 400: الرمز أو الإيميل غير صحيح أو مفقود.', false);
+                } else if (response.status === 403) {
+                    displayMessage('emailVerificationMessage', 'خطأ 403: السيرفر يرفض معالجة الطلب.', false);
+                } else {
+                    displayMessage('emailVerificationMessage', `خطأ من الخادم: ${response.status}`, false);
+                }
+                console.error('Full server response:', responseText);
+                return;
+            }
+
+            let result;
+
+            try {
+                result = JSON.parse(responseText);
+            } catch (jsonError) {
+                if (!response.ok) {
+                    displayMessage('emailVerificationMessage', `خطأ في الخادم (${response.status})`, false);
+                } else {
+                    displayMessage('emailVerificationMessage', 'استجابة الخادم غير صالحة.', false);
+                }
+                console.error('Error parsing verification response:', responseText);
+                return;
+            }
+
+            if (result.success) {
+                displayMessage('emailVerificationMessage', result.message + '. يمكنك الآن تسجيل الدخول.', true);
+                event.target.reset();
+                // Optionally, switch back to login tab after successful verification
+                setTimeout(() => {
+                    switchAuthTab('login');
+                    displayMessage('emailVerificationMessage', '', true); // Clear message
+                }, 2000);
+            } else {
+                const errorMessage = result.message || 'حدث خطأ غير معروف أثناء التحقق.';
+                const errorCode = result.data && result.data.code ? ` (${result.data.code})` : '';
+                displayMessage('emailVerificationMessage', errorMessage + errorCode, false);
+            }
+        } catch (error) {
+            displayMessage('emailVerificationMessage', 'حدث خطأ أثناء الاتصال بالخادم للتحقق من البريد الإلكتروني.', false);
+            console.error('Network or server error during email verification:', error);
         }
     }
 });
