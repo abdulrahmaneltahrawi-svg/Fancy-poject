@@ -88,8 +88,21 @@ document.addEventListener('click', function (e) {
     // معالجة الضغط على زر تسجيل الخروج
     if (e.target.id === 'logout-btn') {
         e.preventDefault();
-        localStorage.removeItem('userData'); // حذف البيانات
-        location.reload(); // إعادة تحميل الصفحة للعودة للحالة الأصلية
+        // استدعاء API تسجيل الخروج لتنظيف الجلسة في السيرفر
+        fetch('/Fancy-Design/fancy/api/auth/logout.php')
+            .finally(() => {
+                localStorage.removeItem('userData'); // حذف البيانات محلياً
+                location.reload(); // إعادة تحميل الصفحة
+            });
+    }
+
+    // إعادة إرسال رمز التحقق
+    if (e.target.id === 'resend-code') {
+        e.preventDefault();
+        const emailInput = document.querySelector('#emailVerificationForm input[name="email"]');
+        if (emailInput && emailInput.value) {
+            resendVerificationCode(emailInput.value);
+        }
     }
 
     // إغلاق النافذة
@@ -188,6 +201,28 @@ async function loadUserProfile() {
     } catch (error) {
         console.error('Error fetching profile:', error);
         displayMessage('profileMessage', 'خطأ في الاتصال بالسيرفر', false);
+    }
+}
+
+// وظيفة إعادة إرسال الرمز
+async function resendVerificationCode(email) {
+    const msgDiv = 'emailVerificationMessage';
+    displayMessage(msgDiv, 'جاري إعادة إرسال الرمز...', true);
+    try {
+        const response = await fetch('/Fancy-Design/fancy/api/auth/resend-verification-code.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email })
+        });
+        const result = await response.json();
+        if (result.success) {
+            displayMessage(msgDiv, result.message || 'تم إرسال رمز جديد لبريدك.', true);
+        } else {
+            displayMessage(msgDiv, result.message || 'فشل إعادة الإرسال.', false);
+        }
+    } catch (error) {
+        console.error('Error resending code:', error);
+        displayMessage(msgDiv, 'خطأ في الاتصال بالسيرفر.', false);
     }
 }
 
