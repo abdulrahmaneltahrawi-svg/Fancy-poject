@@ -104,85 +104,18 @@
 
     <div id="footer-placeholder"></div>
 
-    <script src="js/data.js"></script> 
-    <script>
-// 1. جلب المعرف من الرابط
-const params = new URLSearchParams(window.location.search);
-const projectId = params.get('id');
-
-// 2. البحث في بيانات المنتجات فقط
-const allData = typeof projectsData !== 'undefined' ? projectsData : [];
-
-// 3. البحث عن العنصر المطابق للـ ID
-const project = allData.find(p => p.id === projectId);
-
-if (project) {
-    const mainImg = document.getElementById('project-image');
-    mainImg.src = project.image;
-    document.getElementById('project-name').innerText = project.title;
-    document.getElementById('project-desc').innerText = project.description;
-    document.getElementById('project-category').innerText = project.tag || "";
-
-    // 1. نظام معرض الصور (Thumbnails)
-    const thumbContainer = document.getElementById('thumbnails');
-    const allImages = [project.image, ...(project.gallery || [])];
-    
-    allImages.forEach((imgSrc, index) => {
-        const img = document.createElement('img');
-        img.src = imgSrc;
-        img.className = `thumb-img ${index === 0 ? 'active' : ''}`;
-        img.onclick = function() {
-            mainImg.src = imgSrc;
-            document.querySelectorAll('.thumb-img').forEach(t => t.classList.remove('active'));
-            img.classList.add('active');
-        };
-        thumbContainer.appendChild(img);
-    });
-
-    // 2. اختيار الألوان (Interactive Colors)
-    if (project.colors && project.colors.length > 0) {
-        const colorBox = document.createElement('div');
-        colorBox.innerHTML = '<p style="font-weight:bold; margin: 20px 0 10px;">Select Color:</p>';
-        const circlesContainer = document.createElement('div');
-        circlesContainer.style.display = "flex";
-        circlesContainer.style.gap = "15px";
-
-        project.colors.forEach((color, index) => {
-            const circle = document.createElement('div');
-            circle.className = `color-option ${index === 0 ? 'selected' : ''}`;
-            circle.style.backgroundColor = color;
-            circle.onclick = function() {
-                document.querySelectorAll('.color-option').forEach(c => c.classList.remove('selected'));
-                circle.classList.add('selected');
-                // هنا يمكنك إضافة منطق لتغيير صورة المنتج بناءً على اللون إذا توفرت
-            };
-            circlesContainer.appendChild(circle);
-        });
-        colorBox.appendChild(circlesContainer);
-        document.querySelector('.description-box').appendChild(colorBox);
-    }
-
-    // 3. قسم You May Also Like (عشوائي أو من نفس التصنيف)
-    const relatedContainer = document.getElementById('related-products');
-    const relatedItems = allData
-        .filter(p => p.id !== projectId) // استبعاد المنتج الحالي
-        .slice(0, 4); // عرض 4 منتجات فقط
-
-    relatedItems.forEach(item => {
-        relatedContainer.innerHTML += `
-            <a href="view.html?id=${item.id}" class="related-item">
-                <img src="${item.image}" alt="${item.title}">
-                <p>${item.title}</p>
-            </a>
-        `;
-    });
-
-    // رابط الواتساب
-    const message = encodeURIComponent(`السلام عليكم، أود الاستفسار عن تفاصيل وسعر: ${project.title}`);
-    document.getElementById('whatsapp-btn').href = `https://wa.me/${project.whatsapp}?text=${message}`;
-
-}
-    </script>
     <script src="js/script.js"></script>
+    <script src="js/products.js"></script>
+    <script>
+        // 1. جلب المعرف من الرابط
+        const params = new URLSearchParams(window.location.search);
+        const projectId = params.get('id');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (projectId) {
+                loadSingleProductDetails(projectId);
+            }
+        });
+    </script>
 </body>
 </html>

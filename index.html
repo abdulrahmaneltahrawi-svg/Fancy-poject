@@ -297,57 +297,50 @@
         showSlide(currentSlide);
       }, 5000);
 
-
 // انشاء الكروت وعرضها
 // مراجع الحاويات الفريدة (تأكد أن هذه الـ IDs موجودة في الـ HTML)
 const interiorContainer = document.getElementById('interior-container');
 const productContainer = document.getElementById('product-container');
 const brandContainer = document.getElementById('brand-container');
 
-function displayProjects() {
+document.addEventListener('DOMContentLoaded', () => {
     // 1. عرض أول 3 من قسم Magazine (Interior)
     if (interiorContainer && typeof interiorData !== 'undefined') {
         interiorContainer.innerHTML = "";
         interiorData.slice(0, 6).forEach(item => {
-            interiorContainer.innerHTML += createCardHTML(item, 'magazine');
+            interiorContainer.innerHTML += createGenericCardHTML(item, 'magazine');
         });
     }
 
-    // 2. عرض أول 3 من قسم Product
-    if (productContainer && typeof projectsData !== 'undefined') {
-        productContainer.innerHTML = "";
-        projectsData.slice(0, 6).forEach(project => {
-            productContainer.innerHTML += createCardHTML(project, 'product');
-        });
-    }
+    // 2. عرض أول 6 من قسم Product باستخدام الـ API
+    loadProducts('product-container', 6);
 
     // 3. عرض أول 3 من قسم Brand
     if (brandContainer && typeof brandsData !== 'undefined') {
         brandContainer.innerHTML = "";
         brandsData.slice(0, 3).forEach(brand => {
-            brandContainer.innerHTML += createCardHTML(brand, 'brand');
+            brandContainer.innerHTML += createGenericCardHTML(brand, 'brand');
         });
     }
-}
+});
 
-// دالة التصميم الموحدة
-function createCardHTML(data, type) {
+// دالة التصميم الموحدة للعناصر غير المنتجات (Magazine, Brand)
+function createGenericCardHTML(data, type) {
     let targetPage = "view.html"; // الصفحة الافتراضية للمنتجات
 
     if (type === "magazine") {
         targetPage = "view_interior.html"; 
-    } else if (type === "brand") {
+    } else if (type === "brand" && data.id) { // تأكد من وجود ID للبراند
         targetPage = "view_brand.html";
     }
 
-    const category = data.category;
-    // تحديد الوسم المراد عرضه (tag للمنتجات، type للمجلات، brand للبراندات)
-    const badge = data.type || data.tag || data.brand || "";
+    const categoryText = data.category || '';
+    const badgeText = data.type || data.tag || data.brand || "";
     
     return `
         <div class="project-card">
             <div class="card-image">
-                <a href="${targetPage}?id=${data.id}">
+                <a href="${targetPage}?id=${data.id || ''}">
                     <img src="${data.image}" alt="${data.title}">
                 </a>
             </div>
@@ -355,16 +348,13 @@ function createCardHTML(data, type) {
                 <h3 class="card-title">${data.title}</h3>
                 
                 <p class="card-description"  style="font-size: 14px; color: #666; margin: 10px 0;">
-                    ${category}
+                    ${categoryText}
                 </p>
-                ${badge ? `<span class="category" style=" color: gray; text-transform: uppercase; font-size: 12px;">${badge}</span>` : ''}
+                ${badgeText ? `<span class="category" style=" color: gray; text-transform: uppercase; font-size: 12px;">${badgeText}</span>` : ''}
             </div>
         </div>
     `;
 }
-// تشغيل عند التحميل
-window.addEventListener('load', displayProjects);
-
 
 
 // تحديد الروابط داخل القائمة
@@ -384,11 +374,9 @@ categoryLinks.forEach(link => {
         // الروابط الأخرى التي تحتوي على صفحات مثل filter_Furniture.html ستعمل بشكل طبيعي
     });
 });
-    </script>
-    <script src="js/data.js"></script>
-    <script src="js/data_interior.js"></script>
-    <script src="js/data_brand.js"></script>
+    </script> 
 
+    <script src="js/products.js"></script>  
     <script src="js/script.js"></script>
     <script src="js/auth.js"></script>
   </body>
