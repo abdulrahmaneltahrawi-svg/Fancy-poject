@@ -27,7 +27,7 @@ function updateAuthUI() {
         try {
             const user = JSON.parse(userData);
             authLinks.innerHTML = `
-                <span style="margin-left: 15px; font-size: 14px; font-weight: 500;">أهلاً، ${user.first_name || 'مستخدم'}</span>
+                <a href="#" id="profile-btn" style="margin-left: 15px; font-size: 14px; font-weight: 600; color: #000; text-decoration: none;">👤 حسابي</a>
                 <a href="#" id="logout-btn" style="color: #d9534f; font-weight: bold;">خروج</a>
             `;
         } catch (e) {
@@ -79,6 +79,12 @@ document.addEventListener('click', function (e) {
         showAuthModal('register');
     }
 
+    // فتح الملف الشخصي
+    if (e.target.id === 'profile-btn') {
+        e.preventDefault();
+        showAuthModal('profile');
+    }
+
     // معالجة الضغط على زر تسجيل الخروج
     if (e.target.id === 'logout-btn') {
         e.preventDefault();
@@ -114,12 +120,17 @@ function showAuthModal(type, email = '') { // Added email parameter
             emailInput.value = email;
         }
     }
+    // Load profile data if type is 'profile'
+    if (type === 'profile') {
+        loadUserProfile();
+    }
 }
 
 function switchAuthTab(type) {
     const loginSec = document.getElementById('loginSection');
     const regSec = document.getElementById('registerSection');
     const verifySec = document.getElementById('verifyEmailSection'); // Get the new verification section
+    const profileSec = document.getElementById('profileSection');
     const loginBtn = document.getElementById('showLogin');
     const regBtn = document.getElementById('showRegister');
     // No button for 'verify' tab, as it's usually triggered by login flow
@@ -128,6 +139,7 @@ function switchAuthTab(type) {
     loginSec.classList.add('hidden');
     regSec.classList.add('hidden');
     if (verifySec) verifySec.classList.add('hidden'); // Ensure verification section is hidden
+    if (profileSec) profileSec.classList.add('hidden');
 
     // Deactivate all buttons
     loginBtn.classList.remove('active');
@@ -143,6 +155,39 @@ function switchAuthTab(type) {
     } else if (type === 'verify') { // Handle 'verify' type
         if (verifySec) verifySec.classList.remove('hidden');
         // No active button for 'verify' as it's a flow-triggered state
+    } else if (type === 'profile') {
+        if (profileSec) profileSec.classList.remove('hidden');
+    }
+}
+
+// وظيفة جلب بيانات المستخدم من me.php
+async function loadUserProfile() {
+    const profileData = document.getElementById('profileData');
+    const profileMsg = document.getElementById('profileMessage');
+    
+    try {
+        const response = await fetch('/Fancy-Design/fancy/api/auth/me.php');
+        const result = await response.json();
+
+        if (result.success) {
+            const user = result.data.user;
+            document.getElementById('prof-name').textContent = `${user.first_name} ${user.last_name}`;
+            document.getElementById('prof-email').textContent = user.email;
+            document.getElementById('prof-phone').textContent = user.phone || 'غير مسجل';
+            document.getElementById('prof-type').textContent = user.account_type;
+            document.getElementById('prof-status').textContent = user.status;
+            document.getElementById('prof-date').textContent = new Date(user.created_at).toLocaleDateString('ar-SA');
+            profileMsg.textContent = '';
+        } else {
+            displayMessage('profileMessage', 'فشل جلب البيانات: ' + result.message, false);
+            if (result.code === 'UNAUTHORIZED') {
+                localStorage.removeItem('userData');
+                location.reload();
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching profile:', error);
+        displayMessage('profileMessage', 'خطأ في الاتصال بالسيرفر', false);
     }
 }
 
