@@ -1,7 +1,8 @@
 // js/products.js
 
 // دالة موحدة لإنشاء تصميم الكرت للمنتجات
-function createProductCardHTML(data) {
+function createProductCardHTML(data, options = {}) {
+    const showControls = options.showControls || false;
     // تأكد من أن `data.id` موجود لتوليد رابط صحيح
     const productId = data.id || ''; 
     const productTitle = data.product_name || 'منتج غير معروف';
@@ -25,7 +26,12 @@ function createProductCardHTML(data) {
                 </p>
                 <div class="card-meta">
                     <span class="category" style="color: #ffb400; font-weight: bold; text-transform: uppercase; font-size: 12px;">${productCategory}</span>
-                </div>      
+                </div>
+                ${showControls ? `
+                <div class="card-actions" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; display: flex; gap: 10px;">
+                    <a href="edit-product.html?id=${productId}" class="edit-btn" style="flex: 1; text-align: center; background: #f0ad4e; color: #fff; padding: 5px; border-radius: 4px; text-decoration: none; font-size: 13px;">تعديل</a>
+                </div>
+                ` : ''}
             </div>
         </div>
     `;
@@ -41,7 +47,7 @@ async function loadProducts(containerId, limit = null) {
 
     try {
         // افتراض وجود API endpoint لجلب المنتجات
-        const result = await FancyAPI.get('/products/public-list.php'); 
+        const result = await FancyAPI.get('/products/list.php'); 
 
         if (result && result.success && Array.isArray(result.data.products)) {
             container.innerHTML = ""; // مسح أي محتوى موجود
@@ -75,7 +81,7 @@ async function loadSingleProductDetails(productId) {
 
     try {
         // افتراض وجود API endpoint لجلب منتج واحد
-        const result = await FancyAPI.get(`/products/get.php?id=${productId}`); // افتراض أن هذا الـ API يعيد تفاصيل منتج واحد
+        const result = await FancyAPI.get(`/products/view.php?id=${productId}`); 
 
         if (result && result.success && result.data.product) {
             const product = result.data.product;
@@ -108,7 +114,126 @@ async function loadSingleProductDetails(productId) {
     }
 }
 
+// دالة لجلب وعرض منتجات المستخدم المسجل حالياً
+async function loadMyProducts(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    try {
+        const result = await FancyAPI.get('/products/my-products.php');
+
+        if (result && result.success && Array.isArray(result.data.products)) {
+            container.innerHTML = ""; 
+            
+            if (result.data.products.length === 0) {
+                container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; padding: 40px;">ليس لديك أي منتجات حالياً. ابدأ بإضافة منتجك الأول!</p>';
+                return;
+            }
+
+            result.data.products.forEach(product => {
+                container.innerHTML += createProductCardHTML(product, { showControls: true });
+            });
+        } else {
+            const detail = result.status === 401 ? 'يجب تسجيل الدخول لعرض منتجاتك' : (result.message || 'خطأ غير معروف');
+            console.error('Failed to load my products:', detail);
+            container.innerHTML = `<p style="text-align: center; color: red; grid-column: 1/-1;">${detail}</p>`;
+        }
+    } catch (error) {
+        console.error('Error fetching my products:', error);
+        container.innerHTML = `<p style="text-align: center; color: red; grid-column: 1/-1;">حدث خطأ في الاتصال بالسيرفر.</p>`;
+    }
+}
+
+// دالة لجلب بيانات المنتج ووضعها في نموذج التعديل
+async function loadProductDataForEdit(productId) {
+    try {
+        // نستخدم get.php لأنه مخصص لصاحب المنتج ويجلب تفاصيل أكثر
+        const result = await FancyAPI.get(`/products/get.php?product_id=${productId}`);
+
+        if (result && result.success && result.data.product) {
+            const product = result.data.product;
+            const form = document.getElementById('editProductForm');
+            if (!form) return;
+
+            // تعبئة الحقول
+            form.elements['product_id'].value = product.id;
+            form.elements['brand_id'].value = product.brand_id;
+            form.elements['product_name'].value = product.product_name;
+            form.elements['category_id'].value = product.category_id || '';
+            form.elements['requested_sub_category_name'].value = product.sub_category_name || product.requested_sub_category_name || '';
+            form.elements['short_description'].value = product.short_description || '';
+            form.elements['description'].value = product.description || '';
+        } else {
+            alert("فشل في جلب بيانات المنتج: " + (result.message || "خطأ غير معروف"));
+            window.location.href = 'my-products.html';
+        }
+    } catch (error) {
+        console.error('Error loading product for edit:', error);
+        alert("حدث خطأ أثناء تحميل البيانات.");
+    }
+}
+
+// دالة إرسال التحديث إلى update.php
+async function submitProductUpdate(formDataObject) {
+    try {
+        const payload = {
+            ...formDataObject,
+            product_id: parseInt(formDataObject.product_id),
+            brand_id: parseInt(formDataObject.brand_id),
+            category_id: formDataObject.category_id ? parseInt(formDataObject.category_id) : null,
+            sub_category_id: formDataObject.sub_category_id ? parseInt(formDataObject.sub_category_id) : null
+        };
+
+        const result = await FancyAPI.post('/products/update.php', payload);
+
+        if (result.success) {
+            alert("تم تحديث المنتج بنجاح! سيتم مراجعة التعديلات من قبل الإدارة.");
+            window.location.href = 'my-products.html';
+        } else {
+            alert("خطأ في التحديث: " + (result.message || "فشل الطلب"));
+        }
+    } catch (error) {
+        console.error('Error updating product:', error);
+        alert("فشل الاتصال بالسيرفر.");
+    }
+}
+
+// دالة لإرسال منتج جديد إلى السيرفر
+async function submitNewProduct(formDataObject) {
+    try {
+        // تحويل القيم الرقمية للتأكد من توافقها مع الـ PHP
+        const payload = {
+            ...formDataObject,
+            brand_id: parseInt(formDataObject.brand_id),
+            category_id: formDataObject.category_id ? parseInt(formDataObject.category_id) : null,
+            sub_category_id: formDataObject.sub_category_id ? parseInt(formDataObject.sub_category_id) : null
+        };
+
+        const result = await FancyAPI.post('/products/create.php', payload);
+
+        if (result.success) {
+            alert("تم إضافة المنتج بنجاح! هو الآن بانتظار مراجعة الإدارة.");
+            window.location.href = 'index.html';
+        } else {
+            // في حال كان الخطأ Unauthorized، سنطلب منه تسجيل الدخول
+            if (result.status === 401) {
+                alert("يجب عليك تسجيل الدخول أولاً لإضافة منتج.");
+                if (window.showAuthModal) showAuthModal('login');
+            } else {
+                alert("خطأ: " + (result.message || "حدث خطأ غير متوقع"));
+            }
+        }
+    } catch (error) {
+        console.error('Error creating product:', error);
+        alert("فشل الاتصال بالسيرفر.");
+    }
+}
+
 // جعل الدوال متاحة عالمياً
 window.createProductCardHTML = createProductCardHTML;
 window.loadProducts = loadProducts;
 window.loadSingleProductDetails = loadSingleProductDetails;
+window.loadMyProducts = loadMyProducts;
+window.loadProductDataForEdit = loadProductDataForEdit;
+window.submitProductUpdate = submitProductUpdate;
+window.submitNewProduct = submitNewProduct;

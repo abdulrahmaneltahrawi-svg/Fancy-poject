@@ -12,6 +12,8 @@ function updateAuthUI() {
         try {
             const user = JSON.parse(userData);
             authLinks.innerHTML = `
+                <a href="add-product.html" style="margin-left: 15px; font-size: 14px; font-weight: 600; color: #28a745; text-decoration: none;">➕ إضافة منتج</a>
+                <a href="my-products.html" style="margin-left: 15px; font-size: 14px; font-weight: 600; color: #007bff; text-decoration: none;">📦 منتجاتي</a>
                 <a href="#" id="profile-btn" style="margin-left: 15px; font-size: 14px; font-weight: 600; color: #000; text-decoration: none;">👤 حسابي</a>
                 <a href="#" id="logout-btn" style="color: #d9534f; font-weight: bold;">خروج</a>
             `;

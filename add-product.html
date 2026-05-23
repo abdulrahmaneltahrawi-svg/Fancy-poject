@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>إضافة منتج جديد - Fancy Design</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .form-container { max-width: 600px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        .submit-btn { background: #000; color: #fff; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; width: 100%; }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+    <div class="form-container">
+        <h2>إضافة منتج جديد</h2>
+        <form id="productForm">
+            <input type="hidden" name="brand_id" value="1"> <!-- يجب جلب الـ ID الحقيقي للبراند الخاص بالمستخدم -->
+            <div class="form-group">
+                <label>اسم المنتج</label>
+                <input type="text" name="product_name" required>
+            </div>
+            <div style="display: flex; gap: 15px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>رقم القسم (Category ID)</label>
+                    <input type="number" name="category_id" placeholder="مثلاً: 1">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>أو اسم قسم جديد</label>
+                    <input type="text" name="requested_category_name" placeholder="أثاث مودرن">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>القسم الفرعي المطلوب (Sub Category)</label>
+                <input type="text" name="requested_sub_category_name" placeholder="مثلاً: كراسي، طاولات..." required>
+            </div>
+            <div class="form-group">
+                <label>وصف قصير</label>
+                <textarea name="short_description" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+                <label>وصف كامل</label>
+                <textarea name="description" rows="5"></textarea>
+            </div>
+            <button type="submit" class="submit-btn">إرسال المنتج للمراجعة</button>
+        </form>
+    </div>
+    <script src="js/script.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            submitNewProduct(data);
+        });
+    </script>
+</body>
+</html>

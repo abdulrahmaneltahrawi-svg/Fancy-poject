@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تعديل المنتج - Fancy Design</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .form-container { max-width: 600px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        .submit-btn { background: #f0ad4e; color: #fff; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+    <div class="form-container">
+        <h2>تعديل بيانات المنتج</h2>
+        <form id="editProductForm">
+            <input type="hidden" name="product_id">
+            <input type="hidden" name="brand_id">
+            
+            <div class="form-group">
+                <label>اسم المنتج</label>
+                <input type="text" name="product_name" required>
+            </div>
+            <div class="form-group">
+                <label>رقم القسم (Category ID)</label>
+                <input type="number" name="category_id">
+            </div>
+            <div class="form-group">
+                <label>القسم الفرعي المطلوب</label>
+                <input type="text" name="requested_sub_category_name" required>
+            </div>
+            <div class="form-group">
+                <label>وصف قصير</label>
+                <textarea name="short_description" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+                <label>وصف كامل</label>
+                <textarea name="description" rows="5"></textarea>
+            </div>
+            <button type="submit" class="submit-btn">حفظ التغييرات</button>
+        </form>
+    </div>
+    <script src="js/script.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const productId = params.get('id');
+        if (productId) loadProductDataForEdit(productId);
+
+        document.getElementById('editProductForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitProductUpdate(Object.fromEntries(new FormData(this)));
+        });
+    </script>
+</body>
+</html>
