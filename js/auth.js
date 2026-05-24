@@ -12,10 +12,19 @@ function updateAuthUI() {
         try {
             const user = JSON.parse(userData);
             authLinks.innerHTML = `
-                <a href="add-product.html" style="margin-left: 15px; font-size: 14px; font-weight: 600; color: #28a745; text-decoration: none;">➕ إضافة منتج</a>
-                <a href="my-products.html" style="margin-left: 15px; font-size: 14px; font-weight: 600; color: #007bff; text-decoration: none;">📦 منتجاتي</a>
-                <a href="#" id="profile-btn" style="margin-left: 15px; font-size: 14px; font-weight: 600; color: #000; text-decoration: none;">👤 حسابي</a>
-                <a href="#" id="logout-btn" style="color: #d9534f; font-weight: bold;">خروج</a>
+                <div class="user-menu-wrapper" style="position: relative;">
+                    <button id="user-menu-toggle" class="user-name-btn">
+                        ${user.first_name} ${user.last_name}
+                        <i class="arrow-down"></i>
+                    </button>
+                    <div id="user-dropdown-list" class="dropdown-menu user-dropdown">
+                        ${(user.account_type === 'designer' || user.account_type === 'brand') ? 
+                            '<a href="add-product.html"><li>إضافة منتج</li></a>' : ''}
+                        <a href="profile.html"><li>ملفي الشخصي</li></a>
+                        <hr style="border: 0; border-top: 1px solid #eee; margin: 5px 0;">
+                        <a href="#" id="logout-btn"><li style="color: #d9534f;">تسجيل الخروج</li></a>
+                    </div>
+                </div>
             `;
         } catch (e) {
             console.error('خطأ في قراءة بيانات المستخدم:', e);
@@ -83,6 +92,19 @@ async function loadUserProfile() {
     }
 }
 
+async function logoutUser() {
+    try {
+        // استدعاء API تسجيل الخروج لإنهاء الجلسة في السيرفر
+        await FancyAPI.post('/auth/logout.php');
+    } catch (error) {
+        console.error('Logout error:', error);
+    } finally {
+        // مسح بيانات المستخدم محلياً وإعادة التوجيه للرئيسية
+        localStorage.removeItem('userData');
+        window.location.href = 'index.html';
+    }
+}
+
 async function resendVerificationCode(email) {
     displayMessage('emailVerificationMessage', 'جاري إعادة إرسال الرمز...', true);
     try {
@@ -121,21 +143,24 @@ function initializeAuthListeners() {
         e.preventDefault();
         // console.log('Join link clicked!'); // يمكن تفعيل هذا السطر للتصحيح
         showAuthModal('register');
-    } else if (e.target.id === 'profile-btn') {
+    } else if (e.target.closest('#user-menu-toggle')) {
         e.preventDefault();
-        showAuthModal('profile');
-    } else if (e.target.id === 'logout-btn') {
+        const menu = document.getElementById('user-dropdown-list');
+        menu.classList.toggle('show');
+        e.target.closest('#user-menu-toggle').classList.toggle('active');
+    } else if (e.target.closest('#logout-btn')) {
         e.preventDefault();
-        FancyAPI.post('/auth/logout.php').finally(() => {
-            localStorage.removeItem('userData');
-            location.reload();
-        });
+        logoutUser();
     } else if (e.target.id === 'resend-code') {
         e.preventDefault();
         const emailInput = document.querySelector('#emailVerificationForm input[name="email"]');
         if (emailInput?.value) resendVerificationCode(emailInput.value);
     } else if (e.target.classList.contains('close-modal') || e.target === modal) {
         modal?.classList.remove('show');
+    } else if (!e.target.closest('.user-menu-wrapper')) {
+        // إغلاق القائمة عند النقر في أي مكان آخر
+        document.getElementById('user-dropdown-list')?.classList.remove('show');
+        document.getElementById('user-menu-toggle')?.classList.remove('active');
     } else if (e.target.id === 'showLogin') switchAuthTab('login');
     else if (e.target.id === 'showRegister') switchAuthTab('register');
     else if (e.target.id === 'backToLogin') {

@@ -17,7 +17,7 @@
     <div class="form-container">
         <h2>إضافة منتج جديد</h2>
         <form id="productForm">
-            <input type="hidden" name="brand_id" value="1"> <!-- يجب جلب الـ ID الحقيقي للبراند الخاص بالمستخدم -->
+            <input type="hidden" name="brand_id" id="form_brand_id">
             <div class="form-group">
                 <label>اسم المنتج</label>
                 <input type="text" name="product_name" required>
@@ -51,6 +51,23 @@
     <script src="js/products.js"></script>
     <script src="js/auth.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userData = localStorage.getItem('userData');
+            if (!userData) {
+                alert('يجب تسجيل الدخول أولاً');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            const user = JSON.parse(userData);
+            // التأكد أن المستخدم مصمم أو براند
+            if (user.account_type === 'personal') {
+                alert('عذراً، حسابات الأفراد لا يمكنها إضافة منتجات.');
+                window.location.href = 'index.html';
+            }
+            document.getElementById('form_brand_id').value = user.brand_id || user.id;
+        });
+
         document.getElementById('productForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);

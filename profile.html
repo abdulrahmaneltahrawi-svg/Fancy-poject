@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الملف الشخصي - Fancy Design</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .profile-container { max-width: 800px; margin: 80px auto; padding: 40px; background: #fff; border: 1px solid #eee; }
+        .profile-header { text-align: center; margin-bottom: 40px; border-bottom: 1px solid #f9f9f9; padding-bottom: 30px; }
+        .profile-header h2 { font-size: 28px; font-weight: 500; margin-bottom: 10px; }
+        .profile-header span { color: #888; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
+        .info-item { display: flex; flex-direction: column; gap: 8px; }
+        .info-item label { font-size: 12px; color: #aaa; text-transform: uppercase; }
+        .info-item p { font-size: 16px; color: #333; margin: 0; font-weight: 400; }
+        .profile-actions { margin-top: 50px; display: flex; gap: 15px; border-top: 1px solid #f9f9f9; padding-top: 30px; }
+        .btn-edit { padding: 12px 30px; background: #000; color: #fff; text-decoration: none; font-size: 14px; }
+        .btn-logout-alt { padding: 12px 30px; border: 1px solid #eee; color: #d9534f; text-decoration: none; font-size: 14px; }
+        @media (max-width: 600px) { .info-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <div class="profile-container">
+        <div class="profile-header">
+            <h2 id="prof-name">جاري التحميل...</h2>
+            <span id="prof-type">...</span>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-item">
+                <label>البريد الإلكتروني</label>
+                <p id="prof-email">...</p>
+            </div>
+            <div class="info-item">
+                <label>رقم الهاتف</label>
+                <p id="prof-phone">...</p>
+            </div>
+            <div class="info-item">
+                <label>حالة الحساب</label>
+                <p id="prof-status">...</p>
+            </div>
+            <div class="info-item">
+                <label>تاريخ الانضمام</label>
+                <p id="prof-date">...</p>
+            </div>
+        </div>
+
+        <div class="profile-actions">
+            <a href="#" class="btn-edit" onclick="alert('قريباً: تعديل البيانات'); return false;">تعديل البيانات</a>
+            <a href="#" id="profile-logout-link" class="btn-logout-alt">تسجيل الخروج</a>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/script.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!localStorage.getItem('userData')) {
+                window.location.href = 'index.html';
+                return;
+            }
+            loadUserProfile();
+            
+            document.getElementById('profile-logout-link')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                logoutUser();
+            });
+        });
+    </script>
+</body>
+</html>
