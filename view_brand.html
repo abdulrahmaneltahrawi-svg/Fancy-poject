@@ -1,47 +1,36 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Brand View - Fancy Design</title>
-    <link rel="icon" href="imges/img/fancy1.jfif" />
-    <link rel="stylesheet" href="style.css" />
-    <style>
-        .brand-view { max-width: 1200px; margin: 120px auto; padding: 0 20px; text-align: center; }
-        .brand-logo-large { width: 300px; height: auto; margin-bottom: 40px; }
-        .brand-info h1 { font-size: 48px; margin-bottom: 20px; }
-        .brand-cat { color: #ffb400; font-weight: bold; letter-spacing: 2px; }
-        .brand-desc { max-width: 700px; margin: 30px auto; line-height: 2; color: #555; }
-    </style>
+    <meta charset="UTF-8">
+    <title>صفحة المصمم - Fancy Design</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="header-placeholder"></div>
 
-    <div class="brand-view">
-        <div id="brand-content">
-            <span class="brand-cat">OFFICIAL BRAND</span>
-            <h1 id="brand-title"></h1>
-            <img id="brand-img" src="" alt="" class="brand-logo-large">
-            <p id="brand-desc" class="brand-desc">This brand offers high-quality furniture solutions and innovative designs.</p>
-            <a href="brand.html" class="price-btn" style="background:#000; color:#fff; padding:15px 40px; text-decoration:none;">VIEW COLLECTION</a>
-        </div>
+    <div class="container" style="margin-top: 50px; text-align: center;">
+        <img id="brand-profile-logo" src="" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid #eee;">
+        <h1 id="brand-profile-name" style="margin-top: 20px;">جاري التحميل...</h1>
+        <p id="brand-profile-desc" style="color: #666; max-width: 600px; margin: 20px auto;"></p>
     </div>
+
+    <section class="projects-section">
+        <p class="title">تصاميم المصمم</p>
+        <div class="container">
+            <div id="brand-products-grid" class="projects-grid"></div>
+        </div>
+    </section>
 
     <div id="footer-placeholder"></div>
 
-    <script src="js/data_brand.js"></script>
-    <script>
-        const params = new URLSearchParams(window.location.search);
-        const brandId = params.get('id');
-        const brand = brandsData.find(b => b.id == brandId);
-
-        if (brand) {
-            document.getElementById('brand-title').innerText = brand.title;
-            document.getElementById('brand-img').src = brand.image;
-        } else {
-            window.location.href = "index.html";
-        }
-    </script>
     <script src="js/script.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/designers.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initBrandProfilePage();
+        });
+    </script>
 </body>
 </html>

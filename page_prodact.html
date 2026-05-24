@@ -19,11 +19,6 @@
     </div>
 </section>
 
-
-
-
-
-
     <div id="footer-placeholder"></div>
 
 <script>
@@ -50,27 +45,32 @@ function createCardHTML(data) {
 }
 
 // 2. دالة عرض المشاريع الخاصة بالمنتجات
-function displayProjects() {
+async function displayProjects() {
     // استهداف الحاوية الخاصة بالمنتجات
     const container = document.getElementById('projects-container');
-    
-    // التأكد من وجود الحاوية ومن أن البيانات محملة من ملف js/data.js
-    if (container && typeof projectsData !== 'undefined') {
-        container.innerHTML = ""; // مسح أي محتوى تجريبي
+    if (!container) return;
+
+    try {
+        // جلب البيانات من الـ API باستخدام FancyAPI
+        const result = await FancyAPI.get('/products/get.php');
         
-        projectsData.forEach(project => {
-            container.innerHTML += createCardHTML(project);
-        });
-    } else {
-        console.error("خطأ: لم يتم العثور على projectsData أو حاوية العرض.");
+        if (result.ok && result.success && Array.isArray(result.data)) {
+            container.innerHTML = ""; // مسح محتوى التحميل
+            result.data.forEach(project => {
+                container.innerHTML += createCardHTML(project);
+            });
+        } else {
+            container.innerHTML = `<p>${result.message || 'لا توجد منتجات متاحة حالياً.'}</p>`;
+        }
+    } catch (error) {
+        console.error("Error fetching products:", error);
+        container.innerHTML = '<p>حدث خطأ أثناء تحميل المنتجات.</p>';
     }
 }
 
 // 3. تشغيل الدالة فور تحميل الصفحة
 window.addEventListener('load', displayProjects);
 </script>
-    <script src="js/data.js"></script>
-
     <script src="js/script.js"></script>
   </body>
 </html>

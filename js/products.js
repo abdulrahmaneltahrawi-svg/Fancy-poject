@@ -38,28 +38,40 @@ function createProductCardHTML(data, options = {}) {
 }
 
 // دالة لجلب وعرض المنتجات من الـ API
-async function loadProducts(containerId, limit = null) {
+async function loadProducts(containerId, limit = null, brandId = null) {
     const container = document.getElementById(containerId);
     if (!container) {
         console.error(`Container with ID '${containerId}' not found.`);
         return;
     }
 
+    // إذا لم يمرر ID البراند، نحاول جلبها من الرابط (لصفحات العرض الخاصة بالبراند)
+    if (!brandId) {
+        const urlParams = new URLSearchParams(window.location.search);
+        brandId = urlParams.get('brand') || urlParams.get('brand_id');
+    }
+
     try {
-        // افتراض وجود API endpoint لجلب المنتجات
-        const result = await FancyAPI.get('/products/list.php'); 
+        // بناء الرابط مع فلتر البراند إن وجد
+        let url = '/products/public-list.php';
+        if (brandId) url += `?brand_id=${brandId}`;
+        
+        const result = await FancyAPI.get(url); 
 
         if (result && result.success && Array.isArray(result.data.products)) {
-            container.innerHTML = ""; // مسح أي محتوى موجود
-
             let productsToDisplay = result.data.products;
             if (limit !== null) {
                 productsToDisplay = productsToDisplay.slice(0, limit);
             }
 
-            productsToDisplay.forEach(product => {
-                container.innerHTML += createProductCardHTML(product);
-            });
+            if (productsToDisplay.length === 0) {
+                container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">لا توجد منتجات متاحة حالياً.</p>';
+                return;
+            }
+
+            // استخدام string buffer لتحسين الأداء وتجنب مشاكل الرندر
+            const htmlContent = productsToDisplay.map(product => createProductCardHTML(product)).join('');
+            container.innerHTML = htmlContent;
         } else {
             const detail = result.status === 404 ? 'الملف list.php غير موجود في هذا المسار' : (result.message || 'خطأ غير معروف');
             console.error('Failed to load products:', detail, `Status: ${result.status}`);

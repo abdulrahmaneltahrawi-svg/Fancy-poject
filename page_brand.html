@@ -89,116 +89,20 @@
     </style>
     <div id="header-placeholder"></div>
 
-    <div class="brands-container">
-      <div class="brand-card">
-        <a href="view_companys.html?brand=1" style="text-decoration: none; color: inherit;">
-        <div class="brand-images-grid">
-          <div class="main-img">
-            <img
-              src="imges/brand/Seahawk Building Materials Co.Ltd/3D198_687f057374c08.webp"
-              alt="table"
-            />
-          </div>
-          <div class="side-imgs">
-            <img
-              src="imges/brand/Seahawk Building Materials Co.Ltd/3D122 - Copy_687f045c62a59.webp"
-              alt="item"
-            />
-            <img
-              src="imges/brand/Seahawk Building Materials Co.Ltd/33MUT218 - Copy_687f02f768ae0.webp"
-              alt="item"
-            />
-          </div>
-        </div>
-        <div class="brand-info">
-          <img
-            src="imges/brand/company/rtdvatlqfzvvs9kizi52.png"
-            alt="logo"
-            class="brand-logo"
-          />
-          <div class="brand-text">
-            <h3>Seahawk Building Materials Co.Ltd.</h3>
-            <p>China | Foshan</p>
-            <span>Furniture</span>
-          </div>
-        </div>
-        </a>
-      </div>
-
-      <div class="brand-card">
-        <a href="view_companys.html?brand=2" style="text-decoration: none; color: inherit;">
-        <div class="brand-images-grid">
-          <div class="main-img">
-            <img
-              src="imges/brand/aarkee contract/AR-ORI-TB-01-06_69c4e8b5f2829.webp"
-              alt="table"
-            />
-          </div>
-          <div class="side-imgs">
-            <img
-              src="imges/brand/aarkee contract/AR-MOO-SO-01-04_69c4db530206f.webp"
-              alt="item"
-            />
-            <img
-              src="imges/brand/aarkee contract/AR-MEL-TB-03-02_69c4eacabf7e2 (1).webp"
-              alt="item"
-            />
-          </div>
-        </div>
-        <div class="brand-info">
-          <img
-            src="imges/brand/company/coqmldukz2nytg9eqohu.png"
-            alt="logo"
-            class="brand-logo"
-          />
-          <div class="brand-text">
-            <h3>aarkee contract</h3>
-            <p>China | Shenzhen</p>
-            <span>Furniture</span>
-          </div>
-        </div>
-        </a>
-      </div>
-
-      <div class="brand-card">
-        <a href="view_companys.html?brand=3" style="text-decoration: none; color: inherit;">
-        <div class="brand-images-grid">
-          <div class="main-img">
-            <img
-              src="imges/brand/Joys Living/CROSSTABLE+Fiona“Œ (4)_674ec5f685372.webp"
-              alt="table"
-            />
-          </div>
-          <div class="side-imgs">
-            <img
-              src="imges/brand/Joys Living/JY-LK∫˛≤¥_1 Large_680ca4ad65d29.webp"
-              alt="item"
-            />
-            <img
-              src="imges/brand/Joys Living/JY-ZD-1 Zº∏∑Ω_1 Large(1)_674ec8ad4e854.webp"
-              alt="item"
-            />
-          </div>
-        </div>
-        <div class="brand-info">
-          <img
-            src="imges/brand/company/a0ducguvswaydmnuhmyb.png"
-            alt="logo"
-            class="brand-logo"
-          />
-          <div class="brand-text">
-            <h3>Joys Living</h3>
-            <p>China | Shenzhen</p>
-            <span>Furniture</span>
-          </div>
-        </div>
-        </a>
-      </div>
+    <div id="brands-container" class="brands-container">
+      <!-- سيتم تحميل البراندات هنا تلقائياً -->
     </div>
 
     <div id="footer-placeholder"></div>
 
-    <script src="js/data_brand.js"></script>
     <script src="js/script.js"></script>
+    <script src="js/brands.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        if (typeof displayAllBrands === 'function') {
+          displayAllBrands();
+        }
+      });
+    </script>
   </body>
 </html>

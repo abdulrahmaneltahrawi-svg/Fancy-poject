@@ -3,16 +3,20 @@ const FancyAPI = {
     baseUrl: '/Fancy-Design/fancy/api',
     async request(endpoint, options = {}) {
         const url = `${this.baseUrl}${endpoint}`;
-        const defaultHeaders = {
-            'Content-Type': 'application/json',
+        const headers = {
             'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
             ...options.headers,
-            'X-Requested-With': 'XMLHttpRequest'
         };
+
+        // إضافة Content-Type فقط في حال كانت الطريقة ليست GET
+        if (options.method && options.method !== 'GET') {
+            headers['Content-Type'] = 'application/json';
+        }
 
         try {
             // إضافة credentials: 'include' لضمان عمل الجلسات (Sessions)
-            const response = await fetch(url, { ...options, headers: defaultHeaders, credentials: 'include' });
+            const response = await fetch(url, { ...options, headers, credentials: 'include' });
             const text = await response.text();
             let result;
             try {
