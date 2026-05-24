@@ -22,55 +22,14 @@
     <div id="footer-placeholder"></div>
 
 <script>
-// 1. دالة موحدة لإنشاء تصميم الكرت
-function createCardHTML(data) {
-    return `
-        <div class="project-card">
-            <div class="card-image">
-                <a href="view.html?id=${data.id}">
-                    <img src="${data.image}" alt="${data.title}">
-                </a>
-            </div>
-            <div class="card-content">
-                <h3 class="card-title">${data.title}</h3>
-                <p class="card-description" style="font-size: 14px; color: #666; margin: 10px 0;">
-                    ${data.category.substring(0, 70)}...
-                </p>
-                <div class="card-meta">
-                    <span class="category" style="color: #ffb400; font-weight: bold; text-transform: uppercase; font-size: 12px;">${data.tag || ""}</span>
-                </div>      
-            </div>
-        </div>
-    `;
-}
-
-// 2. دالة عرض المشاريع الخاصة بالمنتجات
-async function displayProjects() {
-    // استهداف الحاوية الخاصة بالمنتجات
-    const container = document.getElementById('projects-container');
-    if (!container) return;
-
-    try {
-        // جلب البيانات من الـ API باستخدام FancyAPI
-        const result = await FancyAPI.get('/products/get.php');
-        
-        if (result.ok && result.success && Array.isArray(result.data)) {
-            container.innerHTML = ""; // مسح محتوى التحميل
-            result.data.forEach(project => {
-                container.innerHTML += createCardHTML(project);
-            });
-        } else {
-            container.innerHTML = `<p>${result.message || 'لا توجد منتجات متاحة حالياً.'}</p>`;
-        }
-    } catch (error) {
-        console.error("Error fetching products:", error);
-        container.innerHTML = '<p>حدث خطأ أثناء تحميل المنتجات.</p>';
+  // الاعتماد على الدالة الموحدة في js/products.js لجلب وعرض كافة المنتجات
+  window.addEventListener('load', () => {
+    if (typeof loadProducts === 'function') {
+      loadProducts('projects-container');
     }
-}
-
-// 3. تشغيل الدالة فور تحميل الصفحة
-window.addEventListener('load', displayProjects);
+  });
 </script>
+    <script src="js/products.js"></script>
     <script src="js/script.js"></script>
   </body>
 </html>
