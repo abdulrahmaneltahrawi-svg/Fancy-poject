@@ -77,12 +77,23 @@ async function loadUserProfile() {
         const result = await FancyAPI.get('/auth/me.php');
         if (result && result.success) {
             const user = result.data.user;
+            // تحديث البيانات المحلية بالبيانات الأحدث من السيرفر
+            localStorage.setItem('userData', JSON.stringify(user));
+            
+            if (document.getElementById('prof-name')) 
             document.getElementById('prof-name').textContent = `${user.first_name} ${user.last_name}`;
-            document.getElementById('prof-email').textContent = user.email;
-            document.getElementById('prof-phone').textContent = user.phone || 'غير مسجل';
-            document.getElementById('prof-type').textContent = user.account_type;
-            document.getElementById('prof-status').textContent = user.status;
-            document.getElementById('prof-date').textContent = new Date(user.created_at).toLocaleDateString('ar-SA');
+            if (document.getElementById('prof-email')) document.getElementById('prof-email').textContent = user.email;
+            if (document.getElementById('prof-phone')) document.getElementById('prof-phone').textContent = user.phone || 'غير مسجل';
+            if (document.getElementById('prof-type')) document.getElementById('prof-type').textContent = user.account_type;
+            if (document.getElementById('prof-status')) document.getElementById('prof-status').textContent = user.status;
+            
+            const dateElem = document.getElementById('prof-date');
+            if (dateElem) {
+                const joinDate = user.created_at || user.registration_date;
+                dateElem.textContent = joinDate 
+                    ? new Date(joinDate).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' })
+                    : 'غير متوفر';
+            }
         } else if (result?.code === 'UNAUTHORIZED') {
             localStorage.removeItem('userData');
             location.reload();
@@ -157,17 +168,18 @@ function initializeAuthListeners() {
         if (emailInput?.value) resendVerificationCode(emailInput.value);
     } else if (e.target.classList.contains('close-modal') || e.target === modal) {
         modal?.classList.remove('show');
+    } else if (e.target.closest('#showLogin') || e.target.closest('#backToLogin')) {
+        e.preventDefault();
+        switchAuthTab('login');
+    } else if (e.target.closest('#showRegister')) {
+        e.preventDefault();
+        switchAuthTab('register');
     } else if (!e.target.closest('.user-menu-wrapper')) {
         // إغلاق القائمة عند النقر في أي مكان آخر
         document.getElementById('user-dropdown-list')?.classList.remove('show');
         document.getElementById('user-menu-toggle')?.classList.remove('active');
-    } else if (e.target.id === 'showLogin') switchAuthTab('login');
-    else if (e.target.id === 'showRegister') switchAuthTab('register');
-    else if (e.target.id === 'backToLogin') {
-        e.preventDefault();
-        switchAuthTab('login');
     }
-});
+}); // نهاية مستمع أحداث النقر
 
     document.addEventListener('submit', async (event) => {
     // التسجيل

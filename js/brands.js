@@ -8,26 +8,45 @@ async function displayAllBrands() {
     if (!container) return;
 
     try {
-        // نستخدم list.php لجلب كافة البراندات لأن get.php مخصص لجلب براند واحد بواسطة الـ ID
-        const result = await FancyAPI.get('/brands/get.php'); 
+        // جلب قائمة العلامات التجارية النشطة من السيرفر
+        const result = await FancyAPI.get('/brands/active-brands.php'); 
         
-        if (result.ok && result.success && Array.isArray(result.data)) {
-            const brands = result.data;
+        console.log('Brands API Response:', result); // لمساعدتك في تتبع البيانات في الكونسول
+
+        let brands = null;
+        if (result.success && result.data) {
+            // محاولة استخراج البيانات سواء كانت في data مباشرة أو داخل data.brands
+            let rawData = result.data.brands || result.data;
+            
+            // إذا كانت البيانات مصفوفة نأخذها مباشرة، وإذا كانت Object نحولها لمصفوفة
+            if (Array.isArray(rawData)) {
+                brands = rawData;
+            } else if (typeof rawData === 'object' && rawData !== null) {
+                brands = Object.values(rawData);
+            }
+        }
+
+        if (result.ok && result.success && brands && brands.length > 0) {
             container.innerHTML = ''; // تفريغ الحاوية
 
             brands.forEach(brand => {
-                // التأكد من وجود مسار للصورة أو استخدام صورة افتراضية
+                // التحقق من وجود صور جانبية لضبط التنسيق (Grid vs Single)
+                const hasSideImages = brand.side_img1 || brand.side_img2;
+                const gridClass = hasSideImages ? '' : 'single-layout';
+
                 const brandHtml = `
                     <div class="brand-card">
                         <a href="view_companys.html?brand=${brand.id}" style="text-decoration: none; color: inherit;">
-                            <div class="brand-images-grid">
+                            <div class="brand-images-grid ${gridClass}">
                                 <div class="main-img">
-                                    <img src="${brand.main_image || 'imges/img/fancy1.jfif'}" alt="${brand.brand_name}" />
+                                    <img src="${brand.cover_image || brand.main_image || 'imges/img/fancy1.jfif'}" alt="${brand.brand_name}" />
                                 </div>
+                                ${hasSideImages ? `
                                 <div class="side-imgs">
-                                    <img src="${brand.side_img1 || 'imges/img/fancy1.jfif'}" alt="item" />
-                                    <img src="${brand.side_img2 || 'imges/img/fancy1.jfif'}" alt="item" />
+                                    ${brand.side_img1 ? `<img src="${brand.side_img1}" alt="item" />` : ''}
+                                    ${brand.side_img2 ? `<img src="${brand.side_img2}" alt="item" />` : ''}
                                 </div>
+                                ` : ''}
                             </div>
                             <div class="brand-info">
                                 <img
@@ -36,7 +55,7 @@ async function displayAllBrands() {
                                     class="brand-logo"
                                 />
                                 <div class="brand-text">
-                                    <h3>${brand.brand_name}</h3>
+                                    <h3>${brand.brand_name || brand.name || 'علامة تجارية'}</h3>
                                     <p>${brand.country || ''} | ${brand.city || ''}</p>
                                     <span>${brand.brand_type || ''}</span>
                                 </div>
@@ -46,9 +65,11 @@ async function displayAllBrands() {
                 `;
                 container.insertAdjacentHTML('beforeend', brandHtml);
             });
+        } else if (result.success && (!brands || brands.length === 0)) {
+            container.innerHTML = `<p style="text-align: center; grid-column: 1/-1; padding: 50px;">لا توجد علامات تجارية نشطة حالياً في قاعدة البيانات.</p>`;
         } else {
             console.error('API Validation Error:', result);
-            container.innerHTML = `<p>${result.message || 'لا توجد علامات تجارية متاحة حالياً.'}</p>`;
+            container.innerHTML = `<p style="text-align: center; color: red;">خطأ في تحميل البيانات: ${result.message || 'استجابة غير متوقعة'}</p>`;
         }
     } catch (error) {
         console.error('Error fetching brands:', error);

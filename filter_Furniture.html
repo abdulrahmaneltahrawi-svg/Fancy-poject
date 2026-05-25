@@ -86,10 +86,47 @@
     <script>
       const mainCategory = 'Furniture';
 
+      // 1. دالة جلب الأقسام الفرعية الحية من السيرفر
+      async function loadLiveSubCategories() {
+        try {
+          const result = await FancyAPI.get('/categories/tree.php');
+          if (result.success && result.data && Array.isArray(result.data.categories)) {
+            const currentCat = result.data.categories.find(cat => cat.name === mainCategory);
+            if (currentCat && currentCat.sub_categories) {
+              updateDropdownUI(currentCat.sub_categories);
+            }
+          }
+        } catch (error) { console.error('Error fetching tree:', error); }
+      }
+
+      // 2. تحديث واجهة القائمة المنسدلة
+      function updateDropdownUI(subCategories) {
+        const dropdownContent = document.querySelector('.dropdown .dropdown-content');
+        if (!dropdownContent) return;
+
+        const searchInputHtml = dropdownContent.querySelector('.search-input').outerHTML;
+        const allOptionHtml = dropdownContent.querySelector('.all-option').outerHTML;
+
+        let newLinksHtml = '';
+        subCategories.forEach(sub => {
+          newLinksHtml += `<a href="#" data-id="${sub.id}">${sub.name}</a>`;
+        });
+
+        dropdownContent.innerHTML = searchInputHtml + allOptionHtml + newLinksHtml;
+        activateFilterLogic(); // إعادة ربط أحداث الفلترة
+      }
+
+      // 3. رسم كروت المنتجات
       function renderProjects(data) {
         const grid = document.getElementById('projects-grid');
         if (!grid) return;
         grid.innerHTML = "";
+        
+        if (data.length === 0) {
+          grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; padding: 20px;">لا توجد منتجات متاحة حالياً.</p>';
+          return;
+        }
+
         data.forEach(project => {
           grid.innerHTML += createCardHTML(project);
         });
@@ -111,18 +148,24 @@
         `;
       }
 
-      document.addEventListener("DOMContentLoaded", () => {
-        const initialData = myProjects.filter(item => item.category === mainCategory);
-        renderProjects(initialData);
+      // 4. منطق الفلترة والبحث
+      function activateFilterLogic() {
+        // تفعيل البحث النصي داخل الدروب داون
+        document.querySelectorAll('.search-input').forEach(input => {
+          input.replaceWith(input.cloneNode(true)); // تنظيف المستمعات القديمة
+        });
 
         document.querySelectorAll('.search-input').forEach(input => {
           input.addEventListener('input', function() {
             const val = this.value.toLowerCase();
-            const links = this.closest('.dropdown-content').querySelectorAll('a');
-            links.forEach(link => {
+            this.closest('.dropdown-content').querySelectorAll('a').forEach(link => {
               link.style.display = link.textContent.toLowerCase().includes(val) ? "" : "none";
             });
           });
+        });
+
+        document.querySelectorAll('.dropdown-content a').forEach(link => {
+          link.replaceWith(link.cloneNode(true));
         });
 
         document.querySelectorAll('.dropdown-content a').forEach(link => {
@@ -146,6 +189,14 @@
             renderProjects(filtered);
           });
         });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        loadLiveSubCategories(); // جلب الأقسام من قاعدة البيانات
+
+        const initialData = myProjects.filter(item => item.category === mainCategory);
+        renderProjects(initialData);
+        activateFilterLogic();
 
         // وظيفة زر مسح الكل
         document.getElementById('clear-all').addEventListener('click', function() {

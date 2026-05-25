@@ -29,6 +29,8 @@
             <span id="prof-type">...</span>
         </div>
 
+        <div id="profileMessage"></div>
+
         <div class="info-grid">
             <div class="info-item">
                 <label>البريد الإلكتروني</label>
@@ -60,11 +62,35 @@
     <script src="js/auth.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            if (!localStorage.getItem('userData')) {
+            const userData = localStorage.getItem('userData');
+            if (!userData) {
                 window.location.href = 'index.html';
                 return;
             }
-            loadUserProfile();
+
+            // عرض البيانات المخزنة محلياً فوراً حتى لا تظل الصفحة فارغة
+            try {
+                const user = JSON.parse(userData);
+                document.getElementById('prof-name').textContent = `${user.first_name} ${user.last_name}`;
+                document.getElementById('prof-type').textContent = 
+                    user.account_type === 'designer' ? 'مصمم' : 
+                    user.account_type === 'brand' ? 'علامة تجارية' : 'حساب شخصي';
+                document.getElementById('prof-email').textContent = user.email;
+                document.getElementById('prof-phone').textContent = user.phone || 'غير مسجل';
+                document.getElementById('prof-status').textContent = user.status === 'active' ? 'نشط' : (user.status || '... Boris');
+                
+                const joinDate = user.created_at || user.registration_date;
+                document.getElementById('prof-date').textContent = joinDate 
+                    ? new Date(joinDate).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' })
+                    : 'جاري التحميل...';
+            } catch (e) {
+                console.error("Error parsing local user data", e);
+            }
+
+            // تحديث البيانات من السيرفر للتأكد من أنها لا تزال صالحة
+            if (typeof loadUserProfile === 'function') {
+                loadUserProfile();
+            }
             
             document.getElementById('profile-logout-link')?.addEventListener('click', (e) => {
                 e.preventDefault();

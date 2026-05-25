@@ -1,97 +1,140 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fancy Design</title>
-    <link rel="icon" href="imges/img/fancy1.jfif" />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
+  <!doctype html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Fancy Design</title>
+      <link rel="icon" href="imges/img/fancy1.jfif" />
+      <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
 
 
 
-    <div id="header-placeholder"></div>
+      <div id="header-placeholder"></div>
 
 
-        <div class="filter-container">
-      <!-- قائمة الأثاث -->
-      <div class="dropdown">
-        <button class="dropbtn" data-original-text="All Furniture">
-          All Furniture <i class="arrow down"></i>
-        </button>
-        <div class="dropdown-content">
-          <input
-            type="text"
-            placeholder="Type to filter"
-            class="search-input"
-          />
-          <a href="#" class="all-option">All Furniture</a>
-          <a href="#">Cabinets</a>
-          <a href="#">Beds</a>
-          <a href="#">Benches</a>
-          <a href="#">Blinds</a>
-          <a href="#">Chairs</a>
-          <a href="#">Sofa</a>
-          <a href="#">Table</a>
-          <a href="#">Poufs</a>
+          <div class="filter-container">
+        <!-- قائمة الأثاث -->
+        <div class="dropdown">
+          <button class="dropbtn" data-original-text="All Furniture">
+            All Furniture <i class="arrow down"></i>
+          </button>
+          <div class="dropdown-content">
+            <input
+              type="text"
+              placeholder="Type to filter"
+              class="search-input"
+            />
+            <a href="#" class="all-option">All Furniture</a>
+            <a href="#">Cabinets</a>
+            <a href="#">Beds</a>
+            <a href="#">Benches</a>
+            <a href="#">Blinds</a>
+            <a href="#">Chairs</a>
+            <a href="#">Sofa</a>
+            <a href="#">Table</a>
+            <a href="#">Poufs</a>
+          </div>
         </div>
+
+        <div class="dropdown">
+          <button class="dropbtn" data-original-text="Materials">Materials<i class="arrow down"></i></button>
+          <div class="dropdown-content">
+            <input
+              type="text"
+              placeholder="Type to filter"
+              class="search-input"
+            />
+            <a href="#" class="all-option">All Materials</a>
+            <a href="#">Fabric</a>
+            <a href="#">Velvet</a>
+            <a href="#">Synthetic fiber</a>
+            <a href="#">Polyester</a>
+            <a href="#">Dacron®</a>
+            <a href="#">Microfiber</a>
+            <a href="#">Janus-fiber®</a>
+            <a href="#">Sunbrella®</a>
+          </div>
+        </div>
+
+        <div class="dropdown">
+          <button class="dropbtn" data-original-text="Styles">Styles<i class="arrow down"></i></button>
+          <div class="dropdown-content">
+            <input
+              type="text"
+              placeholder="Type to filter"
+              class="search-input"
+            />
+            <a href="#" class="all-option">All Styles</a>
+            <a href="#">Contemporary</a>
+            <a href="#">Eclectic</a>
+            <a href="#">Modern</a>
+            <a href="#">Traditional</a>
+            <a href="#">Asian</a>
+            <a href="#">Beach Style</a>
+            <a href="#">Craftsman</a>
+            <a href="#">Farmhouse</a>
+          </div>
+        </div>
+        
+        <button class="clear-filters-btn" id="clear-all">Clear All</button>
       </div>
 
-      <div class="dropdown">
-        <button class="dropbtn" data-original-text="Materials">Materials<i class="arrow down"></i></button>
-        <div class="dropdown-content">
-          <input
-            type="text"
-            placeholder="Type to filter"
-            class="search-input"
-          />
-          <a href="#" class="all-option">All Materials</a>
-          <a href="#">Fabric</a>
-          <a href="#">Velvet</a>
-          <a href="#">Synthetic fiber</a>
-          <a href="#">Polyester</a>
-          <a href="#">Dacron®</a>
-          <a href="#">Microfiber</a>
-          <a href="#">Janus-fiber®</a>
-          <a href="#">Sunbrella®</a>
-        </div>
-      </div>
 
-      <div class="dropdown">
-        <button class="dropbtn" data-original-text="Styles">Styles<i class="arrow down"></i></button>
-        <div class="dropdown-content">
-          <input
-            type="text"
-            placeholder="Type to filter"
-            class="search-input"
-          />
-          <a href="#" class="all-option">All Styles</a>
-          <a href="#">Contemporary</a>
-          <a href="#">Eclectic</a>
-          <a href="#">Modern</a>
-          <a href="#">Traditional</a>
-          <a href="#">Asian</a>
-          <a href="#">Beach Style</a>
-          <a href="#">Craftsman</a>
-          <a href="#">Farmhouse</a>
-        </div>
-      </div>
+      <section class="projects-section">
+          <div class="container">
+              <div id="projects-grid" class="projects-grid"></div>
+          </div>
+      </section>
       
-      <button class="clear-filters-btn" id="clear-all">Clear All</button>
-    </div>
 
-
-    <section class="projects-section">
-        <div class="container">
-            <div id="projects-grid" class="projects-grid"></div>
-        </div>
-    </section>
-    
-
-    <script>
+<script>
       const mainCategory = 'Decore';
 
+      // 1. دالة جلب شجرة الأقسام من الباك إند
+      function loadLiveSubCategories() {
+        // استخدام FancyAPI لضمان صحة المسار
+        FancyAPI.get('/categories/tree.php') 
+          .then(result => {
+            if (result.success && result.data && Array.isArray(result.data.categories)) {
+              const allCategories = result.data.categories;
+
+              // البحث عن القسم الذي يطابق اسم هذه الصفحة (Decore)
+              const currentCategory = allCategories.find(cat => cat.name === mainCategory);
+
+              // إذا وجدنا القسم وبداخله أقسام فرعية، نرسلها عشان تنطبع في القائمة
+              if (currentCategory && currentCategory.sub_categories) {
+                updateDropdownUI(currentCategory.sub_categories);
+              }
+            }
+          })
+          .catch(error => console.error('مشكلة في جلب شجرة الأقسام:', error));
+      }
+
+      // 2. دالة تنظيف القائمة المنسدلة وطباعة الأسماء الجديدة القادمة من الـ TREE
+      function updateDropdownUI(subCategories) {
+        const dropdownContent = document.querySelector('.dropdown .dropdown-content');
+        if (!dropdownContent) return;
+
+        // بنحافظ على خانة البحث وزر الـ All Furniture الثابتين في الأعلى
+        const searchInputHtml = dropdownContent.querySelector('.search-input').outerHTML;
+        const allOptionHtml = dropdownContent.querySelector('.all-option').outerHTML;
+
+        // بنلف على الأقسام الفرعية اللي جاية من السيرفر ونبني روابط الـ HTML لها
+        let newLinksHtml = '';
+        subCategories.forEach(sub => {
+          newLinksHtml += `<a href="#" data-id="${sub.id}">${sub.name}</a>`;
+        });
+
+        // بنمسح الأسماء القديمة المكتوبة بالـ HTML ونحط الجديدة
+        dropdownContent.innerHTML = searchInputHtml + allOptionHtml + newLinksHtml;
+
+        // تشغيل أحداث الضغط والفلترة على الأزرار الجديدة
+        activateFilterLogic();
+      }
+
+      // 3. دالة رسم كروت المشاريع في الصفحة
       function renderProjects(data) {
         const grid = document.getElementById('projects-grid');
         if (!grid) return;
@@ -117,20 +160,14 @@
         `;
       }
 
-      document.addEventListener("DOMContentLoaded", () => {
-        const initialData = myProjects.filter(item => item.category === mainCategory);
-        renderProjects(initialData);
-
-        document.querySelectorAll('.search-input').forEach(input => {
-          input.addEventListener('input', function() {
-            const val = this.value.toLowerCase();
-            const links = this.closest('.dropdown-content').querySelectorAll('a');
-            links.forEach(link => {
-              link.style.display = link.textContent.toLowerCase().includes(val) ? "" : "none";
-            });
-          });
+      // 4. دالة الفلترة (تشتغل على العناصر الثابتة والجديدة المستلمة من الـ TREE)
+      function activateFilterLogic() {
+        document.querySelectorAll('.dropdown-content a').forEach(link => {
+          // فك الارتباط القديم أولاً لمنع تكرار الأحداث
+          link.replaceWith(link.cloneNode(true));
         });
 
+        // تفعيل حدث الضغط من جديد
         document.querySelectorAll('.dropdown-content a').forEach(link => {
           link.addEventListener('click', function(e) {
             e.preventDefault();
@@ -152,7 +189,32 @@
             renderProjects(filtered);
           });
         });
+      }
 
+      // 5. عند تحميل الصفحة بالكامل
+      document.addEventListener("DOMContentLoaded", () => {
+        
+        // تشغيل جلب بيانات الـ TREE فوراً عند فتح الصفحة لتحديث فلتر الأثاث
+        loadLiveSubCategories();
+
+        // عرض المشاريع المبدئية
+        const initialData = myProjects.filter(item => item.category === mainCategory);
+        renderProjects(initialData);
+
+        // تشغيل حقل البحث التصفية داخل القوائم المنسدلة أثناء الكتابة
+        document.querySelectorAll('.filter-container').forEach(container => {
+          container.addEventListener('input', function(e) {
+            if (e.target.classList.contains('search-input')) {
+              const val = e.target.value.toLowerCase();
+              const links = e.target.closest('.dropdown-content').querySelectorAll('a');
+              links.forEach(link => {
+                link.style.display = link.textContent.toLowerCase().includes(val) ? "" : "none";
+              });
+            }
+          });
+        });
+
+        // تشغيل زر مسح الفلاتر Clear All
         document.getElementById('clear-all').addEventListener('click', function() {
           document.querySelectorAll('.dropbtn').forEach(btn => {
             const original = btn.getAttribute('data-original-text');
@@ -165,11 +227,10 @@
       });
     </script>
 
+      <div id="footer-placeholder"></div>
 
-    <div id="footer-placeholder"></div>
+      <script src="js/data_decore.js"></script>
 
-    <script src="js/data_decore.js"></script>
-
-    <script src="js/script.js"></script>
-  </body>
-</html>
+      <script src="js/script.js"></script>
+    </body>
+  </html>
