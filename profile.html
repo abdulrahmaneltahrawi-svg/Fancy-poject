@@ -1,102 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الملف الشخصي - Fancy Design</title>
+    <title>Profile Page</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .profile-container { max-width: 800px; margin: 80px auto; padding: 40px; background: #fff; border: 1px solid #eee; }
-        .profile-header { text-align: center; margin-bottom: 40px; border-bottom: 1px solid #f9f9f9; padding-bottom: 30px; }
-        .profile-header h2 { font-size: 28px; font-weight: 500; margin-bottom: 10px; }
-        .profile-header span { color: #888; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
-        .info-item { display: flex; flex-direction: column; gap: 8px; }
-        .info-item label { font-size: 12px; color: #aaa; text-transform: uppercase; }
-        .info-item p { font-size: 16px; color: #333; margin: 0; font-weight: 400; }
-        .profile-actions { margin-top: 50px; display: flex; gap: 15px; border-top: 1px solid #f9f9f9; padding-top: 30px; }
-        .btn-edit { padding: 12px 30px; background: #000; color: #fff; text-decoration: none; font-size: 14px; }
-        .btn-logout-alt { padding: 12px 30px; border: 1px solid #eee; color: #d9534f; text-decoration: none; font-size: 14px; }
-        @media (max-width: 600px) { .info-grid { grid-template-columns: 1fr; } }
-    </style>
 </head>
 <body>
+    <style>
+
+
+.navbar { display: flex; justify-content: space-between; padding: 15px 50px; border-bottom: 1px solid #ddd; }
+
+.profile-container { text-align: center; margin-top: 50px; }
+
+.avatar { 
+    width: 120px; height: 120px; background: #ddd; 
+    border-radius: 50%; margin: 0 auto 20px; 
+    display: flex; align-items: center; justify-content: center; font-size: 50px;
+}
+
+.tabs { margin-top: 40px; border-bottom: 1px solid #eee; }
+.tabs a { margin: 0 20px; text-decoration: none; color: #666; padding-bottom: 10px; display: inline-block; }
+.tabs a.active { border-bottom: 2px solid #000; color: #000; font-weight: bold; }
+
+.create-section { margin-top: 50px; display: inline-block; }
+.add-box { 
+    width: 150px; height: 150px; border: 2px dashed #ccc; 
+    border-radius: 50%; display: flex; align-items: center; 
+    justify-content: center; font-size: 40px; cursor: pointer;
+}
+    </style>
+
     <div id="header-placeholder"></div>
 
-    <div class="profile-container">
-        <div class="profile-header">
-            <h2 id="prof-name">جاري التحميل...</h2>
-            <span id="prof-type">...</span>
+    <main class="profile-container">
+        <div class="avatar" id="prof-avatar">...</div>
+        <h1 id="prof-type">جاري التحميل...</h1>
+        <h2 id="prof-name" style="font-weight: normal; color: #666; margin-bottom: 20px;">...</h2>
+        <p>انضم في: <span id="prof-date">...</span></p>
+        
+        <div class="actions">
+            <button class="settings-btn">⚙ Settings</button>
         </div>
 
-        <div id="profileMessage"></div>
+        <nav class="tabs">
+            <a href="#">Collection</a>
+            <a href="#">Brands</a>
+            <a href="#">Following</a>
+            <a href="#" class="active">Company Pages</a>
+            <a href="#">PO Management</a>
+            <a href="#">Projects</a>
+        </nav>
 
-        <div class="info-grid">
-            <div class="info-item">
-                <label>البريد الإلكتروني</label>
-                <p id="prof-email">...</p>
-            </div>
-            <div class="info-item">
-                <label>رقم الهاتف</label>
-                <p id="prof-phone">...</p>
-            </div>
-            <div class="info-item">
-                <label>حالة الحساب</label>
-                <p id="prof-status">...</p>
-            </div>
-            <div class="info-item">
-                <label>تاريخ الانضمام</label>
-                <p id="prof-date">...</p>
-            </div>
+        <div class="create-section">
+            <div class="add-box">+</div>
+            <p>Create Design Company</p>
         </div>
-
-        <div class="profile-actions">
-            <a href="#" class="btn-edit" onclick="alert('قريباً: تعديل البيانات'); return false;">تعديل البيانات</a>
-            <a href="#" id="profile-logout-link" class="btn-logout-alt">تسجيل الخروج</a>
-        </div>
-    </div>
+    </main>
 
     <div id="footer-placeholder"></div>
 
-    <script src="js/script.js"></script>
-    <script src="js/auth.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const userData = localStorage.getItem('userData');
-            if (!userData) {
-                window.location.href = 'index.html';
-                return;
-            }
-
-            // عرض البيانات المخزنة محلياً فوراً حتى لا تظل الصفحة فارغة
-            try {
-                const user = JSON.parse(userData);
-                document.getElementById('prof-name').textContent = `${user.first_name} ${user.last_name}`;
-                document.getElementById('prof-type').textContent = 
-                    user.account_type === 'designer' ? 'مصمم' : 
-                    user.account_type === 'brand' ? 'علامة تجارية' : 'حساب شخصي';
-                document.getElementById('prof-email').textContent = user.email;
-                document.getElementById('prof-phone').textContent = user.phone || 'غير مسجل';
-                document.getElementById('prof-status').textContent = user.status === 'active' ? 'نشط' : (user.status || '... Boris');
-                
-                const joinDate = user.created_at || user.registration_date;
-                document.getElementById('prof-date').textContent = joinDate 
-                    ? new Date(joinDate).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' })
-                    : 'جاري التحميل...';
-            } catch (e) {
-                console.error("Error parsing local user data", e);
-            }
-
-            // تحديث البيانات من السيرفر للتأكد من أنها لا تزال صالحة
-            if (typeof loadUserProfile === 'function') {
-                loadUserProfile();
-            }
-            
-            document.getElementById('profile-logout-link')?.addEventListener('click', (e) => {
-                e.preventDefault();
-                logoutUser();
-            });
-        });
-    </script>
 </body>
+<script src="js/script.js"></script>
+<script src="js/auth.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof loadUserProfile === 'function') {
+            loadUserProfile();
+        }
+    });
+</script>
+</html>
+
 </html>

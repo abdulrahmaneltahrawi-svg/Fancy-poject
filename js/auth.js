@@ -9,18 +9,19 @@ function updateAuthUI() {
     if (userData) {
         try {
             const user = JSON.parse(userData);
+
             authLinks.innerHTML = `
-                <div class="user-menu-wrapper" style="position: relative;">
-                    <button id="user-menu-toggle" class="user-name-btn">
-                        ${user.first_name} ${user.last_name}
-                        <i class="arrow-down"></i>
-                    </button>
-                    <div id="user-dropdown-list" class="dropdown-menu user-dropdown">
-                        ${(user.account_type === 'designer' || user.account_type === 'brand') ? 
-                            '<a href="add-product.html"><li>إضافة منتج</li></a>' : ''}
-                        <a href="profile.html"><li>ملفي الشخصي</li></a>
-                        <hr style="border: 0; border-top: 1px solid #eee; margin: 5px 0;">
-                        <a href="#" id="logout-btn"><li style="color: #d9534f;">تسجيل الخروج</li></a>
+                <div class="user-nav-container">
+                    <div class="user-menu-wrapper" style="position: relative;">
+                        <button id="user-menu-toggle" class="user-name-btn">
+                            ${user.first_name} ${user.last_name}
+                            <i class="arrow-down"></i>
+                        </button>
+                        <div id="user-dropdown-list" class="dropdown-menu user-dropdown">
+                            <a href="profile.html"><li>ملفي الشخصي</li></a>
+                            <hr style="border: 0; border-top: 1px solid #eee; margin: 5px 0;">
+                            <a href="#" id="logout-btn"><li style="color: #d9534f;">تسجيل الخروج</li></a>
+                        </div>
                     </div>
                 </div>
             `;
@@ -74,15 +75,25 @@ async function loadUserProfile() {
     try {
         const result = await FancyAPI.get('/auth/me.php');
         if (result && result.success) {
-            const user = result.data.user;
+            // التأكد من جلب بيانات المستخدم سواء كانت داخل user أو في data مباشرة
+            const user = result.data.user || result.data;
             // تحديث البيانات المحلية بالبيانات الأحدث من السيرفر
             localStorage.setItem('userData', JSON.stringify(user));
             
             if (document.getElementById('prof-name')) 
-            document.getElementById('prof-name').textContent = `${user.first_name} ${user.last_name}`;
+            document.getElementById('prof-name').textContent = user.first_name;
+            if (document.getElementById('prof-avatar')) {
+                document.getElementById('prof-avatar').textContent = user.first_name.charAt(0).toUpperCase();
+            }
             if (document.getElementById('prof-email')) document.getElementById('prof-email').textContent = user.email;
             if (document.getElementById('prof-phone')) document.getElementById('prof-phone').textContent = user.phone || 'غير مسجل';
-            if (document.getElementById('prof-type')) document.getElementById('prof-type').textContent = user.account_type;
+            
+            const typeTranslations = {
+                'personal': 'حساب شخصي',
+                'designer': 'مصمم',
+                'brand': 'علامة تجارية'
+            };
+            if (document.getElementById('prof-type')) document.getElementById('prof-type').textContent = typeTranslations[user.account_type] || user.account_type;
             if (document.getElementById('prof-status')) document.getElementById('prof-status').textContent = user.status;
             
             const dateElem = document.getElementById('prof-date');
@@ -100,6 +111,8 @@ async function loadUserProfile() {
         displayMessage('profileMessage', 'خطأ في الاتصال بالسيرفر', false);
     }
 }
+
+window.loadUserProfile = loadUserProfile; // جعل الدالة متاحة عالمياً لاستدعائها من صفحة البروفايل
 
 async function logoutUser() {
     try {
