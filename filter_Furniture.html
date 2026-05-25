@@ -87,21 +87,28 @@
       const mainCategory = 'Furniture';
 
       // 1. دالة جلب الأقسام الفرعية الحية من السيرفر
-      async function loadLiveSubCategories() {
-        try {
-          const result = await FancyAPI.get('/categories/tree.php');
-          if (result.success && result.data && Array.isArray(result.data.categories)) {
-            const currentCat = result.data.categories.find(cat => cat.name === mainCategory);
-            if (currentCat && currentCat.sub_categories) {
-              updateDropdownUI(currentCat.sub_categories);
+      function loadLiveSubCategories() {
+        if (typeof window.loadSubCategoriesForFilter === 'function') {
+          window.loadSubCategoriesForFilter(mainCategory, (subCategories) => {
+            if (subCategories && subCategories.length > 0) {
+              const targetDropdown = document.querySelector('.filter-container .dropdown:first-child');
+              if (targetDropdown) {
+                updateDropdownUI(targetDropdown, subCategories);
+                
+                const dropbtn = targetDropdown.querySelector('.dropbtn');
+                if (dropbtn) {
+                  dropbtn.setAttribute('data-original-text', `All ${mainCategory}`);
+                  dropbtn.innerHTML = `All ${mainCategory} <i class="arrow down"></i>`;
+                }
+              }
             }
-          }
-        } catch (error) { console.error('Error fetching tree:', error); }
+          }).catch(error => console.error('Error in Furniture filter:', error));
+        }
       }
 
       // 2. تحديث واجهة القائمة المنسدلة
-      function updateDropdownUI(subCategories) {
-        const dropdownContent = document.querySelector('.dropdown .dropdown-content');
+      function updateDropdownUI(dropdownElement, subCategories) {
+        const dropdownContent = dropdownElement.querySelector('.dropdown-content');
         if (!dropdownContent) return;
 
         const searchInputHtml = dropdownContent.querySelector('.search-input').outerHTML;
@@ -152,11 +159,9 @@
       function activateFilterLogic() {
         // تفعيل البحث النصي داخل الدروب داون
         document.querySelectorAll('.search-input').forEach(input => {
-          input.replaceWith(input.cloneNode(true)); // تنظيف المستمعات القديمة
-        });
-
-        document.querySelectorAll('.search-input').forEach(input => {
-          input.addEventListener('input', function() {
+          const newInput = input.cloneNode(true);
+          input.parentNode.replaceChild(newInput, input);
+          newInput.addEventListener('input', function() {
             const val = this.value.toLowerCase();
             this.closest('.dropdown-content').querySelectorAll('a').forEach(link => {
               link.style.display = link.textContent.toLowerCase().includes(val) ? "" : "none";
@@ -165,11 +170,9 @@
         });
 
         document.querySelectorAll('.dropdown-content a').forEach(link => {
-          link.replaceWith(link.cloneNode(true));
-        });
-
-        document.querySelectorAll('.dropdown-content a').forEach(link => {
-          link.addEventListener('click', function(e) {
+          const newLink = link.cloneNode(true);
+          link.parentNode.replaceChild(newLink, link);
+          newLink.addEventListener('click', function(e) {
             e.preventDefault();
             const filterText = this.textContent.trim();
             const filterValue = filterText.toLowerCase();
@@ -215,8 +218,6 @@
     </script>
 
     <div id="footer-placeholder"></div>
-
-    <script src="js/data_Furniture.js"></script>
 
     <script src="js/script.js"></script>
   </body>

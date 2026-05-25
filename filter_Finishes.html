@@ -92,20 +92,27 @@
     <script>
       const mainCategory = 'Finishes';
 
-      async function loadLiveSubCategories() {
-        try {
-          const result = await FancyAPI.get('/categories/tree.php');
-          if (result.success && result.data && Array.isArray(result.data.categories)) {
-            const currentCat = result.data.categories.find(cat => cat.name === mainCategory);
-            if (currentCat && currentCat.sub_categories) {
-              updateDropdownUI(currentCat.sub_categories);
+      function loadLiveSubCategories() {
+        if (typeof window.loadSubCategoriesForFilter === 'function') {
+          window.loadSubCategoriesForFilter(mainCategory, (subCategories) => {
+            if (subCategories && subCategories.length > 0) {
+              const targetDropdown = document.querySelector('.filter-container .dropdown:first-child');
+              if (targetDropdown) {
+                updateDropdownUI(targetDropdown, subCategories);
+                
+                const dropbtn = targetDropdown.querySelector('.dropbtn');
+                if (dropbtn) {
+                  dropbtn.setAttribute('data-original-text', `All ${mainCategory}`);
+                  dropbtn.innerHTML = `All ${mainCategory} <i class="arrow down"></i>`;
+                }
+              }
             }
-          }
-        } catch (error) { console.error('Error fetching tree:', error); }
+          }).catch(error => console.error('Error in Finishes filter:', error));
+        }
       }
 
-      function updateDropdownUI(subCategories) {
-        const dropdownContent = document.querySelector('.dropdown .dropdown-content');
+      function updateDropdownUI(dropdownElement, subCategories) {
+        const dropdownContent = dropdownElement.querySelector('.dropdown-content');
         if (!dropdownContent) return;
         const searchInputHtml = dropdownContent.querySelector('.search-input').outerHTML;
         const allOptionHtml = dropdownContent.querySelector('.all-option').outerHTML;
@@ -203,8 +210,6 @@
 
 
     <div id="footer-placeholder"></div>
-
-    <script src="js/data_finishes.js"></script>
 
     <script src="js/script.js"></script>
   </body>

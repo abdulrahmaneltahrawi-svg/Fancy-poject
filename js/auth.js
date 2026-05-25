@@ -2,6 +2,28 @@
  * auth.js - معالجة نظام تسجيل الدخول والحسابات
  */
 
+// كائن خدمة البريد الإلكتروني لعزل منطق الإرسال عن منطق الحسابات
+const EmailService = {
+    // استبدل هذه القيم بمفاتيحك الحقيقية من لوحة تحكم EmailJS
+    // تأكد أن هذه القيم ليست 'service_id_here' أو 'template_id_here'
+    CONFIG: {
+        SERVICE_ID: 'service_id_here', 
+        TEMPLATE_ID: 'template_id_here'
+    },
+
+    sendVerification: async function(userName, userEmail, code) {
+        if (this.CONFIG.SERVICE_ID === 'service_id_here' || this.CONFIG.TEMPLATE_ID === 'template_id_here') {
+            console.error('EmailJS Error: SERVICE_ID or TEMPLATE_ID are still placeholders. Please replace them in js/auth.js.');
+            return Promise.reject({ text: 'خطأ في إعدادات EmailJS: المفاتيح غير صحيحة.' });
+        }
+
+        const params = { user_name: userName, user_email: userEmail, verification_code: code };
+        console.log('Attempting to send email via EmailService...', params);
+        console.log('EmailJS Config:', this.CONFIG); // لعرض المفاتيح المستخدمة في الكونسول
+        return emailjs.send(this.CONFIG.SERVICE_ID, this.CONFIG.TEMPLATE_ID, params);
+    }
+};
+
 // وظيفة لتغيير أزرار الهيدر (Login/Join) إلى اسم المستخدم عند تسجيل الدخول
 function updateAuthUI() {
     const authLinks = document.querySelector('.auth-links');
@@ -120,7 +142,33 @@ async function resendVerificationCode(email) {
     displayMessage('emailVerificationMessage', 'جاري إعادة إرسال الرمز...', true);
     try {
         const result = await FancyAPI.post('/auth/resend-verification-code.php', { email });
-        displayMessage('emailVerificationMessage', result.message, result.success);
+        console.log('Resend API Response:', result); // لمساعدتك في تتبع البيانات في الكونسول
+        
+        // --- رمز تحقق مؤقت وغير آمن للاختبار فقط (لا تستخدمه في بيئة إنتاجية) ---
+        // بما أن ملفات PHP الحالية لا تعيد الرمز في استجابة JSON،
+        // سنستخدم رمزاً ثابتاً مؤقتاً لاختبار عمل EmailJS.
+        // يجب تعديل ملفات PHP لتعيد الرمز الحقيقي ليكون الحل آمناً.
+        const token = result.data?.token_code || result.data?.verification_code || "332211"; // رمز ثابت مؤقت لإعادة الإرسال
+        // --- نهاية الرمز المؤقت ---
+
+        if (result.success) {
+            if (!result.data?.token_code) {
+                console.warn('Warning: No token_code received from server for resend. Using a temporary hardcoded token for EmailJS testing.');
+            }
+
+            // إرسال الكود الجديد (المؤقت) عبر EmailJS
+            EmailService.sendVerification(result.data.first_name || 'User', email, token)
+                .then(() => {
+                    displayMessage('emailVerificationMessage', 'تم إرسال رمز جديد بنجاح إلى بريدك.', true);
+                })
+                .catch(err => {
+                    console.error('EmailJS Resend Error:', err);
+                    displayMessage('emailVerificationMessage', 'تم توليد الرمز ولكن فشل الإرسال عبر البريد. تأكد من إعدادات EmailJS.', false);
+                });
+        } else {
+            displayMessage('emailVerificationMessage', result.message || 'فشل إعادة إرسال الرمز.', false);
+        }
+
     } catch (error) {
         displayMessage('emailVerificationMessage', 'خطأ في الاتصال بالسيرفر.', false);
     }
@@ -186,15 +234,50 @@ function initializeAuthListeners() {
     if (event.target.id === 'registrationForm') {
         event.preventDefault();
         const data = Object.fromEntries(new FormData(event.target).entries());
+        const regMsgId = 'registrationMessage';
+
         try {
-            displayMessage('registrationMessage', 'جاري إرسال البيانات...', true);
+            displayMessage(regMsgId, 'جاري إرسال البيانات...', true);
             const result = await FancyAPI.post('/auth/register.php', data);
-            console.log('Registration Response:', result);
+            
+            console.log('Server Response:', result); // فحص رد السيرفر في الكونسول
 
             if (result?.success) {
-                displayMessage('registrationMessage', result.message, true);
-                event.target.reset();
-                setTimeout(() => showAuthModal('verify', data.email), 2000);
+                // التحقق من وجود الكود قبل الإرسال
+                const token = result.data?.token_code || result.data?.verification_code;
+                
+                // --- رمز تحقق مؤقت وغير آمن للاختبار فقط (لا تستخدمه في بيئة إنتاجية) ---
+                // بما أن ملفات PHP الحالية لا تعيد الرمز في استجابة JSON،
+                // سنستخدم رمزاً ثابتاً مؤقتاً لاختبار عمل EmailJS.
+                // يجب تعديل ملفات PHP لتعيد الرمز الحقيقي ليكون الحل آمناً.
+                const testToken = token || "122333"; // رمز ثابت مؤقت
+                // --- نهاية الرمز المؤقت ---
+
+                if (!token) {
+                    console.warn('Warning: No token_code received from server. Using a temporary hardcoded token for EmailJS testing.');
+                    // لا نخرج هنا، بل نواصل باستخدام الرمز المؤقت
+                }
+
+                // استخدام الـ EmailService بدلاً من الاستدعاء المباشر
+                EmailService.sendVerification(data.first_name, data.email, testToken)
+                    .then(() => {
+                        console.log('EmailService: Success');
+                        displayMessage(regMsgId, 'تم التسجيل! أرسلنا رمز التحقق إلى بريدك الإلكتروني (رمز الاختبار: ' + testToken + ').', true);
+                        
+                        // الانتقال لصفحة التحقق
+                        // ملاحظة: بما أن الرمز ثابت، يمكن للمستخدم إدخال 122333 للتحقق
+                        // ولكن هذا غير آمن ويجب استبداله بالرمز الحقيقي من PHP
+                        // بعد تعديل ملفات PHP لتعيد الرمز.
+
+                        setTimeout(() => {
+                            event.target.reset();
+                            showAuthModal('verify', data.email);
+                        }, 2000);
+                    })
+                    .catch((err) => {
+                        console.error('EmailJS Failed Error:', err);
+                        displayMessage(regMsgId, 'خطأ في خدمة الإيميل: ' + (err.text || 'تأكد من إعدادات EmailJS والمفاتيح'), false);
+                    });
             } else {
                 displayMessage('registrationMessage', result.message || 'خطأ في التسجيل', false);
             }
@@ -210,15 +293,19 @@ function initializeAuthListeners() {
         try {
             displayMessage('loginMessage', 'جاري تسجيل الدخول...', true);
             const result = await FancyAPI.post('/auth/login.php', data);
+            console.log('Login API Response:', result); // أضف هذا السطر
             if (result?.success) {
                 displayMessage('loginMessage', result.message, true);
                 localStorage.setItem('userData', JSON.stringify(result.data.user));
                 setTimeout(() => location.reload(), 1500);
             } else {
+                // إذا كان السبب هو عدم تفعيل البريد، ننتقل لواجهة التحقق
                 if (result.data?.code === "EMAIL_NOT_VERIFIED") {
                     showAuthModal('verify', data.email);
+                    displayMessage('emailVerificationMessage', result.message, false);
+                } else {
+                    displayMessage('loginMessage', result.message || 'فشل الدخول', false);
                 }
-                displayMessage('loginMessage', result.message || 'فشل الدخول', false);
             }
         } catch (error) {
             displayMessage('loginMessage', 'خطأ في الاتصال بالخادم.', false);
