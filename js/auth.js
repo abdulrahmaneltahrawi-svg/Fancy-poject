@@ -71,48 +71,42 @@ function switchAuthTab(type) {
 }
 
 async function loadUserProfile() {
-    const profileMsg = document.getElementById('profileMessage');
+    // 1. القراءة الفورية من المتصفح لسرعة العرض
+    const localData = localStorage.getItem('userData');
+    if (localData) {
+        const user = JSON.parse(localData);
+        updateProfileUI(user);
+    }
+
+    // 2. جلب أحدث البيانات من السيرفر
     try {
         const result = await FancyAPI.get('/auth/me.php');
         if (result && result.success) {
-            // التأكد من جلب بيانات المستخدم سواء كانت داخل user أو في data مباشرة
             const user = result.data.user || result.data;
-            // تحديث البيانات المحلية بالبيانات الأحدث من السيرفر
             localStorage.setItem('userData', JSON.stringify(user));
-            
-            if (document.getElementById('prof-name')) 
-            document.getElementById('prof-name').textContent = user.first_name;
-            if (document.getElementById('prof-avatar')) {
-                document.getElementById('prof-avatar').textContent = user.first_name.charAt(0).toUpperCase();
-            }
-            if (document.getElementById('prof-email')) document.getElementById('prof-email').textContent = user.email;
-            if (document.getElementById('prof-phone')) document.getElementById('prof-phone').textContent = user.phone || 'غير مسجل';
-            
-            const typeTranslations = {
-                'personal': 'حساب شخصي',
-                'designer': 'مصمم',
-                'brand': 'علامة تجارية'
-            };
-            if (document.getElementById('prof-type')) document.getElementById('prof-type').textContent = typeTranslations[user.account_type] || user.account_type;
-            if (document.getElementById('prof-status')) document.getElementById('prof-status').textContent = user.status;
-            
-            const dateElem = document.getElementById('prof-date');
-            if (dateElem) {
-                const joinDate = user.created_at || user.registration_date;
-                dateElem.textContent = joinDate 
-                    ? new Date(joinDate).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' })
-                    : 'غير متوفر';
-            }
-        } else if (result?.code === 'UNAUTHORIZED') {
-            localStorage.removeItem('userData');
-            location.reload();
+            updateProfileUI(user);
         }
     } catch (error) {
-        displayMessage('profileMessage', 'خطأ في الاتصال بالسيرفر', false);
+        console.error("خطأ في جلب بيانات البروفايل من السيرفر:", error);
     }
 }
 
-window.loadUserProfile = loadUserProfile; // جعل الدالة متاحة عالمياً لاستدعائها من صفحة البروفايل
+// دالة مساعدة لتحديث عناصر الصفحة (سهلة الصيانة)
+function updateProfileUI(user) {
+    if (document.getElementById('prof-name')) 
+        document.getElementById('prof-name').textContent = `${user.first_name} ${user.last_name}`;
+    
+    if (document.getElementById('prof-avatar')) 
+        document.getElementById('prof-avatar').textContent = user.first_name.charAt(0).toUpperCase();
+        
+    if (document.getElementById('prof-type')) 
+        document.getElementById('prof-type').textContent = user.account_type || 'مستخدم';
+        
+    const dateElem = document.getElementById('prof-date');
+    if (dateElem && user.created_at) {
+        dateElem.textContent = new Date(user.created_at).toLocaleDateString('ar-EG');
+    }
+}
 
 async function logoutUser() {
     try {
