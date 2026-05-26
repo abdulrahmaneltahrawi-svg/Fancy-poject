@@ -34,7 +34,25 @@ async function displayDesigners() {
     }
 }
 
+async function submitDesignerProfile(data) {
+    try {
+        // إرسال البيانات إلى API إنشاء ملف المصمم
+        const result = await FancyAPI.post('/designer/create-profile.php', data);
+        if (result.success) {
+            alert(result.message || "تم حفظ الملف الشخصي بنجاح! هو الآن بانتظار مراجعة الإدارة.");
+            window.location.href = 'profile.html';
+        } else {
+            alert("خطأ: " + (result.message || "فشل في حفظ البيانات"));
+        }
+    } catch (error) {
+        console.error('Error submitting designer profile:', error);
+        alert("حدث خطأ في الاتصال بالسيرفر.");
+    }
+}
+
 // التشغيل عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', () => {
     displayDesigners();
 });
+
+window.submitDesignerProfile = submitDesignerProfile;

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>الانضمام كمصمم - Fancy Design</title>
@@ -24,7 +24,7 @@
         <form id="designerForm">
             <div class="form-group">
                 <label>الاسم المهني / الكامل</label>
-                <input type="text" name="full_name" required placeholder="مثلاً: م. أحمد علي">
+                <input type="text" name="name" required placeholder="مثلاً: م. أحمد علي">
             </div>
             <div class="form-group">
                 <label>التخصص</label>
@@ -44,15 +44,22 @@
 
     <div id="footer-placeholder"></div>
 
-    <script src="js/script.js"></script>
-    <script src="js/designers.js"></script>
-    <script>
-        document.getElementById('designerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+<script src="js/script.js"></script>
+<script src="js/designers.js"></script>
+
+<script>
+    document.getElementById('designerForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // التحقق من وجود الدالة قبل استدعائها
+        if (typeof submitDesignerProfile === 'function') {
             const data = Object.fromEntries(new FormData(this).entries());
-            // نستخدم الدالة الموجودة في designers.js لإرسال البيانات
             submitDesignerProfile(data);
-        });
-    </script>
+        } else {
+            console.error("خطأ: الدالة submitDesignerProfile غير معرفة!");
+        }
+    });
+</script>
 </body>
 </html>
+fancy/api/designer/create-profile.php

@@ -140,6 +140,23 @@ async function updateBrandProfile(formDataObject) {
     }
 }
 
+async function submitNewBrand(data) {
+    try {
+        // إرسال البيانات إلى API تسجيل براند جديد
+        const result = await FancyAPI.post('/brands/create.php', data);
+        if (result.success) {
+            alert(result.message || "تم إرسال طلب تسجيل البراند بنجاح! هو الآن بانتظار مراجعة الإدارة.");
+            window.location.href = 'profile.html';
+        } else {
+            alert("خطأ: " + (result.message || "فشل في إرسال الطلب"));
+        }
+    } catch (error) {
+        console.error('Error submitting brand:', error);
+        alert("حدث خطأ في الاتصال بالسيرفر.");
+    }
+}
+
 window.loadMyBrandForEdit = loadMyBrandForEdit;
 window.updateBrandProfile = updateBrandProfile;
 window.displayAllBrands = displayAllBrands;
+window.submitNewBrand = submitNewBrand;

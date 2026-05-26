@@ -10,19 +10,21 @@ const FancyAPI = {
         };
 
         // إضافة Content-Type فقط في حال كانت الطريقة ليست GET
-        if (options.method && options.method !== 'GET') {
+        if (options.method && options.method !== 'GET' && !headers['Content-Type']) {
             headers['Content-Type'] = 'application/json';
         }
 
         try {
             // إضافة credentials: 'include' لضمان عمل الجلسات (Sessions)
             const response = await fetch(url, { ...options, headers, credentials: 'include' });
-            const text = await response.text();
+            const text = (await response.text()).trim();
+
             let result;
             try {
                 result = JSON.parse(text);
             } catch (e) {
-                // في حال رجوع خطأ PHP أو استجابة ليست JSON
+                // طباعة الخطأ الحقيقي في الكونسول للمساعدة في البرمجة
+                console.error(`Raw Server Response Error at [${endpoint}]:`, text);
                 return { success: false, message: 'استجابة غير صالحة من السيرفر', status: response.status, error: text };
             }
             return { ok: response.ok, status: response.status, ...result };
@@ -32,7 +34,20 @@ const FancyAPI = {
         }
     },
     get(endpoint) { return this.request(endpoint, { method: 'GET' }); },
-    post(endpoint, data) { return this.request(endpoint, { method: 'POST', body: JSON.stringify(data) }); }
+        post(endpoint, data) { 
+            // تحويل البيانات إلى URLSearchParams لتمكين PHP من قراءتها مباشرة عبر $_POST
+            const params = new URLSearchParams();
+            for (const key in data) {
+                if (data[key] !== null && data[key] !== undefined) {
+                    params.append(key, data[key]);
+                }
+            }
+            return this.request(endpoint, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: params.toString() 
+            }); 
+        }
 };
 
 // وظيفة لجلب ملف الهيدر وحقنه في الصفحة
