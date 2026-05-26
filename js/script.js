@@ -34,19 +34,11 @@ const FancyAPI = {
         }
     },
     get(endpoint) { return this.request(endpoint, { method: 'GET' }); },
-        post(endpoint, data) { 
-            // تحويل البيانات إلى URLSearchParams لتمكين PHP من قراءتها مباشرة عبر $_POST
-            const params = new URLSearchParams();
-            for (const key in data) {
-                if (data[key] !== null && data[key] !== undefined) {
-                    params.append(key, data[key]);
-                }
-            }
-            return this.request(endpoint, { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: params.toString() 
-            }); 
+        post(endpoint, data) {
+            return this.request(endpoint, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
         }
 };
 
