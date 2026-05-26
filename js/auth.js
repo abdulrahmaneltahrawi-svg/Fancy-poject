@@ -106,7 +106,41 @@ function updateProfileUI(user) {
     if (dateElem && user.created_at) {
         dateElem.textContent = new Date(user.created_at).toLocaleDateString('ar-EG');
     }
+    
+    // تهيئة التبويبات
+    setupProfileTabs(user);
 }
+
+function setupProfileTabs(user) {
+    const tabs = document.querySelectorAll('.tabs a');
+    const createSection = document.getElementById('create-action-link');
+    const createText = document.getElementById('create-action-text');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            // 1. تغيير الخط تحت التبويب (Underline)
+            tabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+
+            // 2. تغيير المحتوى بناءً على التبويب
+            if (this.id === 'tab-overview') {
+                createSection?.classList.add('hidden');
+            } 
+            else if (this.id === 'tab-brands') {
+                createSection?.classList.remove('hidden');
+                if (createText) createText.textContent = 'إضافة منتج جديد';
+                if (createSection) createSection.href = 'add-product.html';
+            } 
+            else if (this.id === 'tab-designer') {
+                createSection?.classList.remove('hidden');
+                if (createText) createText.textContent = 'إضافة مصمم';
+                if (createSection) createSection.href = 'add-designer.html';
+            }
+        });
+    });
+}
+
+window.loadUserProfile = loadUserProfile;
 
 async function logoutUser() {
     try {
