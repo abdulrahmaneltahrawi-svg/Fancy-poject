@@ -37,6 +37,10 @@
                 <input type="text" name="requested_sub_category_name" placeholder="مثلاً: كراسي، طاولات..." required>
             </div>
             <div class="form-group">
+                <label>صورة المنتج الرئيسية</label>
+                <input type="file" name="image" accept="image/*" required>
+            </div>
+            <div class="form-group">
                 <label>وصف قصير</label>
                 <textarea name="short_description" rows="2"></textarea>
             </div>
@@ -52,27 +56,39 @@
     <script src="js/auth.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const userData = localStorage.getItem('userData');
-            if (!userData) {
-                alert('يجب تسجيل الدخول أولاً');
-                window.location.href = 'index.html';
-                return;
-            }
-            
-            const user = JSON.parse(userData);
-            // التأكد أن المستخدم مصمم أو براند
-            if (user.account_type === 'personal') {
-                alert('عذراً، حسابات الأفراد لا يمكنها إضافة منتجات.');
-                window.location.href = 'index.html';
-            }
-            document.getElementById('form_brand_id').value = user.brand_id || user.id;
+            // التأكد من تحديث بيانات المستخدم من السيرفر لجلب الـ brand_id الصحيح
+            FancyAPI.get('/auth/me.php').then(result => {
+                if (result && result.success) {
+                    const user = result.data.user || result.data;
+                    localStorage.setItem('userData', JSON.stringify(user));
+                    
+                    if (user.account_type === 'personal') {
+                        alert('عذراً، حسابات الأفراد لا يمكنها إضافة منتجات.');
+                        window.location.href = 'index.html';
+                        return;
+                    }
+
+                    // تحديد المعرف: يفضل brand_id، وإذا لم يوجد نستخدم id المستخدم
+                    const brandId = user.brand_id || user.id;
+                    document.getElementById('form_brand_id').value = brandId;
+                } else {
+                    alert('يجب تسجيل الدخول أولاً');
+                    window.location.href = 'login.html';
+                }
+            });
         });
 
         document.getElementById('productForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
-            const data = Object.fromEntries(formData.entries());
-            submitNewProduct(data);
+            
+            // تحقق أخير قبل الإرسال
+            if (!formData.get('brand_id')) {
+                alert('خطأ: لم يتم التعرف على معرف العلامة التجارية. يرجى تحديث الصفحة.');
+                return;
+            }
+
+            submitNewProduct(formData);
         });
     </script>
 </body>

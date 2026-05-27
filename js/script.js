@@ -10,7 +10,7 @@ const FancyAPI = {
         };
 
         // إضافة Content-Type فقط في حال كانت الطريقة ليست GET
-        if (options.method && options.method !== 'GET' && !headers['Content-Type']) {
+        if (options.method && options.method !== 'GET' && !headers['Content-Type'] && !(options.body instanceof FormData)) {
             headers['Content-Type'] = 'application/json';
         }
 
@@ -35,9 +35,10 @@ const FancyAPI = {
     },
     get(endpoint) { return this.request(endpoint, { method: 'GET' }); },
         post(endpoint, data) {
+            const isFormData = data instanceof FormData;
             return this.request(endpoint, {
                 method: 'POST',
-                body: JSON.stringify(data)
+                body: isFormData ? data : JSON.stringify(data)
             });
         }
 };

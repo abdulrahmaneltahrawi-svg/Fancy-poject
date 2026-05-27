@@ -211,15 +211,25 @@ async function submitProductUpdate(formDataObject) {
 }
 
 // دالة لإرسال منتج جديد إلى السيرفر
-async function submitNewProduct(formDataObject) {
+async function submitNewProduct(formData) {
     try {
-        // تحويل القيم الرقمية للتأكد من توافقها مع الـ PHP
-        const payload = {
-            ...formDataObject,
-            brand_id: parseInt(formDataObject.brand_id),
-            category_id: formDataObject.category_id ? parseInt(formDataObject.category_id) : null,
-            sub_category_id: formDataObject.sub_category_id ? parseInt(formDataObject.sub_category_id) : null
-        };
+        let payload = formData;
+        const userData = JSON.parse(localStorage.getItem('userData')) || {};
+
+        if (payload instanceof FormData) {
+            // التأكد من وجود brand_id داخل الـ FormData قبل الإرسال
+            if (!payload.get('brand_id') || payload.get('brand_id') === "undefined" || payload.get('brand_id') === "") {
+                payload.set('brand_id', userData.brand_id || userData.id);
+            }
+        } else {
+            // في حال كانت البيانات كائن JSON عادي
+            if (!payload.brand_id || payload.brand_id === "undefined" || payload.brand_id === "") {
+                payload.brand_id = userData.brand_id || userData.id;
+            }
+            // تحويل المعرفات لأرقام لضمان قبولها في قاعدة البيانات
+            payload.brand_id = payload.brand_id ? parseInt(payload.brand_id) : null;
+            payload.category_id = payload.category_id ? parseInt(payload.category_id) : null;
+        }
 
         const result = await FancyAPI.post('/products/create.php', payload);
 

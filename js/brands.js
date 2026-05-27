@@ -140,15 +140,49 @@ async function updateBrandProfile(formDataObject) {
     }
 }
 
-async function submitNewBrand(data) {
+async function submitNewBrand(formData) {
     try {
-        // إرسال البيانات إلى API تسجيل براند جديد
-        const result = await FancyAPI.post('/brands/create.php', data);
+        // تحويل FormData إلى كائن عادي ليتم إرساله كـ JSON
+        // لأن السيرفر يتوقع JSON (وهذا سبب خطأ 422 عند إرسال FormData مباشرة)
+        const data = {};
+        
+        // دالة لتحويل ملفات الصور إلى Base64 لإدراجها في الـ JSON
+        const fileToBase64 = (file) => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+
+        // استخراج البيانات من FormData ومعالجة الصور
+        for (let [key, value] of formData.entries()) {
+            if (value instanceof File) {
+                if (value.size > 0) {
+                    data[key] = await fileToBase64(value);
+                } else {
+                    data[key] = null;
+                }
+            } else {
+                data[key] = value;
+            }
+        }
+
+        // إضافة حقول قد تكون مطلوبة في قاعدة البيانات مثل كود الدولة
+        if (!data.phone_code) data.phone_code = "";
+
+        const result = await FancyAPI.post('/brands/create.php', data); 
+        
         if (result.success) {
-            alert(result.message || "تم إرسال طلب تسجيل البراند بنجاح! هو الآن بانتظار مراجعة الإدارة.");
+            alert(result.message || "تم إرسال طلب تسجيل البراند بنجاح!");
+            
+            let userData = JSON.parse(localStorage.getItem('userData')) || {};
+            if (result.data && (result.data.brand_id || result.data.id)) {
+                userData.brand_id = result.data.brand_id || result.data.id;
+                localStorage.setItem('userData', JSON.stringify(userData));
+            }
             window.location.href = 'profile.html';
         } else {
-            alert("خطأ: " + (result.message || "فشل في إرسال الطلب"));
+            alert("خطأ من السيرفر: " + (result.message || "فشل في إرسال الطلب"));
         }
     } catch (error) {
         console.error('Error submitting brand:', error);

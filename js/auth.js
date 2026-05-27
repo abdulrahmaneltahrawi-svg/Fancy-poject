@@ -128,8 +128,15 @@ function setupProfileTabs(user) {
             } 
             else if (this.id === 'tab-brands') {
                 createSection?.classList.remove('hidden');
-                if (createText) createText.textContent = 'إضافة منتج جديد';
-                if (createSection) createSection.href = 'add-product.html';
+                
+                // التحقق: إذا كان لدى المستخدم براند، يوجهه لإضافة منتج. وإذا لم يكن لديه، يوجهه لإنشاء براند.
+                if (user.brand_id) {
+                    if (createText) createText.textContent = 'إضافة منتج جديد';
+                    if (createSection) createSection.href = 'add-product.html';
+                } else {
+                    if (createText) createText.textContent = 'إنشاء علامة تجارية (براند)';
+                    if (createSection) createSection.href = 'add-brand.html';
+                }
             } 
             else if (this.id === 'tab-designer') {
                 createSection?.classList.remove('hidden');
