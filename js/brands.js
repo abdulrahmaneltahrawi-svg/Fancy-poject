@@ -36,7 +36,7 @@ async function displayAllBrands() {
 
                 const brandHtml = `
                     <div class="brand-card">
-                        <a href="view_companys.html?brand=${brand.id}" style="text-decoration: none; color: inherit;">
+                        <a href="veiw_brands.html?brand=${brand.id}" style="text-decoration: none; color: inherit;">
                             <div class="brand-images-grid ${gridClass}">
                                 <div class="main-img">
                                     <img src="${brand.cover_image || brand.main_image || 'imges/img/fancy1.jfif'}" alt="${brand.brand_name}" />
@@ -199,12 +199,6 @@ async function displayUserBrands(containerId = 'user-brands-list') {
         // استدعاء API لجلب براندات المستخدم (يفترض وجود ملف my-brands.php)
         const result = await FancyAPI.get('/brands/my-brands.php'); 
         
-        // التحقق مما إذا كان الطلب غير مصرح به (انتهت الجلسة)
-        if (result.status === 401) {
-            container.innerHTML = '<p style="text-align: center; padding: 40px; grid-column: 1/-1;">يرجى تسجيل الدخول لعرض برانداتك.</p>';
-            return;
-        }
-
         let brands = null;
         if (result.success && result.data) {
             let rawData = result.data.brands || result.data;
@@ -222,7 +216,7 @@ async function displayUserBrands(containerId = 'user-brands-list') {
                 const gridClass = hasSideImages ? '' : 'single-layout';
                 const brandHtml = `
                     <div class="brand-card">
-                        <a href="view_companys.html?brand=${brand.id}" style="text-decoration: none; color: inherit;">
+                        <a href="view_brands.html?brand=${brand.id}" style="text-decoration: none; color: inherit;">
                             <div class="brand-images-grid ${gridClass}">
                                 <div class="main-img">
                                     <img src="${brand.cover_image || brand.main_image || 'imges/img/fancy1.jfif'}" alt="${brand.brand_name}" />
