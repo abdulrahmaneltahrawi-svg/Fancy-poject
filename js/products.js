@@ -3,6 +3,7 @@
 // دالة موحدة لإنشاء تصميم الكرت للمنتجات
 function createProductCardHTML(data, options = {}) {
     const showControls = options.showControls || false;
+    const isAdmin = options.isAdmin || false;
     // تأكد من أن `data.id` موجود لتوليد رابط صحيح
     const productId = data.id || ''; 
     const productTitle = data.product_name || 'منتج غير معروف';
@@ -29,7 +30,12 @@ function createProductCardHTML(data, options = {}) {
                 </div>
                 ${showControls ? `
                 <div class="card-actions" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; display: flex; gap: 10px;">
-                    <a href="edit-product.html?id=${productId}" class="edit-btn" style="flex: 1; text-align: center; background: #f0ad4e; color: #fff; padding: 5px; border-radius: 4px; text-decoration: none; font-size: 13px;">تعديل</a>
+                    ${isAdmin ? `
+                        <button onclick="approveProduct(${productId})" style="flex: 1; background: #5cb85c; color: #fff; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 12px;">قبول</button>
+                        <button onclick="rejectProduct(${productId})" style="flex: 1; background: #d9534f; color: #fff; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 12px;">رفض</button>
+                    ` : `
+                        <a href="edit-product.html?id=${productId}" class="edit-btn" style="flex: 1; text-align: center; background: #f0ad4e; color: #fff; padding: 5px; border-radius: 4px; text-decoration: none; font-size: 13px;">تعديل</a>
+                    `}
                 </div>
                 ` : ''}
             </div>
@@ -280,6 +286,70 @@ async function submitNewProduct(formData) {
     }
 }
 
+// دالة لجلب وعرض المنتجات المعلقة (للمدير فقط)
+async function loadPendingProductsForAdmin(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    if (!userData || (userData.account_type !== 'admin' && userData.role !== 'admin')) {
+        container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; padding: 40px; color: red;">ليس لديك صلاحية الوصول لهذه الصفحة.</p>';
+        // يمكنك إعادة توجيه المستخدم لصفحة أخرى
+        // window.location.href = 'index.html';
+        return;
+    }
+
+    try {
+        // استدعاء API جديد لجلب المنتجات المعلقة
+        const result = await FancyAPI.get('/admin/pending-products.php');
+
+        if (result && result.success && Array.isArray(result.data.products)) {
+            container.innerHTML = ""; 
+            
+            if (result.data.products.length === 0) {
+                container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; padding: 40px;">لا توجد منتجات معلقة للمراجعة حالياً.</p>';
+                return;
+            }
+
+            result.data.products.forEach(product => {
+                container.innerHTML += createProductCardHTML(product, { showControls: true, isAdmin: true });
+            });
+        } else {
+            const detail = result.status === 401 ? 'يجب تسجيل الدخول كمدير لعرض المنتجات المعلقة' : (result.message || 'خطأ غير معروف');
+            console.error('Failed to load pending products:', detail);
+            container.innerHTML = `<p style="text-align: center; color: red; grid-column: 1/-1;">${detail}</p>`;
+        }
+    } catch (error) {
+        console.error('Error fetching pending products:', error);
+        container.innerHTML = `<p style="text-align: center; color: red; grid-column: 1/-1;">حدث خطأ في الاتصال بالسيرفر.</p>`;
+    }
+}
+
+// دالة قبول المنتج
+async function approveProduct(id) {
+    if (!confirm('هل تريد الموافقة على هذا المنتج؟')) return;
+    const result = await FancyAPI.post('/admin/approve-product.php', { product_id: id });
+    if (result.success) {
+        alert('تم قبول المنتج بنجاح');
+        loadPendingProductsForAdmin('pending-products-container');
+    } else {
+        alert('فشل القبول: ' + result.message);
+    }
+}
+
+// دالة رفض المنتج
+async function rejectProduct(id) {
+    const reason = prompt('سبب الرفض:');
+    if (reason === null) return;
+    const result = await FancyAPI.post('/admin/reject-product.php', { product_id: id, reason: reason });
+    if (result.success) {
+        alert('تم رفض المنتج');
+        loadPendingProductsForAdmin('pending-products-container');
+    } else {
+        alert('فشل الرفض: ' + result.message);
+    }
+}
+
 // جعل الدوال متاحة عالمياً
 window.createProductCardHTML = createProductCardHTML;
 window.loadProducts = loadProducts;
@@ -288,3 +358,6 @@ window.loadMyProducts = loadMyProducts;
 window.loadProductDataForEdit = loadProductDataForEdit;
 window.submitProductUpdate = submitProductUpdate;
 window.submitNewProduct = submitNewProduct;
+window.loadPendingProductsForAdmin = loadPendingProductsForAdmin;
+window.approveProduct = approveProduct;
+window.rejectProduct = rejectProduct;

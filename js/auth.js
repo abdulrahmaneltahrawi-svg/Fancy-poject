@@ -12,7 +12,10 @@ function updateAuthUI() {
 
             authLinks.innerHTML = `
                 <div class="user-nav-container">
-                    ${(user.account_type === 'brand' || user.brand_id) ? `<a href="add-product.html" class="header-action-btn">إضافة منتج جديد</a>` : ''}
+                    ${(user.account_type === 'brand' || user.brand_id || user.account_type === 'admin' || user.role === 'admin') 
+                        ? `<a href="add-product.html" class="header-action-btn">إضافة منتج جديد</a>` 
+                        : ''
+                    }
                     <div class="user-menu-wrapper" style="position: relative;">
                         <button id="user-menu-toggle" class="user-name-btn">
                             ${user.first_name} ${user.last_name}
@@ -20,6 +23,10 @@ function updateAuthUI() {
                         </button>
                         <div id="user-dropdown-list" class="dropdown-menu user-dropdown">
                             <a href="profile.html"><li>ملفي الشخصي</li></a>
+                            ${(user.account_type === 'admin' || user.role === 'admin') ? `
+                                <a href="pending.html"><li>صفحة الادمن</li></a>
+                            ` : ''}
+                            
                             <hr style="border: 0; border-top: 1px solid #eee; margin: 5px 0;">
                             <a href="#" id="logout-btn"><li style="color: #d9534f;">تسجيل الخروج</li></a>
                         </div>
@@ -86,6 +93,7 @@ async function loadUserProfile() {
             const user = result.data.user || result.data;
             localStorage.setItem('userData', JSON.stringify(user));
             updateProfileUI(user);
+            updateAuthUI(); // تحديث الهيدر فوراً بعد جلب البيانات الجديدة
         } else if (result.status === 401) {
             // إذا رد السيرفر بـ 401، فهذا يعني أن الجلسة انتهت فعلياً
             console.warn("Session expired on server. Clearing local data.");

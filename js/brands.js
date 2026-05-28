@@ -299,6 +299,64 @@ async function deleteBrand(brandId) {
     }
 }
 
+// دالة جلب البراندات المعلقة للمدير
+async function loadPendingBrandsForAdmin(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    // التحقق من الصلاحيات محلياً قبل إرسال الطلب للسيرفر لتجنب خطأ 403
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    if (!userData || (userData.account_type !== 'admin' && userData.role !== 'admin')) {
+        container.innerHTML = '<p style="text-align: center; color: red; padding: 20px;">غير مسموح لك بالوصول لبيانات الإدارة.</p>';
+        return;
+    }
+
+    try {
+        const result = await FancyAPI.get('/admin/pending-brands.php');
+        if (result.success && Array.isArray(result.data.brands)) {
+            container.innerHTML = result.data.brands.length ? '' : '<p style="grid-column:1/-1; text-align:center;">لا توجد براندات معلقة.</p>';
+            result.data.brands.forEach(brand => {
+                container.innerHTML += `
+                    <div class="brand-card" style="border: 1px solid #eee; padding: 15px; border-radius: 8px;">
+                        <img src="${brand.logo || 'imges/img/fancy1.jfif'}" style="width:50px; height:50px; border-radius:50%;">
+                        <h3>${brand.brand_name}</h3>
+                        <p>${brand.brand_type} - ${brand.country}</p>
+                        <div style="display:flex; gap:10px; margin-top:10px;">
+                            <button onclick="approveBrand(${brand.id})" style="flex:1; background:#5cb85c; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">قبول</button>
+                            <button onclick="rejectBrand(${brand.id})" style="flex:1; background:#d9534f; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">رفض</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+    } catch (error) { console.error(error); }
+}
+
+// دالة قبول البراند
+async function approveBrand(id) {
+    if (!confirm('هل تريد قبول هذه العلامة التجارية؟')) return;
+    const result = await FancyAPI.post('/admin/approve-brand.php', { brand_id: id });
+    if (result.success) {
+        alert('تم قبول البراند');
+        loadPendingBrandsForAdmin('pending-brands-list');
+    } else {
+        alert('خطأ: ' + result.message);
+    }
+}
+
+// دالة رفض البراند
+async function rejectBrand(id) {
+    const reason = prompt('سبب الرفض:');
+    if (reason === null) return;
+    const result = await FancyAPI.post('/admin/reject-brand.php', { brand_id: id, reason: reason });
+    if (result.success) {
+        alert('تم رفض البراند');
+        loadPendingBrandsForAdmin('pending-brands-list');
+    } else {
+        alert('خطأ: ' + result.message);
+    }
+}
+
 window.loadMyBrandForEdit = loadMyBrandForEdit;
 window.updateBrandProfile = updateBrandProfile;
 window.displayAllBrands = displayAllBrands;
@@ -306,3 +364,6 @@ window.submitNewBrand = submitNewBrand;
 window.displayUserBrands = displayUserBrands;
 window.deactivateBrand = deactivateBrand;
 window.deleteBrand = deleteBrand;
+window.loadPendingBrandsForAdmin = loadPendingBrandsForAdmin;
+window.approveBrand = approveBrand;
+window.rejectBrand = rejectBrand;
