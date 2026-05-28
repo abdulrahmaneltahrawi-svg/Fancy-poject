@@ -56,6 +56,9 @@
     <script src="js/auth.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlBrandId = urlParams.get('brand_id');
+
             // التأكد من تحديث بيانات المستخدم من السيرفر لجلب الـ brand_id الصحيح
             FancyAPI.get('/auth/me.php').then(result => {
                 if (result && result.success) {
@@ -68,8 +71,14 @@
                         return;
                     }
 
-                    // تحديد المعرف: يفضل brand_id، وإذا لم يوجد نستخدم id المستخدم
-                    const brandId = user.brand_id || user.id;
+                    // الأولوية للمعرف في الرابط ثم المعرف في بيانات المستخدم
+                    const brandId = urlBrandId || user.brand_id;
+
+                    if (!brandId) {
+                        alert('عذراً، يجب إنشاء علامة تجارية أولاً قبل إضافة المنتجات.');
+                        window.location.href = 'add-brand.html';
+                        return;
+                    }
                     document.getElementById('form_brand_id').value = brandId;
                 } else {
                     alert('يجب تسجيل الدخول أولاً');

@@ -2,7 +2,12 @@
 const FancyAPI = {
     baseUrl: '/Fancy-Design/fancy/api',
     async request(endpoint, options = {}) {
-        const url = `${this.baseUrl}${endpoint}`;
+        // تنظيف المسار لضمان عدم وجود سلاش مزدوج
+        const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+        const url = `${this.baseUrl}${cleanEndpoint}`;
+        
+        console.log(`Sending ${options.method || 'GET'} request to: ${url}`);
+
         const headers = {
             'Accept': 'application/json',
             'X-Requested-With': 'XMLHttpRequest',

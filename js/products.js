@@ -213,25 +213,38 @@ async function submitProductUpdate(formDataObject) {
 // دالة لإرسال منتج جديد إلى السيرفر
 async function submitNewProduct(formData) {
     try {
-        let payload = formData;
+        const data = {};
         const userData = JSON.parse(localStorage.getItem('userData')) || {};
 
-        if (payload instanceof FormData) {
-            // التأكد من وجود brand_id داخل الـ FormData قبل الإرسال
-            if (!payload.get('brand_id') || payload.get('brand_id') === "undefined" || payload.get('brand_id') === "") {
-                payload.set('brand_id', userData.brand_id || userData.id);
+        // دالة مساعدة لتحويل الملف إلى Base64
+        const fileToBase64 = (file) => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+
+        // تحويل FormData إلى Object ومعالجة الصور
+        for (let [key, value] of formData.entries()) {
+            if (value instanceof File) {
+                if (value.size > 0) {
+                    data[key] = await fileToBase64(value);
+                }
+            } else {
+                // إرسال القيم الفارغة كـ null لضمان قبولها في الـ PHP
+                data[key] = value === "" ? null : value;
             }
-        } else {
-            // في حال كانت البيانات كائن JSON عادي
-            if (!payload.brand_id || payload.brand_id === "undefined" || payload.brand_id === "") {
-                payload.brand_id = userData.brand_id || userData.id;
-            }
-            // تحويل المعرفات لأرقام لضمان قبولها في قاعدة البيانات
-            payload.brand_id = payload.brand_id ? parseInt(payload.brand_id) : null;
-            payload.category_id = payload.category_id ? parseInt(payload.category_id) : null;
         }
 
-        const result = await FancyAPI.post('/products/create.php', payload);
+        // تحويل المعرفات إلى أرقام (Numbers) بدلاً من نصوص
+        data.brand_id = data.brand_id ? Number(data.brand_id) : 0;
+        data.category_id = data.category_id ? Number(data.category_id) : null;
+        if (data.sub_category_id) data.sub_category_id = Number(data.sub_category_id);
+
+        console.log("Payload being sent to server:", data);
+
+        // نستخدم المسار المباشر لملف الإنشـاء
+        const result = await FancyAPI.post('/products/create.php', data); 
 
         if (result.success) {
             alert("تم إضافة المنتج بنجاح! هو الآن بانتظار مراجعة الإدارة.");
