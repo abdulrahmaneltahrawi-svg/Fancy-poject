@@ -41,7 +41,7 @@
                     <p id="brandLocation"></p>
                 </div>
                 <div class="brand-actions">
-                    <a href="#" id="edit-brand-btn" class="btn btn-edit hidden">تعديل العلامة</a>
+                    <a href="#" id="edit-brand-btn" class="btn btn-edit hidden">تعديل البروفايل</a>
                     <a href="#" id="add-product-btn" class="btn btn-black hidden">إضافة منتج جديد +</a>
                 </div>
             </div>
@@ -49,11 +49,22 @@
     </section>
 
     <main class="brand-content">
-        <section style="padding: 40px 5%;">
-            <h2>About</h2>
-            <p id="brandAbout"></p>
+        <section style="padding: 60px 5% 20px;">
+            <p class="title">حول العلامة التجارية</p>
+            <p id="brandAbout" style="max-width: 800px; line-height: 1.8; color: #555; margin-top: 15px;"></p>
         </section>
     
+
+        <section class="products-section" style="padding: 40px 5% 80px;">
+            <div class="container">
+                <div style="width: 100%; margin-bottom: 30px;">
+                    <p class="title" style="margin: 0;">المنتجات</p>
+                </div>
+                <div class="projects-grid" id="productsGrid">
+                    <!-- سيتم تحميل المنتجات هنا تلقائياً -->
+                </div>
+            </div>
+        </section>
     </main>
 
     <script src="js/script.js"></script>
@@ -84,11 +95,6 @@
                         const addBtn = document.getElementById('add-product-btn');
                         addBtn.classList.remove('hidden');
                         addBtn.href = `add-product.html?brand_id=${brand.id}`;
-
-                        // إظهار زر إضافة منتج في قسم المنتجات
-                        const sectionAddBtn = document.getElementById('section-add-product-btn');
-                        sectionAddBtn.classList.remove('hidden');
-                        sectionAddBtn.href = `add-product.html?brand_id=${brand.id}`;
 
                         // إظهار زر تعديل العلامة التجارية
                         const editBtn = document.getElementById('edit-brand-btn');

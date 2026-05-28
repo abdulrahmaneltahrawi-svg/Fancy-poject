@@ -310,8 +310,8 @@ document.addEventListener('DOMContentLoaded', () => {
     loadProducts('product-container', 6);
 
     // 3. جلب وعرض المصممين/البراندات من الـ API
-    if (typeof loadDesigners === 'function') {
-        loadDesigners('brand-container');
+    if (typeof displayAllBrands === 'function') {
+        displayAllBrands('brand-container');
     }
 });
 
@@ -352,11 +352,11 @@ window.createGenericCardHTML = createGenericCardHTML;
 
     </script> 
     <!-- EmailJS SDK - يجب أن يتم تحميله قبل أي سكريبت يستخدم emailjs -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <script src="js/designers.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>  
+    <script src="js/script.js"></script>
     <script src="js/categories.js"></script>
     <script src="js/products.js"></script>  
-    <script src="js/script.js"></script>
+    <script src="js/brands.js"></script>
     <script src="js/auth.js"></script>
   </body>
 </html>

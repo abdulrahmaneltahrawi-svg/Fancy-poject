@@ -3,8 +3,8 @@
  */
 
 // دالة لجلب وعرض جميع البراندات في الصفحة
-async function displayAllBrands() {
-    const container = document.getElementById('brands-container');
+async function displayAllBrands(containerId = 'brands-container') {
+    const container = document.getElementById(containerId);
     if (!container) return;
 
     try {
@@ -36,7 +36,7 @@ async function displayAllBrands() {
 
                 const brandHtml = `
                     <div class="brand-card">
-                        <a href="veiw_brands.html?brand=${brand.id}" style="text-decoration: none; color: inherit;">
+                        <a href="view_brands.html?brand=${brand.id}" style="text-decoration: none; color: inherit;">
                             <div class="brand-images-grid ${gridClass}">
                                 <div class="main-img">
                                     <img src="${brand.cover_image || brand.main_image || 'imges/img/fancy1.jfif'}" alt="${brand.brand_name}" />
@@ -78,15 +78,18 @@ async function displayAllBrands() {
 }
 
 // دالة لجلب بيانات البراند الخاصة بالمستخدم المسجل لتعبئة نموذج التعديل
-async function loadMyBrandForEdit() {
+async function loadMyBrandForEdit(specificBrandId = null) {
     const userData = localStorage.getItem('userData');
     if (!userData) return;
 
     try {
         const user = JSON.parse(userData);
-        // نستخدم الـ ID الخاص بالبراند المخزن في بيانات المستخدم
-        const brandId = user.brand_id || user.id; 
+        // الأولوية لمعرف البراند المحدد (إذا تم تمريره)، ثم معرف البراند المخزن في بيانات المستخدم
+        const brandId = specificBrandId || user.brand_id;
         
+        // إذا لم يتم العثور على brandId، نتحقق مما إذا كان المستخدم هو صاحب البراند
+        // (هذا السيناريو قد يحدث إذا كان المستخدم مصممًا وليس براندًا، أو لم ينشئ براند بعد)
+        // ولكن في سياق تعديل براند، يجب أن يكون هناك brandId
         if (!brandId) {
             console.warn('No Brand ID found for the current user.');
             return;

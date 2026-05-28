@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تعديل البراند - Fancy Design</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .form-container { max-width: 700px; margin: 50px auto; padding: 30px; border: 1px solid #ddd; border-radius: 12px; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .form-header { text-align: center; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; }
+        .submit-btn { background: #ffb400; color: #000; padding: 15px 25px; border: none; border-radius: 6px; cursor: pointer; width: 100%; font-size: 17px; font-weight: bold; transition: background 0.3s; }
+        .submit-btn:hover { background: #e5a200; }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <div class="form-container">
+        <div class="form-header">
+            <h2>تعديل بيانات العلامة التجارية</h2>
+            <p>قم بتحديث تفاصيل البراند الخاص بك</p>
+        </div>
+        <form id="editBrandForm">
+            <input type="hidden" name="brand_id" id="brand_id_input">
+            <div class="form-group">
+                <label>اسم العلامة التجارية</label>
+                <input type="text" name="brand_name" required>
+            </div>
+            <div class="form-group">
+                <label>نوع النشاط</label>
+                <input type="text" name="brand_type">
+            </div>
+            <div style="display: flex; gap: 15px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>الدولة</label>
+                    <input type="text" name="country" required>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>المدينة</label>
+                    <input type="text" name="city">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>البريد الإلكتروني للعلامة التجارية</label>
+                <input type="email" name="email">
+            </div>
+            <div class="form-group">
+                <label>رقم الهاتف للعلامة التجارية</label>
+                <input type="tel" name="phone">
+            </div>
+            <!-- ملاحظة: تعديل الصور (الشعار والغلاف) يتطلب منطقاً إضافياً لرفع الملفات كـ Base64 أو FormData.
+                 حالياً، النموذج لا يدعم رفع الصور مباشرة، بل يتم إرسال البيانات النصية فقط.
+                 إذا كنت ترغب في تعديل الصور، ستحتاج لإضافة حقول input type="file" ومعالجة رفعها في JavaScript. -->
+            <div class="form-group">
+                <label>رابط الموقع الإلكتروني (إن وجد)</label>
+                <input type="url" name="website">
+            </div>
+            <div class="form-group">
+                <label>وصف عن العلامة التجارية</label>
+                <textarea name="description" rows="4"></textarea>
+            </div>
+            <button type="submit" class="submit-btn">حفظ التغييرات</button>
+        </form>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/script.js"></script>
+    <script src="js/brands.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const brandIdFromUrl = urlParams.get('brand_id');
+
+            // جلب بيانات البراند بناءً على الـ ID من الرابط أو من بيانات المستخدم
+            await loadMyBrandForEdit(brandIdFromUrl);
+        });
+
+        document.getElementById('editBrandForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const formDataObject = Object.fromEntries(formData.entries());
+            
+            if (!formDataObject.brand_id) {
+                alert('خطأ: معرف البراند مفقود. يرجى تحديث الصفحة.');
+                return;
+            }
+            updateBrandProfile(formDataObject);
+        });
+    </script>
+</body>
+</html>
