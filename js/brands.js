@@ -27,6 +27,9 @@ async function displayAllBrands(containerId = 'brands-container') {
         }
 
         if (result.ok && result.success && brands && brands.length > 0) {
+            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+            const isAdmin = userData.account_type === 'admin' || userData.role === 'admin';
+
             container.innerHTML = ''; // تفريغ الحاوية
 
             brands.forEach(brand => {
@@ -61,6 +64,11 @@ async function displayAllBrands(containerId = 'brands-container') {
                                 </div>
                             </div>
                         </a>
+                        ${isAdmin ? `
+                        <div class="admin-mgmt-btns" style="padding: 10px; border-top: 1px solid #eee; background: #fdfdfd;">
+                            <button onclick="suspendBrand(${brand.id})" style="width: 100%; padding: 6px; background: #666; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">إيقاف العلامة التجارية</button>
+                        </div>
+                        ` : ''}
                     </div>
                 `;
                 container.insertAdjacentHTML('beforeend', brandHtml);
@@ -357,6 +365,18 @@ async function rejectBrand(id) {
     }
 }
 
+// دالة إيقاف البراند (للإدارة)
+async function suspendBrand(id) {
+    if (!confirm('هل تريد إيقاف هذه العلامة التجارية؟ سيتم إخفاء البراند ومنتجاته.')) return;
+    const result = await FancyAPI.post('/admin/suspend-brand.php', { brand_id: id });
+    if (result.success) {
+        alert('تم إيقاف العلامة التجارية بنجاح');
+        location.reload();
+    } else {
+        alert('خطأ: ' + result.message);
+    }
+}
+
 window.loadMyBrandForEdit = loadMyBrandForEdit;
 window.updateBrandProfile = updateBrandProfile;
 window.displayAllBrands = displayAllBrands;
@@ -367,3 +387,4 @@ window.deleteBrand = deleteBrand;
 window.loadPendingBrandsForAdmin = loadPendingBrandsForAdmin;
 window.approveBrand = approveBrand;
 window.rejectBrand = rejectBrand;
+window.suspendBrand = suspendBrand;

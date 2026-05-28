@@ -10,6 +10,7 @@ function createProductCardHTML(data, options = {}) {
     const productImage = data.main_image || 'imges/placeholder.png'; // صورة افتراضية
     const productDesc = data.short_description || '';
     const productCategory = data.category_name || '';
+    const productStatus = data.status || 'active';
 
     return `
         <div class="project-card">
@@ -30,10 +31,14 @@ function createProductCardHTML(data, options = {}) {
                 </div>
                 ${showControls ? `
                 <div class="card-actions" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; display: flex; gap: 10px;">
-                    ${isAdmin ? `
-                        <button onclick="approveProduct(${productId})" style="flex: 1; background: #5cb85c; color: #fff; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 12px;">قبول</button>
-                        <button onclick="rejectProduct(${productId})" style="flex: 1; background: #d9534f; color: #fff; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 12px;">رفض</button>
-                    ` : `
+                    ${isAdmin ? (
+                        productStatus === 'pending_admin_approval' ? `
+                            <button onclick="approveProduct(${productId})" style="flex: 1; background: #5cb85c; color: #fff; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 12px;">قبول</button>
+                            <button onclick="rejectProduct(${productId})" style="flex: 1; background: #d9534f; color: #fff; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 12px;">رفض</button>
+                        ` : `
+                            <button onclick="suspendProduct(${productId})" style="flex: 1; background: #666; color: #fff; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 12px;">إيقاف</button>
+                        `
+                    ) : `
                         <a href="edit-product.html?id=${productId}" class="edit-btn" style="flex: 1; text-align: center; background: #f0ad4e; color: #fff; padding: 5px; border-radius: 4px; text-decoration: none; font-size: 13px;">تعديل</a>
                     `}
                 </div>
@@ -57,6 +62,10 @@ async function loadProducts(containerId, limit = null, brandId = null, showContr
         brandId = urlParams.get('brand') || urlParams.get('brand_id');
     }
 
+    // التحقق من حالة المدير محلياً لتفعيل أدوات التحكم تلقائياً
+    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    const isAdmin = userData.account_type === 'admin' || userData.role === 'admin';
+
     try {
         // بناء الرابط مع فلتر البراند إن وجد
         let url = '/products/public-list.php';
@@ -76,7 +85,8 @@ async function loadProducts(containerId, limit = null, brandId = null, showContr
             }
 
             // استخدام string buffer لتحسين الأداء وتجنب مشاكل الرندر
-            const htmlContent = productsToDisplay.map(product => createProductCardHTML(product, { showControls })).join('');
+            const finalShowControls = showControls || isAdmin;
+            const htmlContent = productsToDisplay.map(product => createProductCardHTML(product, { showControls: finalShowControls, isAdmin })).join('');
             container.innerHTML = htmlContent;
         } else {
             const detail = result.status === 404 ? 'الملف list.php غير موجود في هذا المسار' : (result.message || 'خطأ غير معروف');
@@ -350,6 +360,18 @@ async function rejectProduct(id) {
     }
 }
 
+// دالة إيقاف المنتج (للإدارة)
+async function suspendProduct(id) {
+    if (!confirm('هل تريد إيقاف هذا المنتج؟ سيختفي من العرض العام.')) return;
+    const result = await FancyAPI.post('/admin/suspend-product.php', { product_id: id });
+    if (result.success) {
+        alert('تم إيقاف المنتج بنجاح');
+        location.reload(); // تحديث الصفحة لرؤية التغييرات
+    } else {
+        alert('فشل الإيقاف: ' + result.message);
+    }
+}
+
 // جعل الدوال متاحة عالمياً
 window.createProductCardHTML = createProductCardHTML;
 window.loadProducts = loadProducts;
@@ -361,3 +383,4 @@ window.submitNewProduct = submitNewProduct;
 window.loadPendingProductsForAdmin = loadPendingProductsForAdmin;
 window.approveProduct = approveProduct;
 window.rejectProduct = rejectProduct;
+window.suspendProduct = suspendProduct;
