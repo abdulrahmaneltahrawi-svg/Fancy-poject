@@ -244,6 +244,10 @@ async function displayUserBrands(containerId = 'user-brands-list') {
                                 </div>
                             </div>
                         </a>
+                        <div class="brand-mgmt-btns" style="display: flex; gap: 8px; padding: 10px; border-top: 1px solid #eee; background: #fafafa;">
+                            <button onclick="deactivateBrand(${brand.id})" style="flex: 1; padding: 8px; border: 1px solid #ddd; background: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; color: #666; transition: 0.3s;">تعطيل</button>
+                            <button onclick="deleteBrand(${brand.id})" style="flex: 1; padding: 8px; border: none; background: #d9534f; color: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; transition: 0.3s;">حذف</button>
+                        </div>
                     </div>
                 `;
                 container.insertAdjacentHTML('beforeend', brandHtml);
@@ -257,8 +261,48 @@ async function displayUserBrands(containerId = 'user-brands-list') {
     }
 }
 
+// دالة لتعطيل العلامة التجارية
+async function deactivateBrand(brandId) {
+    if (!confirm('هل أنت متأكد من تعطيل هذه العلامة التجارية؟')) return;
+    try {
+        const formData = new FormData();
+        formData.append('brand_id', brandId);
+
+        const result = await FancyAPI.post('/brands/deactivate.php', formData);
+        if (result.success || result.ok) {
+            alert(result.message || 'تم تعطيل البراند بنجاح');
+            displayUserBrands(); // تحديث القائمة
+        } else {
+            alert(result.message || 'فشل التعطيل');
+        }
+    } catch (error) {
+        console.error('Deactivate error:', error);
+    }
+}
+
+// دالة لحذف العلامة التجارية
+async function deleteBrand(brandId) {
+    if (!confirm('تحذير: هل أنت متأكد من حذف هذه العلامة التجارية نهائياً؟ لا يمكن التراجع عن هذا الإجراء.')) return;
+    try {
+        const formData = new FormData();
+        formData.append('brand_id', brandId);
+
+        const result = await FancyAPI.post('/brands/delete.php', formData);
+        if (result.success || result.ok) {
+            alert(result.message || 'تم حذف البراند بنجاح');
+            displayUserBrands(); // تحديث القائمة
+        } else {
+            alert(result.message || 'فشل الحذف');
+        }
+    } catch (error) {
+        console.error('Delete error:', error);
+    }
+}
+
 window.loadMyBrandForEdit = loadMyBrandForEdit;
 window.updateBrandProfile = updateBrandProfile;
 window.displayAllBrands = displayAllBrands;
 window.submitNewBrand = submitNewBrand;
 window.displayUserBrands = displayUserBrands;
+window.deactivateBrand = deactivateBrand;
+window.deleteBrand = deleteBrand;

@@ -24,15 +24,24 @@ const FancyAPI = {
             const response = await fetch(url, { ...options, headers, credentials: 'include' });
             const text = (await response.text()).trim();
 
-            let result;
+            let result = {};
             try {
-                result = JSON.parse(text);
+                result = text ? JSON.parse(text) : {};
             } catch (e) {
+                // إذا كانت الاستجابة ناجحة من السيرفر (200 OK) ولكنها ليست JSON (نص عادي أو فارغة)
+                if (response.ok) {
+                    return { success: true, ok: true, status: response.status, data: text };
+                }
+
                 // طباعة الخطأ الحقيقي في الكونسول للمساعدة في البرمجة
                 console.error(`Raw Server Response Error at [${endpoint}]:`, text);
-                return { success: false, message: 'استجابة غير صالحة من السيرفر', status: response.status, error: text };
+                
+                // التحقق ما إذا كان الرد عبارة عن صفحة HTML (غالباً خطأ 404 أو 500)
+                const isHtml = text.startsWith('<');
+                const errorMsg = isHtml ? 'خطأ في المسار أو السيرفر (404/500)' : 'استجابة غير صالحة من السيرفر';
+                return { success: false, message: errorMsg, status: response.status, error: text };
             }
-            return { ok: response.ok, status: response.status, ...result };
+            return { ok: response.ok, status: response.status, success: result.success ?? response.ok, ...result };
         } catch (error) {
             console.error(`API Error (${endpoint}):`, error);
             return { success: false, message: 'حدث خطأ في الاتصال بالسيرفر' };

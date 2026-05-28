@@ -90,6 +90,7 @@
 
                     // التحقق من الصلاحيات لإظهار الأزرار
                     const userData = JSON.parse(localStorage.getItem('userData'));
+                    let showProductControls = false;
                     if (userData && userData.id == brand.user_id) {
                         // إظهار زر إضافة منتج
                         const addBtn = document.getElementById('add-product-btn');
@@ -100,9 +101,11 @@
                         const editBtn = document.getElementById('edit-brand-btn');
                         editBtn.classList.remove('hidden');
                         editBtn.href = `edit-brand.html?brand_id=${brand.id}`; // الرابط لصفحة التعديل
+
+                        showProductControls = true;
                     }
                     
-                    loadProducts('productsGrid', null, brand.id);
+                    loadProducts('productsGrid', null, brand.id, showProductControls);
                 } else {
                     console.error("Brand not found or API error:", result.message);
                     alert("عذراً، لم يتم العثور على بيانات هذه العلامة التجارية.");

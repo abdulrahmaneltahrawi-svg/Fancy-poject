@@ -38,7 +38,7 @@ function createProductCardHTML(data, options = {}) {
 }
 
 // دالة لجلب وعرض المنتجات من الـ API
-async function loadProducts(containerId, limit = null, brandId = null) {
+async function loadProducts(containerId, limit = null, brandId = null, showControls = false) {
     const container = document.getElementById(containerId);
     if (!container) {
         console.error(`Container with ID '${containerId}' not found.`);
@@ -70,7 +70,7 @@ async function loadProducts(containerId, limit = null, brandId = null) {
             }
 
             // استخدام string buffer لتحسين الأداء وتجنب مشاكل الرندر
-            const htmlContent = productsToDisplay.map(product => createProductCardHTML(product)).join('');
+            const htmlContent = productsToDisplay.map(product => createProductCardHTML(product, { showControls })).join('');
             container.innerHTML = htmlContent;
         } else {
             const detail = result.status === 404 ? 'الملف list.php غير موجود في هذا المسار' : (result.message || 'خطأ غير معروف');
@@ -186,21 +186,37 @@ async function loadProductDataForEdit(productId) {
 }
 
 // دالة إرسال التحديث إلى update.php
-async function submitProductUpdate(formDataObject) {
+async function submitProductUpdate(formData) {
     try {
-        const payload = {
-            ...formDataObject,
-            product_id: parseInt(formDataObject.product_id),
-            brand_id: parseInt(formDataObject.brand_id),
-            category_id: formDataObject.category_id ? parseInt(formDataObject.category_id) : null,
-            sub_category_id: formDataObject.sub_category_id ? parseInt(formDataObject.sub_category_id) : null
-        };
+        const data = {};
+        
+        const fileToBase64 = (file) => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
 
-        const result = await FancyAPI.post('/products/update.php', payload);
+        // تحويل البيانات ومعالجة الملفات إن وجدت
+        for (let [key, value] of formData.entries()) {
+            if (value instanceof File) {
+                if (value.size > 0) data[key] = await fileToBase64(value);
+            } else {
+                data[key] = value === "" ? null : value;
+            }
+        }
+
+        // تأكيد الأنواع الرقمية لتوافق السيرفر
+        data.product_id = Number(data.product_id);
+        data.brand_id = Number(data.brand_id);
+        if (data.category_id) data.category_id = Number(data.category_id);
+        if (data.sub_category_id) data.sub_category_id = Number(data.sub_category_id);
+
+        const result = await FancyAPI.post('/products/update.php', data);
 
         if (result.success) {
-            alert("تم تحديث المنتج بنجاح! سيتم مراجعة التعديلات من قبل الإدارة.");
-            window.location.href = 'my-products.html';
+            alert("تم تحديث المنتج بنجاح! التغييرات قيد المراجعة.");
+            window.location.href = 'index.html';
         } else {
             alert("خطأ في التحديث: " + (result.message || "فشل الطلب"));
         }
