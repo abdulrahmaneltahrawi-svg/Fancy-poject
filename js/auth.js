@@ -12,6 +12,7 @@ function updateAuthUI() {
 
             authLinks.innerHTML = `
                 <div class="user-nav-container">
+                    ${(user.account_type === 'brand' || user.brand_id) ? `<a href="add-product.html" class="header-action-btn">إضافة منتج جديد</a>` : ''}
                     <div class="user-menu-wrapper" style="position: relative;">
                         <button id="user-menu-toggle" class="user-name-btn">
                             ${user.first_name} ${user.last_name}

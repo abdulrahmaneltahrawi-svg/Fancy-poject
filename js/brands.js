@@ -93,7 +93,7 @@ async function loadMyBrandForEdit() {
         }
 
         // استدعاء بيانات البراند عبر API الجلب
-        const result = await FancyAPI.get(`/brands/get.php?id=${brandId}`);
+        const result = await FancyAPI.get(`/brands/get.php?brand_id=${brandId}`);
         
         if (result.ok && result.success && result.data && result.data.brand) {
             const brand = result.data.brand;

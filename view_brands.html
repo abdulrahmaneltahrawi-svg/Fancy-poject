@@ -3,156 +3,107 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Brand View - Fancy Design</title>
-    <link rel="icon" href="imges/img/fancy1.jfif" />
+    <title>Brand View</title>
     <link rel="stylesheet" href="style.css" />
     <style>
-/* تحسينات إضافية للتنسيق */
-.about-section { padding: 40px 5%; background: #fff; }
-.about-section h2 { font-size: 22px; margin-bottom: 15px; border-right: 4px solid #000; padding-right: 15px; }
-.products-grid-section { padding: 20px 5% 60px; }
-
-.brand-header { position: relative; background: #fff; }
-
-.cover-photo {
-  height: 400px;
-  width: 100%;
-  overflow: hidden;
-}
-
-.cover-photo img { width: 100%; height: 100%; object-fit: cover; }
-
-.brand-profile-bar {
-  padding: 0 5%;
-  position: relative;
-  height: 100px;
-}
-
-.brand-logo-container {
-  position: absolute;
-  top: -60px; /* لرفع اللوجو فوق الغلاف */
-  width: 150px;
-  height: 150px;
-  background: #fff;
-  border-radius: 50%;
-  padding: 5px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.brand-logo-container img { width: 100%; height: 100%; border-radius: 50%; }
-
-.container-flex {
-  display: flex;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-  position: relative;
-}
-
-.brand-tabs {
-    margin-top: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 20px;
-    font-weight: bold;
-    border-bottom: 1px solid black;
-}
-
-.brand-main-info { margin-left: 170px; padding-top: 15px; }
-
-.brand-main-info h1 { font-size: 24px; margin: 0; }
-
-.brand-actions { position: absolute; right: 5%; top: 20px; display: flex; gap: 15px; }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: sans-serif; background-color: #f9f9f9; }
+        .brand-header { background: #fff; padding-bottom: 20px; }
+        .cover-photo { height: 300px; width: 100%; overflow: hidden; }
+        .cover-photo img { width: 100%; height: 100%; object-fit: cover; }
+        .brand-profile-bar { padding: 0 5%; position: relative; }
+        .container-flex { display: flex; align-items: flex-end; max-width: 1200px; margin: 0 auto; }
+        .brand-logo-container { width: 150px; height: 150px; background: #fff; border-radius: 50%; padding: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-right: 20px; margin-top: -75px; }
+        .brand-logo-container img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .brand-main-info { padding-bottom: 20px; flex-grow: 1; }
+        .brand-actions { padding-bottom: 20px; display: flex; gap: 10px; }
+        .btn { padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 14px; cursor: pointer; }
+        .btn-black { background: #000; color: #fff; }
+        .btn-edit { background: #eee; color: #000; border: 1px solid #ccc; }
+        .hidden { display: none !important; }
+        .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
     </style>
 </head>
 <body>
     <div id="header-placeholder"></div>
 
     <section class="brand-header">
-  <div class="cover-photo">
-    <img id="brandCover" src="" alt="Cover">
-  </div>
-  
-  <div class="brand-profile-bar">
-    <div class="container-flex">
-      <div class="brand-logo-container">
-        <img id="brandLogo" src="" alt="Logo">
-      </div>
-      <div class="brand-main-info">
-        <h1 id="brandName"></h1>
-        <p id="brandLocation"><i class="pin-icon"></i> </p>
-        <span class="type-tag">Brand</span>
-      </div>
-      <div class="brand-actions">
-        <a href="add-product.html" id="add-product-btn" class="header-action-btn hidden">إضافة منتج جديد</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<nav class="brand-tabs">
-  <p>Overview</p>
-</nav>
-
-<main class="brand-content">
-  <section class="about-section">
-    <h2>About</h2>
-    <p id="brandAbout"></p>
-  </section>
-
-  <section class="products-grid-section">
-    <div class="container">
-        <p class="title">المنتجات</p>
-        <div class="projects-grid" id="productsGrid">
-            <!-- سيتم تحميل المنتجات هنا -->
+        <div class="cover-photo">
+            <img id="brandCover" src="" alt="Cover">
         </div>
-    </div>
-  </section>
-</main>
+        <div class="brand-profile-bar">
+            <div class="container-flex">
+                <div class="brand-logo-container">
+                    <img id="brandLogo" src="" alt="Logo">
+                </div>
+                <div class="brand-main-info">
+                    <h1 id="brandName">...</h1>
+                    <p id="brandLocation"></p>
+                </div>
+                <div class="brand-actions">
+                    <a href="#" id="edit-brand-btn" class="btn btn-edit hidden">تعديل العلامة</a>
+                    <a href="#" id="add-product-btn" class="btn btn-black hidden">إضافة منتج جديد +</a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <div id="footer-placeholder"></div>
+    <main class="brand-content">
+        <section style="padding: 40px 5%;">
+            <h2>About</h2>
+            <p id="brandAbout"></p>
+        </section>
+
+
+    </main>
 
     <script src="js/script.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/products.js"></script>
-    <script src="js/brands.js"></script>
     <script>
         async function loadBrandPage() {
             const urlParams = new URLSearchParams(window.location.search);
             const brandId = urlParams.get('brand') || urlParams.get('id');
 
-            if (!brandId) {
-                window.location.href = 'page_brand.html';
-                return;
-            }
+            if (!brandId) return;
 
             try {
-                // طلب بيانات البراند من السيرفر
-                const result = await FancyAPI.get(`/brands/get.php?id=${brandId}`);
-                if (result && result.success && result.data.brand) {
+                // استخدام FancyAPI الموحد بدلاً من fetch المباشر لتجنب أخطاء المسارات (404)
+                const result = await FancyAPI.get(`/brands/get.php?brand_id=${brandId}`);
+                
+                if (result.success && result.data && result.data.brand) {
                     const brand = result.data.brand;
-
-                    document.getElementById('brandName').innerText = brand.brand_name || brand.name;
-                    document.getElementById('brandLocation').innerText = `${brand.country || ''} ${brand.city || ''}`;
-                    document.getElementById('brandAbout').innerText = brand.description || "لا يوجد وصف متوفر حالياً لهذه العلامة التجارية.";
-                    document.getElementById('brandCover').src = brand.cover_image || brand.main_image || 'imges/img/fancy1.jfif';
+                    document.getElementById('brandName').innerText = brand.brand_name || 'علامة تجارية';
+                    document.getElementById('brandAbout').innerText = brand.description || 'لا يوجد وصف متاح.';
+                    document.getElementById('brandCover').src = brand.cover_image || 'imges/img/fancy3.jfif';
                     document.getElementById('brandLogo').src = brand.logo || 'imges/img/fancy1.jfif';
 
-                    // التحقق من الملكية لإظهار زر الإضافة
+                    // التحقق من الصلاحيات لإظهار الأزرار
                     const userData = JSON.parse(localStorage.getItem('userData'));
-                    if (userData && (userData.brand_id == brand.id || userData.id == brand.user_id)) {
+                    if (userData && userData.id == brand.user_id) {
+                        // إظهار زر إضافة منتج
                         const addBtn = document.getElementById('add-product-btn');
-                        if (addBtn) {
-                            addBtn.classList.remove('hidden');
-                            addBtn.href = `add-product.html?brand_id=${brand.id}`;
-                        }
+                        addBtn.classList.remove('hidden');
+                        addBtn.href = `add-product.html?brand_id=${brand.id}`;
+
+                        // إظهار زر إضافة منتج في قسم المنتجات
+                        const sectionAddBtn = document.getElementById('section-add-product-btn');
+                        sectionAddBtn.classList.remove('hidden');
+                        sectionAddBtn.href = `add-product.html?brand_id=${brand.id}`;
+
+                        // إظهار زر تعديل العلامة التجارية
+                        const editBtn = document.getElementById('edit-brand-btn');
+                        editBtn.classList.remove('hidden');
+                        editBtn.href = `edit-brand.html?brand_id=${brand.id}`; // الرابط لصفحة التعديل
                     }
-                    // تحميل المنتجات
+                    
                     loadProducts('productsGrid', null, brand.id);
+                } else {
+                    console.error("Brand not found or API error:", result.message);
+                    alert("عذراً، لم يتم العثور على بيانات هذه العلامة التجارية.");
+                    window.location.href = 'page_brand.html';
                 }
-            } catch (error) { console.error('Error:', error); }
+            } catch (error) { console.error(error); }
         }
         window.addEventListener('load', loadBrandPage);
     </script>
