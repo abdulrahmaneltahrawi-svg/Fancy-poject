@@ -48,6 +48,11 @@
             <a href="javascript:void(0)" id="tab-brands">البراندات</a>  
         </nav>
 
+        <!-- حاوية عرض البراندات الخاصة بالمستخدم -->
+        <div id="brands-tab-content" class="hidden">
+            <div id="user-brands-list" class="brands-container"></div>
+        </div>
+
         <a href="add-designer.html" id="create-action-link" class="create-section hidden" style="text-decoration: none; color: inherit;">
             <div class="add-box">+</div>
             <p id="create-action-text">...</p>
@@ -58,10 +63,10 @@
 
 </body>
 <script src="js/script.js"></script>
+<script src="js/brands.js"></script>
 <script src="js/auth.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // استدعاء الدالة الموحدة من auth.js لجلب البيانات من me.php وعرضها في الصفحة
         if (typeof loadUserProfile === 'function') {
             loadUserProfile();
         }
@@ -69,4 +74,4 @@
 </script>
 </html>
 
-</html>
+my-brands.php

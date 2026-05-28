@@ -190,7 +190,78 @@ async function submitNewBrand(formData) {
     }
 }
 
+// دالة لجلب وعرض البراندات الخاصة بالمستخدم المسجل في صفحته الشخصية
+async function displayUserBrands(containerId = 'user-brands-list') {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    try {
+        // استدعاء API لجلب براندات المستخدم (يفترض وجود ملف my-brands.php)
+        const result = await FancyAPI.get('/brands/my-brands.php'); 
+        
+        // التحقق مما إذا كان الطلب غير مصرح به (انتهت الجلسة)
+        if (result.status === 401) {
+            container.innerHTML = '<p style="text-align: center; padding: 40px; grid-column: 1/-1;">يرجى تسجيل الدخول لعرض برانداتك.</p>';
+            return;
+        }
+
+        let brands = null;
+        if (result.success && result.data) {
+            let rawData = result.data.brands || result.data;
+            if (Array.isArray(rawData)) {
+                brands = rawData;
+            } else if (typeof rawData === 'object' && rawData !== null) {
+                brands = Object.values(rawData);
+            }
+        }
+
+        if (result.success && brands && brands.length > 0) {
+            container.innerHTML = ''; 
+            brands.forEach(brand => {
+                const hasSideImages = brand.side_img1 || brand.side_img2;
+                const gridClass = hasSideImages ? '' : 'single-layout';
+                const brandHtml = `
+                    <div class="brand-card">
+                        <a href="view_companys.html?brand=${brand.id}" style="text-decoration: none; color: inherit;">
+                            <div class="brand-images-grid ${gridClass}">
+                                <div class="main-img">
+                                    <img src="${brand.cover_image || brand.main_image || 'imges/img/fancy1.jfif'}" alt="${brand.brand_name}" />
+                                </div>
+                                ${hasSideImages ? `
+                                <div class="side-imgs">
+                                    ${brand.side_img1 ? `<img src="${brand.side_img1}" alt="item" />` : ''}
+                                    ${brand.side_img2 ? `<img src="${brand.side_img2}" alt="item" />` : ''}
+                                </div>
+                                ` : ''}
+                            </div>
+                            <div class="brand-info">
+                                <img
+                                    src="${brand.logo || 'imges/img/fancy1.jfif'}"
+                                    alt="logo"
+                                    class="brand-logo"
+                                />
+                                <div class="brand-text">
+                                    <h3>${brand.brand_name || brand.name || 'علامة تجارية'}</h3>
+                                    <p>${brand.country || ''} | ${brand.city || ''}</p>
+                                    <span>${brand.brand_type || ''}</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', brandHtml);
+            });
+        } else {
+            container.innerHTML = `<p style="text-align: center; padding: 40px; grid-column: 1/-1;">لا توجد علامات تجارية لعرضها حالياً.</p>`;
+        }
+    } catch (error) {
+        console.error('Error fetching user brands:', error);
+        container.innerHTML = '<p style="text-align: center; color: red; grid-column: 1/-1;">حدث خطأ أثناء تحميل بيانات البراندات.</p>';
+    }
+}
+
 window.loadMyBrandForEdit = loadMyBrandForEdit;
 window.updateBrandProfile = updateBrandProfile;
 window.displayAllBrands = displayAllBrands;
 window.submitNewBrand = submitNewBrand;
+window.displayUserBrands = displayUserBrands;

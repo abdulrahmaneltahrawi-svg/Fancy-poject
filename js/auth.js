@@ -85,6 +85,14 @@ async function loadUserProfile() {
             const user = result.data.user || result.data;
             localStorage.setItem('userData', JSON.stringify(user));
             updateProfileUI(user);
+        } else if (result.status === 401) {
+            // إذا رد السيرفر بـ 401، فهذا يعني أن الجلسة انتهت فعلياً
+            console.warn("Session expired on server. Clearing local data.");
+            localStorage.removeItem('userData');
+            updateAuthUI(); // سيعيد إظهار أزرار Login/Join
+            if (window.location.pathname.includes('profile.html')) {
+                window.location.href = 'index.html'; // توجيه للرئيسية لحماية صفحة البروفايل
+            }
         }
     } catch (error) {
         console.error("خطأ في جلب بيانات البروفايل من السيرفر:", error);
@@ -115,6 +123,7 @@ function setupProfileTabs(user) {
     const tabs = document.querySelectorAll('.tabs a');
     const createSection = document.getElementById('create-action-link');
     const createText = document.getElementById('create-action-text');
+    const brandsSection = document.getElementById('brands-tab-content');
 
     tabs.forEach(tab => {
         tab.addEventListener('click', function() {
@@ -125,17 +134,25 @@ function setupProfileTabs(user) {
             // 2. تغيير المحتوى بناءً على التبويب
             if (this.id === 'tab-overview') {
                 createSection?.classList.add('hidden');
+                brandsSection?.classList.add('hidden');
             } 
             else if (this.id === 'tab-brands') {
-                createSection?.classList.remove('hidden');
+                brandsSection?.classList.remove('hidden');
                 
+                // استدعاء دالة جلب البراندات عند الضغط على التبويب
+                if (typeof window.displayUserBrands === 'function') {
+                    window.displayUserBrands('user-brands-list');
+                }
+
                 // التحقق: إذا كان لدى المستخدم براند، يوجهه لإضافة منتج. وإذا لم يكن لديه، يوجهه لإنشاء براند.
                 if (user.brand_id) {
                     if (createText) createText.textContent = 'إضافة منتج جديد';
                     if (createSection) createSection.href = 'add-product.html';
+                    createSection?.classList.remove('hidden');
                 } else {
                     if (createText) createText.textContent = 'إنشاء علامة تجارية (براند)';
                     if (createSection) createSection.href = 'add-brand.html';
+                    createSection?.classList.remove('hidden');
                 }
             } 
             else if (this.id === 'tab-designer') {
