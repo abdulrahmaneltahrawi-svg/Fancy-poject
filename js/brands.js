@@ -2,6 +2,19 @@
  * brands.js - معالجة بيانات العلامة التجارية (تحديث الملف الشخصي للمصمم)
  */
 
+// دالة مساعدة لضمان صحة مسار الصورة (تضيف رابط الـ API إذا كان المسار نسبياً)
+function getSafeImageUrl(path) {
+    if (!path) return 'imges/img/fancy1.jfif'; // الصورة الافتراضية
+    if (path.startsWith('data:') || path.startsWith('http')) return path;
+    
+    // تنظيف المسار من أي سلاش زائد في البداية
+    const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+    
+    // الربط مع مسار الـ API الموجود في FancyAPI (js/script.js)
+    // نفترض أن المجلد هو uploads في جذر الـ API
+    return `${FancyAPI.baseUrl}/${cleanPath}`;
+}
+
 // دالة لجلب وعرض جميع البراندات في الصفحة
 async function displayAllBrands(containerId = 'brands-container') {
     const container = document.getElementById(containerId);
@@ -42,18 +55,18 @@ async function displayAllBrands(containerId = 'brands-container') {
                         <a href="view_brands.html?brand=${brand.id}" style="text-decoration: none; color: inherit;">
                             <div class="brand-images-grid ${gridClass}">
                                 <div class="main-img">
-                                    <img src="${brand.cover_image || brand.main_image || 'imges/img/fancy1.jfif'}" alt="${brand.brand_name}" />
+                                    <img src="${getSafeImageUrl(brand.cover_image || brand.main_image)}" alt="${brand.brand_name}" />
                                 </div>
                                 ${hasSideImages ? `
                                 <div class="side-imgs">
-                                    ${brand.side_img1 ? `<img src="${brand.side_img1}" alt="item" />` : ''}
-                                    ${brand.side_img2 ? `<img src="${brand.side_img2}" alt="item" />` : ''}
+                                    ${brand.side_img1 ? `<img src="${getSafeImageUrl(brand.side_img1)}" alt="item" />` : ''}
+                                    ${brand.side_img2 ? `<img src="${getSafeImageUrl(brand.side_img2)}" alt="item" />` : ''}
                                 </div>
                                 ` : ''}
                             </div>
                             <div class="brand-info">
                                 <img
-                                    src="${brand.logo || 'imges/img/fancy1.jfif'}"
+                                    src="${getSafeImageUrl(brand.logo)}"
                                     alt="logo"
                                     class="brand-logo"
                                 />
@@ -128,17 +141,35 @@ async function loadMyBrandForEdit(specificBrandId = null) {
 }
 
 // دالة لإرسال تحديث بيانات البراند إلى السيرفر (Update)
-async function updateBrandProfile(formDataObject) {
+async function updateBrandProfile(formData) {
     try {
-        // إرسال البيانات إلى ملف update.php المذكور في الـ API
-        const result = await FancyAPI.post('/brands/update.php', formDataObject);
+        const data = {};
+        const fileToBase64 = (file) => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+
+        for (let [key, value] of formData.entries()) {
+            if (value instanceof File && value.size > 0) {
+                data[key] = await fileToBase64(value);
+            } else if (value instanceof File && value.size === 0) {
+                // إذا لم يتم اختيار ملف، لا نرسل هذا المفتاح للحفاظ على الصورة القديمة
+                continue;
+            } else {
+                data[key] = value;
+            }
+        }
+
+        const result = await FancyAPI.post('/brands/update.php', data);
 
         if (result.success) {
             alert("تم تحديث بيانات العلامة التجارية بنجاح!");
             
             // تحديث الاسم في localStorage لضمان ظهوره في الهيدر فوراً
             const userData = JSON.parse(localStorage.getItem('userData'));
-            userData.brand_name = formDataObject.brand_name;
+            userData.brand_name = data.brand_name;
             localStorage.setItem('userData', JSON.stringify(userData));
             
             window.location.href = 'profile.html'; // العودة لصفحة البروفايل
@@ -153,11 +184,7 @@ async function updateBrandProfile(formDataObject) {
 
 async function submitNewBrand(formData) {
     try {
-        // تحويل FormData إلى كائن عادي ليتم إرساله كـ JSON
-        // لأن السيرفر يتوقع JSON (وهذا سبب خطأ 422 عند إرسال FormData مباشرة)
         const data = {};
-        
-        // دالة لتحويل ملفات الصور إلى Base64 لإدراجها في الـ JSON
         const fileToBase64 = (file) => new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -165,22 +192,19 @@ async function submitNewBrand(formData) {
             reader.onerror = error => reject(error);
         });
 
-        // استخراج البيانات من FormData ومعالجة الصور
         for (let [key, value] of formData.entries()) {
             if (value instanceof File) {
                 if (value.size > 0) {
                     data[key] = await fileToBase64(value);
                 } else {
-                    data[key] = null;
+                    data[key] = null; // إرسال null صريح لضمان معالجة الحقل في PHP
                 }
             } else {
                 data[key] = value;
             }
         }
 
-        // إضافة حقول قد تكون مطلوبة في قاعدة البيانات مثل كود الدولة
-        if (!data.phone_code) data.phone_code = "";
-
+        console.log("Sending brand data as JSON with Base64 images...");
         const result = await FancyAPI.post('/brands/create.php', data); 
         
         if (result.success) {
@@ -225,23 +249,24 @@ async function displayUserBrands(containerId = 'user-brands-list') {
             brands.forEach(brand => {
                 const hasSideImages = brand.side_img1 || brand.side_img2;
                 const gridClass = hasSideImages ? '' : 'single-layout';
+                const brandId = brand.id || brand.brand_id;
                 const brandHtml = `
                     <div class="brand-card">
-                        <a href="view_brands.html?brand=${brand.id}" style="text-decoration: none; color: inherit;">
+                        <a href="view_brands.html?brand=${brandId}" style="text-decoration: none; color: inherit;">
                             <div class="brand-images-grid ${gridClass}">
                                 <div class="main-img">
-                                    <img src="${brand.cover_image || brand.main_image || 'imges/img/fancy1.jfif'}" alt="${brand.brand_name}" />
+                                    <img src="${getSafeImageUrl(brand.cover_image || brand.main_image)}" alt="${brand.brand_name}" />
                                 </div>
                                 ${hasSideImages ? `
                                 <div class="side-imgs">
-                                    ${brand.side_img1 ? `<img src="${brand.side_img1}" alt="item" />` : ''}
-                                    ${brand.side_img2 ? `<img src="${brand.side_img2}" alt="item" />` : ''}
+                                    ${brand.side_img1 ? `<img src="${getSafeImageUrl(brand.side_img1)}" alt="item" />` : ''}
+                                    ${brand.side_img2 ? `<img src="${getSafeImageUrl(brand.side_img2)}" alt="item" />` : ''}
                                 </div>
                                 ` : ''}
                             </div>
                             <div class="brand-info">
                                 <img
-                                    src="${brand.logo || 'imges/img/fancy1.jfif'}"
+                                    src="${getSafeImageUrl(brand.logo)}"
                                     alt="logo"
                                     class="brand-logo"
                                 />
@@ -253,8 +278,8 @@ async function displayUserBrands(containerId = 'user-brands-list') {
                             </div>
                         </a>
                         <div class="brand-mgmt-btns" style="display: flex; gap: 8px; padding: 10px; border-top: 1px solid #eee; background: #fafafa;">
-                            <button onclick="deactivateBrand(${brand.id})" style="flex: 1; padding: 8px; border: 1px solid #ddd; background: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; color: #666; transition: 0.3s;">تعطيل</button>
-                            <button onclick="deleteBrand(${brand.id})" style="flex: 1; padding: 8px; border: none; background: #d9534f; color: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; transition: 0.3s;">حذف</button>
+                            <button onclick="deactivateBrand(${brandId})" style="flex: 1; padding: 8px; border: 1px solid #ddd; background: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; color: #666; transition: 0.3s;">تعطيل</button>
+                            <button onclick="deleteBrand(${brandId})" style="flex: 1; padding: 8px; border: none; background: #d9534f; color: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; transition: 0.3s;">حذف</button>
                         </div>
                     </div>
                 `;
@@ -273,11 +298,8 @@ async function displayUserBrands(containerId = 'user-brands-list') {
 async function deactivateBrand(brandId) {
     if (!confirm('هل أنت متأكد من تعطيل هذه العلامة التجارية؟')) return;
     try {
-        const formData = new FormData();
-        formData.append('brand_id', brandId);
-
-        const result = await FancyAPI.post('/brands/deactivate.php', formData);
-        if (result.success || result.ok) {
+        const result = await FancyAPI.post('/brands/deactivate.php', { brand_id: brandId });
+        if (result.success) {
             alert(result.message || 'تم تعطيل البراند بنجاح');
             displayUserBrands(); // تحديث القائمة
         } else {
@@ -292,11 +314,8 @@ async function deactivateBrand(brandId) {
 async function deleteBrand(brandId) {
     if (!confirm('تحذير: هل أنت متأكد من حذف هذه العلامة التجارية نهائياً؟ لا يمكن التراجع عن هذا الإجراء.')) return;
     try {
-        const formData = new FormData();
-        formData.append('brand_id', brandId);
-
-        const result = await FancyAPI.post('/brands/delete.php', formData);
-        if (result.success || result.ok) {
+        const result = await FancyAPI.post('/brands/delete.php', { brand_id: brandId });
+        if (result.success) {
             alert(result.message || 'تم حذف البراند بنجاح');
             displayUserBrands(); // تحديث القائمة
         } else {

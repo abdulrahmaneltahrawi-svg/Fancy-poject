@@ -110,8 +110,15 @@ function updateProfileUI(user) {
     if (document.getElementById('prof-name')) 
         document.getElementById('prof-name').textContent = `${user.first_name} ${user.last_name}`;
     
-    if (document.getElementById('prof-avatar')) 
-        document.getElementById('prof-avatar').textContent = user.first_name.charAt(0).toUpperCase();
+    if (document.getElementById('prof-avatar')) {
+        const avatarUrl = user.image || user.logo || user.avatar;
+        if (avatarUrl) {
+            const fullUrl = typeof getSafeImageUrl === 'function' ? getSafeImageUrl(avatarUrl) : avatarUrl;
+            document.getElementById('prof-avatar').innerHTML = `<img src="${fullUrl}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+        } else {
+            document.getElementById('prof-avatar').textContent = user.first_name.charAt(0).toUpperCase();
+        }
+    }
         
     if (document.getElementById('prof-type')) 
         document.getElementById('prof-type').textContent = user.account_type || 'مستخدم';
@@ -139,6 +146,8 @@ function setupProfileTabs(user) {
     const createSection = document.getElementById('create-action-link');
     const createText = document.getElementById('create-action-text');
     const brandsSection = document.getElementById('brands-tab-content');
+    const productsSection = document.getElementById('products-tab-content');
+    const overviewSection = document.getElementById('overview-tab-content');
 
     tabs.forEach(tab => {
         tab.addEventListener('click', function() {
@@ -146,10 +155,12 @@ function setupProfileTabs(user) {
             tabs.forEach(t => t.classList.remove('active'));
             this.classList.add('active');
 
+            // إخفاء جميع الأقسام أولاً
+            [overviewSection, brandsSection, productsSection, createSection].forEach(sec => sec?.classList.add('hidden'));
+
             // 2. تغيير المحتوى بناءً على التبويب
             if (this.id === 'tab-overview') {
-                createSection?.classList.add('hidden');
-                brandsSection?.classList.add('hidden');
+                overviewSection?.classList.remove('hidden');
             } 
             else if (this.id === 'tab-brands') {
                 brandsSection?.classList.remove('hidden');
@@ -170,6 +181,20 @@ function setupProfileTabs(user) {
                     createSection?.classList.remove('hidden');
                 }
             } 
+            else if (this.id === 'tab-products') {
+                productsSection?.classList.remove('hidden');
+                
+                // استدعاء دالة جلب المنتجات عند الضغط على التبويب
+                if (typeof window.loadMyProducts === 'function') {
+                    window.loadMyProducts('user-products-list');
+                }
+
+                if (user.brand_id) {
+                    if (createText) createText.textContent = 'إضافة منتج جديد';
+                    if (createSection) createSection.href = 'add-product.html';
+                    createSection?.classList.remove('hidden');
+                }
+            }
             else if (this.id === 'tab-designer') {
                 createSection?.classList.remove('hidden');
                 if (createText) createText.textContent = 'إضافة مصمم';

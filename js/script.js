@@ -28,10 +28,9 @@ const FancyAPI = {
             try {
                 result = text ? JSON.parse(text) : {};
             } catch (e) {
-                // إذا كانت الاستجابة ناجحة من السيرفر (200 OK) ولكنها ليست JSON (نص عادي أو فارغة)
-                if (response.ok) {
-                    return { success: true, ok: true, status: response.status, data: text };
-                }
+                // إذا فشل تحويل النص لـ JSON، نعتبر العملية فشلت برمجياً لإظهار الخطأ الحقيقي
+                console.error(`Invalid JSON Response at [${endpoint}]:`, text);
+                return { success: false, message: 'خطأ في استجابة السيرفر البرمجية', status: response.status, error: text };
 
                 // طباعة الخطأ الحقيقي في الكونسول للمساعدة في البرمجة
                 console.error(`Raw Server Response Error at [${endpoint}]:`, text);

@@ -50,9 +50,14 @@
                 <label>رقم الهاتف للعلامة التجارية</label>
                 <input type="tel" name="phone">
             </div>
-            <!-- ملاحظة: تعديل الصور (الشعار والغلاف) يتطلب منطقاً إضافياً لرفع الملفات كـ Base64 أو FormData.
-                 حالياً، النموذج لا يدعم رفع الصور مباشرة، بل يتم إرسال البيانات النصية فقط.
-                 إذا كنت ترغب في تعديل الصور، ستحتاج لإضافة حقول input type="file" ومعالجة رفعها في JavaScript. -->
+            <div class="form-group">
+                <label>تحديث الشعار (Logo)</label>
+                <input type="file" name="logo" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label>تحديث صورة الغلاف (Cover Image)</label>
+                <input type="file" name="cover_image" accept="image/*">
+            </div>
             <div class="form-group">
                 <label>رابط الموقع الإلكتروني (إن وجد)</label>
                 <input type="url" name="website">
@@ -82,13 +87,12 @@
         document.getElementById('editBrandForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
-            const formDataObject = Object.fromEntries(formData.entries());
             
-            if (!formDataObject.brand_id) {
+            if (!formData.get('brand_id')) {
                 alert('خطأ: معرف البراند مفقود. يرجى تحديث الصفحة.');
                 return;
             }
-            updateBrandProfile(formDataObject);
+            updateBrandProfile(formData);
         });
     </script>
 </body>

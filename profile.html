@@ -45,6 +45,7 @@
         <nav class="tabs">
             <a href="javascript:void(0)" class="active" id="tab-overview">نظرة عامة</a>
             <a href="javascript:void(0)" id="tab-brands">البراندات</a>  
+            <a href="javascript:void(0)" id="tab-products">منتجاتي</a>
         </nav>
 
         <!-- حاوية نظرة عامة -->
@@ -60,6 +61,11 @@
         <!-- حاوية عرض البراندات الخاصة بالمستخدم -->
         <div id="brands-tab-content" class="hidden">
             <div id="user-brands-list" class="brands-container"></div>
+        </div>
+
+        <!-- حاوية عرض المنتجات الخاصة بالمستخدم -->
+        <div id="products-tab-content" class="hidden" style="padding: 20px;">
+            <div id="user-products-list" class="projects-grid"></div>
         </div>
 
         <a href="add-designer.html" id="create-action-link" class="create-section hidden" style="text-decoration: none; color: inherit;">
@@ -79,30 +85,6 @@
         if (typeof loadUserProfile === 'function') {
             loadUserProfile();
         }
-
-        // منطق التبديل بين التبويبات
-        const tabOverview = document.getElementById('tab-overview');
-        const tabBrands = document.getElementById('tab-brands');
-        const overviewContent = document.getElementById('overview-tab-content');
-        const brandsContent = document.getElementById('brands-tab-content');
-
-        tabOverview.addEventListener('click', () => {
-            tabOverview.classList.add('active');
-            tabBrands.classList.remove('active');
-            overviewContent.classList.remove('hidden');
-            brandsContent.classList.add('hidden');
-        });
-
-        tabBrands.addEventListener('click', () => {
-            tabBrands.classList.add('active');
-            tabOverview.classList.remove('active');
-            brandsContent.classList.remove('hidden');
-            overviewContent.classList.add('hidden');
-        });
     });
 </script>
 </html>
-
-fancy/api/brands/deactivate.php
-
-fancy/api/brands/delete.php
