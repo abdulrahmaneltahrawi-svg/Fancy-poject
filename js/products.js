@@ -28,7 +28,7 @@ function createProductCardHTML(data, options = {}) {
                     ${productDesc.substring(0, 70)}${productDesc.length > 70 ? '...' : ''}
                 </p>
                 <div class="card-meta">
-                    <span class="category" style="color: #ffb400; font-weight: bold; text-transform: uppercase; font-size: 12px;">${productCategory}</span>
+                    <span class="category" style="font-weight: bold; text-transform: uppercase; font-size: 12px;">${productCategory}</span>
                 </div>
                 ${showControls ? `
                 <div class="card-actions" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; display: flex; gap: 10px;">
@@ -37,7 +37,7 @@ function createProductCardHTML(data, options = {}) {
                             <button onclick="approveProduct(${productId})" style="flex: 1; background: #5cb85c; color: #fff; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 12px;">قبول</button>
                             <button onclick="rejectProduct(${productId})" style="flex: 1; background: #d9534f; color: #fff; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 12px;">رفض</button>
                         ` : `
-                            <button onclick="suspendProduct(${productId})" style="flex: 1; background: #666; color: #fff; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 12px;">إيقاف</button>
+                            <button onclick="suspendProduct(${productId})" style=" background: #ff0000; color: #fff; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 13px;">إيقاف</button>
                         `
                     ) : `
                         <a href="edit-product.html?id=${productId}" class="edit-btn" style="flex: 1; text-align: center; background: #f0ad4e; color: #fff; padding: 5px; border-radius: 4px; text-decoration: none; font-size: 13px;">تعديل</a>

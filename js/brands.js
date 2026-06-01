@@ -64,7 +64,7 @@ async function displayAllBrands(containerId = 'brands-container') {
                                 </div>
                                 ` : ''}
                             </div>
-                            <div class="brand-info">
+                            <div class="brand-info" style="padding: 10px;">
                                 <img
                                     src="${getSafeImageUrl(brand.logo)}"
                                     alt="logo"
@@ -73,13 +73,13 @@ async function displayAllBrands(containerId = 'brands-container') {
                                 <div class="brand-text">
                                     <h3>${brand.brand_name || brand.name || 'علامة تجارية'}</h3>
                                     <p>${brand.country || ''} | ${brand.city || ''}</p>
-                                    <span>${brand.brand_type || ''}</span>
+                                    <span style="pad">${brand.brand_type || ''}</span>
                                 </div>
                             </div>
                         </a>
                         ${isAdmin ? `
                         <div class="admin-mgmt-btns" style="padding: 10px; border-top: 1px solid #eee; background: #fdfdfd;">
-                            <button onclick="suspendBrand(${brand.id})" style="width: 100%; padding: 6px; background: #666; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">إيقاف العلامة التجارية</button>
+                            <button onclick="suspendBrand(${brand.id})" style=" padding: 6px; background: #ff0000; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;">إيقاف </button>
                         </div>
                         ` : ''}
                     </div>
