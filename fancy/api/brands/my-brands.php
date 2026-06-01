@@ -6,6 +6,7 @@ error_reporting(E_ALL);
 
 require_once __DIR__ . "/../../core/cors.php";
 require_once __DIR__ . "/../../config/database.php";
+require_once __DIR__ . "/../../config/app.php";
 require_once __DIR__ . "/../../core/response.php";
 require_once __DIR__ . "/../../core/helpers.php";
 require_once __DIR__ . "/../../core/auth.php";
@@ -15,6 +16,15 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 }
 
 $auth = requireAuth();
+
+function imageUrl($path)
+{
+    if (!$path) {
+        return null;
+    }
+
+    return rtrim(APP_URL, '/') . '/' . ltrim($path, '/');
+}
 
 try {
     $stmt = $pdo->prepare("
@@ -42,9 +52,17 @@ try {
     $stmt->execute([$auth['user_id']]);
     $brands = $stmt->fetchAll();
 
+    foreach ($brands as &$brand) {
+        $brand['id'] = (int)$brand['id'];
+
+        $brand['logo_url'] = imageUrl($brand['logo']);
+        $brand['cover_image_url'] = imageUrl($brand['cover_image']);
+    }
+
     jsonResponse(true, "Brands retrieved successfully", [
         "brands" => $brands,
-        "has_brands" => count($brands) > 0
+        "has_brands" => count($brands) > 0,
+        "count" => count($brands)
     ]);
 
 } catch (Exception $e) {

@@ -16,17 +16,86 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $auth = requireAuth();
 
-$input = getJsonInput();
+/*
+|--------------------------------------------------------------------------
+| Upload helper
+|--------------------------------------------------------------------------
+*/
+function uploadBrandImage($fileInputName)
+{
+    if (!isset($_FILES[$fileInputName]) || $_FILES[$fileInputName]['error'] === UPLOAD_ERR_NO_FILE) {
+        return null;
+    }
 
-$brandName = cleanInput($input['brand_name'] ?? '');
-$brandType = cleanInput($input['brand_type'] ?? '');
-$email = strtolower(cleanInput($input['email'] ?? ''));
-$phoneCode = cleanInput($input['phone_code'] ?? '');
-$phone = cleanInput($input['phone'] ?? '');
-$country = cleanInput($input['country'] ?? '');
-$city = cleanInput($input['city'] ?? '');
-$website = cleanInput($input['website'] ?? '');
-$description = cleanInput($input['description'] ?? '');
+    $file = $_FILES[$fileInputName];
+
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        jsonResponse(false, "File upload error", [
+            "code" => "FILE_UPLOAD_ERROR",
+            "field" => $fileInputName
+        ], 400);
+    }
+
+    $maxSize = 2 * 1024 * 1024; // 2MB
+
+    if ($file['size'] > $maxSize) {
+        jsonResponse(false, "Image size must not exceed 2MB", [
+            "code" => "IMAGE_TOO_LARGE",
+            "field" => $fileInputName
+        ], 422);
+    }
+
+    $allowedMimeTypes = [
+        'image/jpeg' => 'jpg',
+        'image/png'  => 'png',
+        'image/webp' => 'webp'
+    ];
+
+    $mimeType = mime_content_type($file['tmp_name']);
+
+    if (!array_key_exists($mimeType, $allowedMimeTypes)) {
+        jsonResponse(false, "Only JPG, PNG and WEBP images are allowed", [
+            "code" => "INVALID_IMAGE_TYPE",
+            "field" => $fileInputName
+        ], 422);
+    }
+
+    $extension = $allowedMimeTypes[$mimeType];
+
+    $uploadDir = __DIR__ . "/../../uploads/brands/";
+
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0775, true);
+    }
+
+    $fileName = $fileInputName . "_" . time() . "_" . bin2hex(random_bytes(8)) . "." . $extension;
+
+    $destination = $uploadDir . $fileName;
+
+    if (!move_uploaded_file($file['tmp_name'], $destination)) {
+        jsonResponse(false, "Could not save uploaded image", [
+            "code" => "IMAGE_SAVE_FAILED",
+            "field" => $fileInputName
+        ], 500);
+    }
+
+    return "uploads/brands/" . $fileName;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Get form-data input
+|--------------------------------------------------------------------------
+*/
+$brandName = cleanInput($_POST['brand_name'] ?? '');
+$brandType = cleanInput($_POST['brand_type'] ?? '');
+$email = strtolower(cleanInput($_POST['email'] ?? ''));
+$phoneCode = cleanInput($_POST['phone_code'] ?? '');
+$phone = cleanInput($_POST['phone'] ?? '');
+$country = cleanInput($_POST['country'] ?? '');
+$city = cleanInput($_POST['city'] ?? '');
+$website = cleanInput($_POST['website'] ?? '');
+$description = cleanInput($_POST['description'] ?? '');
 
 if ($brandName === '') {
     jsonResponse(false, "Brand name is required", [
@@ -47,6 +116,7 @@ try {
         WHERE id = ?
         LIMIT 1
     ");
+
     $stmt->execute([$auth['user_id']]);
     $user = $stmt->fetch();
 
@@ -69,6 +139,14 @@ try {
         ], 403);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Upload images
+    |--------------------------------------------------------------------------
+    */
+    $logoPath = uploadBrandImage('logo');
+    $coverImagePath = uploadBrandImage('cover_image');
+
     $stmt = $pdo->prepare("
         INSERT INTO brands (
             user_id,
@@ -81,6 +159,8 @@ try {
             city,
             website,
             description,
+            logo,
+            cover_image,
             status
         ) VALUES (
             :user_id,
@@ -93,6 +173,8 @@ try {
             :city,
             :website,
             :description,
+            :logo,
+            :cover_image,
             'pending_admin_approval'
         )
     ");
@@ -107,13 +189,17 @@ try {
         ":country" => $country ?: null,
         ":city" => $city ?: null,
         ":website" => $website ?: null,
-        ":description" => $description ?: null
+        ":description" => $description ?: null,
+        ":logo" => $logoPath,
+        ":cover_image" => $coverImagePath
     ]);
 
     $brandId = $pdo->lastInsertId();
 
     jsonResponse(true, "Brand created successfully. Waiting for admin approval.", [
         "brand_id" => (int)$brandId,
+        "logo" => $logoPath,
+        "cover_image" => $coverImagePath,
         "status" => "pending_admin_approval",
         "next_step" => "waiting_admin_approval"
     ], 201);

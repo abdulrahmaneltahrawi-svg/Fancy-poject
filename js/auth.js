@@ -135,7 +135,7 @@ function updateProfileUI(user) {
         document.getElementById('prof-phone').textContent = user.phone || 'غير متوفر';
 
     if (document.getElementById('prof-status')) 
-        document.getElementById('prof-status').textContent = 'نشط';
+        document.getElementById('prof-status').textContent = 'Active';
     
     // تهيئة التبويبات
     setupProfileTabs(user);

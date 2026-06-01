@@ -9,6 +9,7 @@ require_once __DIR__ . "/../../config/database.php";
 require_once __DIR__ . "/../../core/response.php";
 require_once __DIR__ . "/../../core/helpers.php";
 require_once __DIR__ . "/../../core/auth.php";
+require_once __DIR__ . "/../../config/app.php";
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     jsonResponse(false, "Method not allowed", [], 405);
@@ -24,6 +25,24 @@ if ($brandId <= 0) {
     ], 422);
 }
 
+/*
+|--------------------------------------------------------------------------
+| Build base URL
+|--------------------------------------------------------------------------
+| Example:
+| http://localhost/fancy/
+|--------------------------------------------------------------------------
+*/
+
+
+function imageUrl($path)
+{
+    if (!$path) {
+        return null;
+    }
+
+    return rtrim(APP_URL, '/') . '/' . ltrim($path, '/');
+}
 try {
     $stmt = $pdo->prepare("
         SELECT
@@ -57,6 +76,12 @@ try {
             "code" => "BRAND_NOT_FOUND"
         ], 404);
     }
+
+    $brand['id'] = (int)$brand['id'];
+    $brand['user_id'] = (int)$brand['user_id'];
+
+    $brand['logo_url'] = imageUrl($brand['logo']);
+    $brand['cover_image_url'] = imageUrl($brand['cover_image']);
 
     jsonResponse(true, "Brand retrieved successfully", [
         "brand" => $brand
