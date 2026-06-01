@@ -57,5 +57,3 @@ async function loadSubCategoriesForFilter(categoryName, callback) {
 
 window.loadMainCategories = loadMainCategories;
 window.loadSubCategoriesForFilter = loadSubCategoriesForFilter;
-
-get-sub-categories.php

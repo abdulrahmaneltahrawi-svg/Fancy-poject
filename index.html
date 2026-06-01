@@ -9,27 +9,27 @@
   </head>
   <body>
     <style>
-   .category-nav {
-    display: flex;
-    justify-content: center; /* لتوسيط القائمة في الصفحة */
-    margin-top: 30px;
-    gap: 30px;              /* المسافة بين الكلمات */
-    padding: 30px;
-    font-family: Arial, sans-serif; /* نوع الخط القريب من الصورة */
-}
+      .category-nav {
+        display: flex;
+        justify-content: center; /* لتوسيط القائمة في الصفحة */
+        margin-top: 30px;
+        gap: 30px; /* المسافة بين الكلمات */
+        padding: 30px;
+        font-family: Arial, sans-serif; /* نوع الخط القريب من الصورة */
+      }
 
-.category-nav a {
-    text-decoration: none;  /* إزالة الخط اللي تحت الرابط */
-    color: #333;            /* لون الخط */
-    font-size: 18px;        /* حجم الخط */
-    font-weight: 400;       /* سمك الخط */
-    transition: color 0.3s ease;
-}
+      .category-nav a {
+        text-decoration: none; /* إزالة الخط اللي تحت الرابط */
+        color: #333; /* لون الخط */
+        font-size: 18px; /* حجم الخط */
+        font-weight: 400; /* سمك الخط */
+        transition: color 0.3s ease;
+      }
 
-/* تأثير بسيط عند تمرير الماوس */
-.category-nav a:hover {
-    color: gray; 
-}
+      /* تأثير بسيط عند تمرير الماوس */
+      .category-nav a:hover {
+        color: gray;
+      }
 
       .hero-slider {
         position: relative;
@@ -153,57 +153,61 @@
       }
 
       /**/
-   
     </style>
 
     <div id="header-placeholder"></div>
 
     <nav class="category-nav" id="main-category-nav"></nav>
 
-<section class="hero-slider">
-  <div class="slider-container">
+    <section class="hero-slider">
+      <div class="slider-container">
+
         <div class="slide active">
-      <div class="slide-bg" style="background-image: url('imges/img/fancy3.jfif')"></div>
-      <div class="slide-content">
-     
-          <h1>Fancy Design </h1>
-          <p>Fancy Design is a leading Saudi company specializing in integrated interior design and furniture solutions.</p>
-       
-      </div>
-    </div>
-    
-    <div class="slide">
-      <div class="slide-bg" style="background-image: url('imges/img/topslider04.webp')"></div>
-      <div class="slide-content">
-      
-          <h1>The RAIN FLOWER </h1>
-          <p>A modern masterpiece that seemlessly blends comfort and style.</p>
-       
-      </div>
-    </div>
+          <div
+            class="slide-bg"
+            style="
+              background-image: url(&quot;imges/img/topslider04.webp&quot;);
+            "
+          ></div>
+          <div class="slide-content">
+            <h1>The RAIN FLOWER</h1>
+            <p>
+              A modern masterpiece that seemlessly blends comfort and style.
+            </p>
+          </div>
+        </div>
 
-    <div class="slide">
-      <div class="slide-bg" style="background-image: url('imges/img/topslider03.webp')"></div>
-      <div class="slide-content">
-        
-          <h1>Flower Sofa </h1>
-          <p>A versatile and inviting seating solution that blooms into endless configurations.</p>
-        
+        <div class="slide">
+          <div
+            class="slide-bg"
+            style="
+              background-image: url(&quot;imges/img/topslider03.webp&quot;);
+            "
+          ></div>
+          <div class="slide-content">
+            <h1>Flower Sofa</h1>
+            <p>
+              A versatile and inviting seating solution that blooms into endless
+              configurations.
+            </p>
+          </div>
+        </div>
+
+        <div class="slide">
+          <div
+            class="slide-bg"
+            style="
+              background-image: url(&quot;imges/img/topslider05.webp&quot;);
+            "
+          ></div>
+          <div class="slide-content">
+            <h1>The Koji Sofa</h1>
+            <p>
+              a sculptural seating experience that redefines modern minimalism.
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
-
-    <div class="slide">
-      <div class="slide-bg" style="background-image: url('imges/img/topslider05.webp')"></div>
-      <div class="slide-content">
-        
-          <h1>The Koji Sofa </h1>
-          <p>a sculptural seating experience that redefines modern minimalism.</p>
-        
-      </div>
-    </div>
-  </div>
-
-
 
       <button class="prev-btn">&#10094;</button>
       <button class="next-btn">&#10095;</button>
@@ -228,26 +232,25 @@
 </section>
 -->
 
-<section class="projects-section">
-    <p class="title">Product</p>
-    <div class="container">
-        <div id="product-container" class="projects-grid"></div> </div>
-        <a href="page_prodact.html">
+    <section class="projects-section">
+      <p class="title">Product</p>
+      <div class="container">
+        <div id="product-container" class="projects-grid"></div>
+      </div>
+      <a href="page_prodact.html">
         <div class="read-more"><button>SEE MORE PRODUCTS</button></div>
-        </a>
-</section>
+      </a>
+    </section>
 
-<section class="projects-section">
-    <p class="title">Brand</p>
-    <div class="container">
-        <div id="brand-container" class="projects-grid"></div> </div>
-        <a href="page_brand.html">
+    <section class="projects-section">
+      <p class="title">Brand</p>
+      <div class="container">
+        <div id="brand-container" class="projects-grid"></div>
+      </div>
+      <a href="page_brand.html">
         <div class="read-more"><button>SEE ALL BRANDS</button></div>
-        </a>
-</section>
-
-
-
+      </a>
+    </section>
 
     <div id="footer-placeholder"></div>
 
@@ -259,14 +262,20 @@
       function showSlide(index) {
         // إضافة تحققات لمنع الأخطاء إذا كانت العناصر غير موجودة أو الـ index غير صالح
         if (!slides || slides.length === 0) {
-            console.warn("Slider elements with class 'slide' not found.");
-            return;
+          console.warn("Slider elements with class 'slide' not found.");
+          return;
         }
         if (!dots || dots.length === 0) {
-            console.warn("Dot elements with class 'dot' not found.");
-            return;
+          console.warn("Dot elements with class 'dot' not found.");
+          return;
         }
-        if (isNaN(index) || index < 0 || index >= slides.length || index >= dots.length) return; // تأكد أن الـ index ضمن النطاق لجميع العناصر
+        if (
+          isNaN(index) ||
+          index < 0 ||
+          index >= slides.length ||
+          index >= dots.length
+        )
+          return; // تأكد أن الـ index ضمن النطاق لجميع العناصر
         slides.forEach((slide) => slide.classList.remove("active"));
         dots.forEach((dot) => dot.classList.remove("active"));
 
@@ -290,49 +299,50 @@
         showSlide(currentSlide);
       }, 5000);
 
-// انشاء الكروت وعرضها
-// مراجع الحاويات الفريدة (تأكد أن هذه الـ IDs موجودة في الـ HTML)
-const interiorContainer = document.getElementById('interior-container');
-const productContainer = document.getElementById('product-container');
-const brandContainer = document.getElementById('brand-container');
+      // انشاء الكروت وعرضها
+      // مراجع الحاويات الفريدة (تأكد أن هذه الـ IDs موجودة في الـ HTML)
+      const interiorContainer = document.getElementById("interior-container");
+      const productContainer = document.getElementById("product-container");
+      const brandContainer = document.getElementById("brand-container");
 
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. جلب وعرض الأقسام من الـ API
-    if (typeof loadMainCategories === 'function') {
-        loadMainCategories('main-category-nav');
-    }
+      document.addEventListener("DOMContentLoaded", () => {
+        // 1. جلب وعرض الأقسام من الـ API
+        if (typeof loadMainCategories === "function") {
+          loadMainCategories("main-category-nav");
+        }
 
-    // 1. جلب وعرض المقالات من الـ API (أول 3 مقالات للمجلة)
-    if (typeof loadMagazines === 'function') {
-        loadMagazines('interior-container', 3);
-    }
+        // 1. جلب وعرض المقالات من الـ API (أول 3 مقالات للمجلة)
+        if (typeof loadMagazines === "function") {
+          loadMagazines("interior-container", 3);
+        }
 
-    // 2. جلب وعرض المنتجات من الـ API (أول 6 منتجات)
-    loadProducts('product-container', 6);
+        // 2. جلب وعرض المنتجات من الـ API (أول 6 منتجات)
+        loadProducts("product-container", 6);
 
-    // 3. جلب وعرض المصممين/البراندات من الـ API
-    if (typeof displayAllBrands === 'function') {
-        displayAllBrands('brand-container');
-    }
-});
+        // 3. جلب وعرض المصممين/البراندات من الـ API
+        if (typeof displayAllBrands === "function") {
+          displayAllBrands("brand-container");
+        }
+      });
 
-// دالة التصميم الموحدة للعناصر غير المنتجات (Magazine, Brand)
-function createGenericCardHTML(data, type) {
-    let targetPage = "view.html"; // الصفحة الافتراضية للمنتجات
+      // دالة التصميم الموحدة للعناصر غير المنتجات (Magazine, Brand)
+      function createGenericCardHTML(data, type) {
+        let targetPage = "view.html"; // الصفحة الافتراضية للمنتجات
 
-    if (type === "magazine") {
-        targetPage = "view_interior.html"; 
-    } else if (type === "brand" && data.id) { // تأكد من وجود ID للبراند
-        targetPage = "view_brand.html";
-    }
+        if (type === "magazine") {
+          targetPage = "view_interior.html";
+        } else if (type === "brand" && data.id) {
+          // تأكد من وجود ID للبراند
+          targetPage = "view_brand.html";
+        }
 
-    const categoryText = data.category || '';
-    const badgeText = data.type || data.tag || data.brand || "";
-    
-    return `
+        const categoryText = data.category || "";
+        const badgeText = data.type || data.tag || data.brand || "";
+
+        return `
         <div class="project-card">
             <div class="card-image">
-                <a href="${targetPage}?id=${data.id || ''}">
+                <a href="${targetPage}?id=${data.id || ""}">
                     <img src="${data.image}" alt="${data.title}">
                 </a>
             </div>
@@ -342,21 +352,23 @@ function createGenericCardHTML(data, type) {
                 <p class="card-description"  style="font-size: 14px; color: #666; margin: 10px 0;">
                     ${categoryText}
                 </p>
-                ${badgeText ? `<span class="category" style=" color: gray; text-transform: uppercase; font-size: 12px;">${badgeText}</span>` : ''}
+                ${badgeText ? `<span class="category" style=" color: gray; text-transform: uppercase; font-size: 12px;">${badgeText}</span>` : ""}
             </div>
         </div>
     `;
-}
+      }
 
-// جعل الدالة متاحة لملف magazines.js
-window.createGenericCardHTML = createGenericCardHTML;
-
-    </script> 
+      // جعل الدالة متاحة لملف magazines.js
+      window.createGenericCardHTML = createGenericCardHTML;
+    </script>
     <!-- EmailJS SDK - يجب أن يتم تحميله قبل أي سكريبت يستخدم emailjs -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>  
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
+    ></script>
     <script src="js/script.js"></script>
     <script src="js/categories.js"></script>
-    <script src="js/products.js"></script>  
+    <script src="js/products.js"></script>
     <script src="js/brands.js"></script>
     <script src="js/auth.js"></script>
   </body>
