@@ -22,6 +22,10 @@
         .btn-edit { background: #eee; color: #000; border: 1px solid #ccc; }
         .hidden { display: none !important; }
         .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
+
+        @media (max-width: 768px) {
+            .container-flex { flex-direction: column; align-items: center; }
+        }
     </style>
 </head>
 <body>

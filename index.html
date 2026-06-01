@@ -152,6 +152,18 @@
         background: #fff;
       }
 
+            /* تحسين استجابة قائمة الأقسام للموبايل */
+      @media (max-width: 600px) {
+        .category-nav {
+          gap: 27px; /* تقليل المسافة بين الروابط */
+          padding: 15px; /* تقليل الحشوة */
+          flex-wrap: wrap; /* السماح للعناصر بالانتقال إلى سطر جديد */
+          justify-content: flex-start; /* محاذاة العناصر إلى البداية عند الالتفاف */
+          font-size: 5px;
+        }
+      }
+
+
       /**/
     </style>
 

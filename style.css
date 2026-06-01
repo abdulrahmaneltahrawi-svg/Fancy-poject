@@ -601,6 +601,30 @@ body {
   border-color: #999;
 }
 
+/* تحسين استجابة وحجم الفلاتر في الجوال */
+@media (max-width: 768px) {
+  .filter-container {
+    padding: 10px;
+    flex-wrap: nowrap; /* منع النزول لسطر جديد */
+    overflow-x: auto;  /* تفعيل السحب الأفقي */
+    justify-content: flex-start; /* البدء من اليمين/اليسار للسحب */
+    gap: 6px;
+    -webkit-overflow-scrolling: touch; /* سلاسة السحب في آيفون */
+    scrollbar-width: none; /* إخفاء شريط التمرير في فايرفوكس */
+  }
+
+  .filter-container::-webkit-scrollbar {
+    display: none; /* إخفاء شريط التمرير في كروم وسفاري لمظهر أنظف */
+  }
+
+  .dropbtn, .filter-btn {
+    padding: 5px 10px; /* تقليل الحواف أكثر */
+    font-size: 12px;   /* تصغير الخط ليتناسب مع الجوال */
+    white-space: nowrap; /* منع انكسار النص داخل الزر */
+    flex-shrink: 0;    /* منع انكماش الزر */
+  }
+}
+
 /* --- تنسيق نافذة التسجيل والدخول --- */
 .modal-overlay {
     display: none;
