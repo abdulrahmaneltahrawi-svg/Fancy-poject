@@ -79,7 +79,7 @@ async function displayAllBrands(containerId = 'brands-container') {
                         </a>
                         ${isAdmin ? `
                         <div class="admin-mgmt-btns" style="padding: 10px; border-top: 1px solid #eee; background: #fdfdfd;">
-                            <button onclick="suspendBrand(${brand.id})" style=" padding: 6px; background: #ff0000; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;">إيقاف </button>
+                            <button onclick="suspendBrand(${brand.id})" style=" padding: 6px; background: #ff0000; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;">Stop </button>
                         </div>
                         ` : ''}
                     </div>

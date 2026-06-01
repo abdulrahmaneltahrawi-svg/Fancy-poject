@@ -19,13 +19,13 @@ function updateAuthUI() {
                             <i class="arrow-down"></i>
                         </button>
                         <div id="user-dropdown-list" class="dropdown-menu user-dropdown">
-                            <a href="profile.html"><li>ملفي الشخصي</li></a>
+                            <a href="profile.html"><li>Profile</li></a>
                             ${(user.account_type === 'admin' || user.role === 'admin') ? `
-                                <a href="pending.html"><li>صفحة الادمن</li></a>
+                                <a href="pending.html"><li>Admin page</li></a>
                             ` : ''}
                             
                             <hr style="border: 0; border-top: 1px solid #eee; margin: 5px 0;">
-                            <a href="#" id="logout-btn"><li style="color: #d9534f;">تسجيل الخروج</li></a>
+                            <a href="#" id="logout-btn"><li style="color: #d9534f;">Logout</li></a>
                         </div>
                     </div>
                 </div>
