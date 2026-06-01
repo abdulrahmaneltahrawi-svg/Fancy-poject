@@ -7,7 +7,8 @@ function createProductCardHTML(data, options = {}) {
     // تأكد من أن `data.id` موجود لتوليد رابط صحيح
     const productId = data.id || ''; 
     const productTitle = data.product_name || 'منتج غير معروف';
-    const productImage = data.main_image || 'imges/placeholder.png'; // صورة افتراضية
+    // استخدام getSafeImageUrl لضمان ظهور الصور المخزنة في قاعدة البيانات
+    const productImage = typeof getSafeImageUrl === 'function' ? getSafeImageUrl(data.main_image) : (data.main_image || 'imges/placeholder.png');
     const productDesc = data.short_description || '';
     const productCategory = data.category_name || '';
     const productStatus = data.status || 'active';
