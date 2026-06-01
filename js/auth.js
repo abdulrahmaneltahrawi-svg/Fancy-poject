@@ -120,6 +120,15 @@ function updateProfileUI(user) {
     if (dateElem && user.created_at) {
         dateElem.textContent = new Date(user.created_at).toLocaleDateString('ar-EG');
     }
+
+    if (document.getElementById('prof-email')) 
+        document.getElementById('prof-email').textContent = user.email || 'غير متوفر';
+
+    if (document.getElementById('prof-phone')) 
+        document.getElementById('prof-phone').textContent = user.phone || 'غير متوفر';
+
+    if (document.getElementById('prof-status')) 
+        document.getElementById('prof-status').textContent = 'نشط';
     
     // تهيئة التبويبات
     setupProfileTabs(user);
