@@ -325,8 +325,8 @@ async function loadPendingBrandsForAdmin(containerId) {
             <h3>${brand.brand_name}</h3>
             <p>${brand.brand_type} - ${brand.country}</p>
             <div style="display:flex; gap:10px; margin-top:10px;">
-                <button onclick="approveBrand(${brand.id})" style="flex:1; background:#5cb85c; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">قبول</button>
-                <button onclick="rejectBrand(${brand.id})" style="flex:1; background:#d9534f; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">رفض</button>
+                <button onclick="approveBrand(${brand.id})" style="flex:1; background:#5cb85c; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">accept</button>
+                <button onclick="rejectBrand(${brand.id})" style="flex:1; background:#d9534f; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">refect</button>
             </div>
         </div>
     `;
