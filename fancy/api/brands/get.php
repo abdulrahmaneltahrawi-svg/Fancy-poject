@@ -65,6 +65,7 @@ try {
         FROM brands
         WHERE id = ?
           AND user_id = ?
+          AND status != 'deleted'
         LIMIT 1
     ");
 

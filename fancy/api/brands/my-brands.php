@@ -46,6 +46,7 @@ try {
             updated_at
         FROM brands
         WHERE user_id = ?
+        AND status != 'deleted'
         ORDER BY id DESC
     ");
 

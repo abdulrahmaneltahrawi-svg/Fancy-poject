@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>تسجيل براند جديد - Fancy Design</title>
@@ -20,55 +20,55 @@
 
     <div class="form-container">
         <div class="form-header">
-            <h2>تسجيل علامة تجارية جديدة</h2>
-            <p>أدخل تفاصيل البراند الخاص بك ليتم مراجعته من قبل الإدارة</p>
+            <h2>Registering a new trademark</h2>
+            <p>Enter your brand details for review by management.</p>
         </div>
         <form id="brandForm">
             <div class="form-group">
-                <label>اسم العلامة التجارية</label>
-                <input type="text" name="brand_name" required placeholder="اكتب اسم العلامة التجارية هنا...">
+                <label>Registering a new trademark:</label>
+                <input type="text" name="brand_name" required placeholder="Write the brand name here...">
             </div>
             <div class="form-group">
-                <label>نوع المنتج (القسم)</label>
+                <label>Product type (category):</label>
                 <select name="brand_type" id="brand_type_select" required>
-                    <option value="">جاري تحميل الأقسام...</option>
+                    <option value=""> Choose the product type...</option>
                 </select>
             </div>
             <div style="display: flex; gap: 35px;">
                 <div class="form-group" style="flex: 1;">
-                    <label>الدولة</label>
+                    <label>City:</label>
                     <input type="text" name="country" required>
                 </div>
                 <div class="form-group" style="flex: 1;">
-                    <label>المدينة</label>
+                    <label>State:</label>
                     <input type="text" name="city">
                 </div>
             </div>
             <div class="form-group">
-                <label>البريد الإلكتروني للعلامة التجارية</label>
+                <label>Brand Email:</label>
                 <input type="email" name="email" placeholder="brand@example.com">
             </div>
             <div class="form-group">
-                <label>رقم الهاتف للعلامة التجارية</label>
-                <input type="tel" name="phone" placeholder="مثلاً: 05XXXXXXXX">
+                <label>Brand phone number:</label>
+                <input type="tel" name="phone" placeholder="EX: 05XXXXXXXX">
             </div>
             <div class="form-group">
-                <label>شعار العلامة التجارية (Logo)</label>
+                <label>Brand logo:</label>
                 <input type="file" name="logo" accept="image/*">
             </div>
             <div class="form-group">
-                <label>صورة الغلاف (Cover Image)</label>
+                <label>Cover image:</label>
                 <input type="file" name="cover_image" accept="image/*">
             </div>
             <div class="form-group">
-                <label>رابط الموقع الإلكتروني (إن وجد)</label>
+                <label>Website link (if available):</label>
                 <input type="url" name="website" placeholder="https://example.com">
             </div>
             <div class="form-group">
-                <label>وصف عن العلامة التجارية</label>
+                <label>Brand description</label>
                 <textarea name="description" rows="4"></textarea>
             </div>
-            <button type="submit" class="submit-btn">إرسال الطلب</button>
+            <button type="submit" class="submit-btn">Sbumit the request</button>
         </form>
     </div>
 
@@ -85,7 +85,7 @@
                 // استدعاء ملف الأقسام (تم استخدام المسار القياسي المتبع في المشروع)
                 const result = await FancyAPI.get('/categories/list.php');
                 if (result.success && result.data && result.data.categories) {
-                    selectElem.innerHTML = '<option value="">اختر نوع المنتج...</option>';
+                    selectElem.innerHTML = '<option value="">chosse product category...</option>';
                     result.data.categories.forEach(cat => {
                         const option = document.createElement('option');
                         option.value = cat.name; // نرسل اسم القسم كنوع للنشاط

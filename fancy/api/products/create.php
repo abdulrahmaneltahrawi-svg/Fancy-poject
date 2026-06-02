@@ -15,25 +15,98 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $auth = requireAuth();
+// jsonResponse(true, "FILES DEBUG", [
+//     "post" => $_POST,
+//     "files" => $_FILES
+// ]);
 
-$input = getJsonInput();
+/*
+|--------------------------------------------------------------------------
+| Upload Product Image Helper
+|--------------------------------------------------------------------------
+*/
+function uploadProductImage($fileInputName)
+{
+    if (!isset($_FILES[$fileInputName]) || $_FILES[$fileInputName]['error'] === UPLOAD_ERR_NO_FILE) {
+        return null;
+    }
 
-$brandId = (int)($input['brand_id'] ?? 0);
+    $file = $_FILES[$fileInputName];
 
-$categoryId = isset($input['category_id']) && $input['category_id'] !== ''
-    ? (int)$input['category_id']
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        jsonResponse(false, "File upload error", [
+            "code" => "FILE_UPLOAD_ERROR",
+            "field" => $fileInputName
+        ], 400);
+    }
+
+    $maxSize = 3 * 1024 * 1024; // 3MB
+
+    if ($file['size'] > $maxSize) {
+        jsonResponse(false, "Image size must not exceed 3MB", [
+            "code" => "IMAGE_TOO_LARGE",
+            "field" => $fileInputName
+        ], 422);
+    }
+
+    $allowedMimeTypes = [
+        'image/jpeg' => 'jpg',
+        'image/png'  => 'png',
+        'image/webp' => 'webp'
+    ];
+
+    $mimeType = mime_content_type($file['tmp_name']);
+
+    if (!array_key_exists($mimeType, $allowedMimeTypes)) {
+        jsonResponse(false, "Only JPG, PNG and WEBP images are allowed", [
+            "code" => "INVALID_IMAGE_TYPE",
+            "field" => $fileInputName
+        ], 422);
+    }
+
+    $extension = $allowedMimeTypes[$mimeType];
+
+    $uploadDir = __DIR__ . "/../../uploads/products/";
+
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0775, true);
+    }
+
+    $fileName = $fileInputName . "_" . time() . "_" . bin2hex(random_bytes(8)) . "." . $extension;
+
+    $destination = $uploadDir . $fileName;
+
+    if (!move_uploaded_file($file['tmp_name'], $destination)) {
+        jsonResponse(false, "Could not save uploaded image", [
+            "code" => "IMAGE_SAVE_FAILED",
+            "field" => $fileInputName
+        ], 500);
+    }
+
+    return "uploads/products/" . $fileName;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Get form-data input
+|--------------------------------------------------------------------------
+*/
+$brandId = (int)($_POST['brand_id'] ?? 0);
+
+$categoryId = isset($_POST['category_id']) && $_POST['category_id'] !== ''
+    ? (int)$_POST['category_id']
     : null;
 
-$subCategoryId = isset($input['sub_category_id']) && $input['sub_category_id'] !== ''
-    ? (int)$input['sub_category_id']
+$subCategoryId = isset($_POST['sub_category_id']) && $_POST['sub_category_id'] !== ''
+    ? (int)$_POST['sub_category_id']
     : null;
 
-$requestedCategoryName = cleanInput($input['requested_category_name'] ?? '');
-$requestedSubCategoryName = cleanInput($input['requested_sub_category_name'] ?? '');
+$requestedCategoryName = cleanInput($_POST['requested_category_name'] ?? '');
+$requestedSubCategoryName = cleanInput($_POST['requested_sub_category_name'] ?? '');
 
-$productName = cleanInput($input['product_name'] ?? '');
-$shortDescription = cleanInput($input['short_description'] ?? '');
-$description = cleanInput($input['description'] ?? '');
+$productName = cleanInput($_POST['product_name'] ?? '');
+$shortDescription = cleanInput($_POST['short_description'] ?? '');
+$description = cleanInput($_POST['description'] ?? '');
 
 if ($brandId <= 0) {
     jsonResponse(false, "Brand ID is required", [
@@ -47,26 +120,12 @@ if ($productName === '') {
     ], 422);
 }
 
-/*
-|--------------------------------------------------------------------------
-| Category validation
-|--------------------------------------------------------------------------
-| لازم المستخدم يعمل واحدة من الاتنين:
-| 1. يختار category موجودة
-| 2. يكتب requested_category_name لو الكاتيجوري مش موجودة
-*/
 if ($categoryId === null && $requestedCategoryName === '') {
     jsonResponse(false, "Please select a category or enter requested category name", [
         "code" => "CATEGORY_REQUIRED"
     ], 422);
 }
 
-/*
-|--------------------------------------------------------------------------
-| Sub Category validation
-|--------------------------------------------------------------------------
-| لو اختار category موجودة، لازم يختار sub_category أو يكتب requested_sub_category_name
-*/
 if ($categoryId !== null && $subCategoryId === null && $requestedSubCategoryName === '') {
     jsonResponse(false, "Please select a sub category or enter requested sub category name", [
         "code" => "SUB_CATEGORY_REQUIRED"
@@ -151,7 +210,14 @@ try {
 
     /*
     |--------------------------------------------------------------------------
-    | 4. Generate unique slug
+    | 4. Upload main image
+    |--------------------------------------------------------------------------
+    */
+    $mainImagePath = uploadProductImage('main_image');
+
+    /*
+    |--------------------------------------------------------------------------
+    | 5. Generate unique slug
     |--------------------------------------------------------------------------
     */
     $baseSlug = createSlug($productName);
@@ -172,7 +238,7 @@ try {
 
     /*
     |--------------------------------------------------------------------------
-    | 5. Insert product
+    | 6. Insert product
     |--------------------------------------------------------------------------
     */
     $stmt = $pdo->prepare("
@@ -187,6 +253,7 @@ try {
             slug,
             short_description,
             description,
+            main_image,
             status
         ) VALUES (
             :user_id,
@@ -199,6 +266,7 @@ try {
             :slug,
             :short_description,
             :description,
+            :main_image,
             'pending_admin_approval'
         )
     ");
@@ -213,7 +281,8 @@ try {
         ":product_name" => $productName,
         ":slug" => $slug,
         ":short_description" => $shortDescription ?: null,
-        ":description" => $description ?: null
+        ":description" => $description ?: null,
+        ":main_image" => $mainImagePath
     ]);
 
     $productId = $pdo->lastInsertId();
@@ -221,6 +290,7 @@ try {
     jsonResponse(true, "Product created successfully. Waiting for admin approval.", [
         "product_id" => (int)$productId,
         "slug" => $slug,
+        "main_image" => $mainImagePath,
         "status" => "pending_admin_approval",
         "next_step" => "waiting_admin_approval"
     ], 201);

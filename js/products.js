@@ -235,36 +235,31 @@ async function submitProductUpdate(formData) {
     }
 }
 
-// دالة لإرسال منتج جديد إلى السيرفر
 async function submitNewProduct(formData) {
     try {
-        // تحويل FormData إلى كائن JSON (لحل مشكلة رفض السيرفر للـ multipart/form-data)
-        // ملاحظة: إذا كان المنتج يحتوي على صورة (File)، فإن JSON لا يدعم إرسالها مباشرة.
-        // ولكن بناءً على طلبك بالتحويل لـ JSON، سنقوم بجمع النصوص:
-        const data = Object.fromEntries(formData.entries());
+        console.log("Sending product data...");
         
-        console.log("Sending product data as JSON...", data);
-        
-        const result = await FancyAPI.post('/products/create.php', data); 
+        // ملاحظة: لا تحول formData إلى JSON
+        // إذا كان FancyAPI يضيف JSON Header تلقائياً، فقد تحتاج لاستخدام fetch العادي أو تعديل FancyAPI
+        const response = await fetch('/fancy-design/Fancy/api/products/create.php', {
+            method: 'POST',
+            body: formData // أرسل الـ formData مباشرة
+            // لا تضع Content-Type هنا، المتصفح سيضعها تلقائياً مع الـ boundary الصحيح
+        });
+
+        const result = await response.json();
 
         if (result.success) {
-            alert("تم إضافة المنتج بنجاح! هو الآن بانتظار مراجعة الإدارة.");
+            alert("تم إضافة المنتج بنجاح!");
             window.location.href = 'index.html';
         } else {
-            // في حال كان الخطأ Unauthorized، سنطلب منه تسجيل الدخول
-            if (result.status === 401) {
-                alert("يجب عليك تسجيل الدخول أولاً لإضافة منتج.");
-                if (window.showAuthModal) showAuthModal('login');
-            } else {
-                alert("خطأ: " + (result.message || "حدث خطأ غير متوقع"));
-            }
+            alert("خطأ: " + (result.message || "حدث خطأ"));
         }
     } catch (error) {
-        console.error('Error creating product:', error);
+        console.error('Error:', error);
         alert("فشل الاتصال بالسيرفر.");
     }
 }
-
 // دالة لجلب وعرض المنتجات المعلقة (للمدير فقط)
 async function loadPendingProductsForAdmin(containerId) {
     const container = document.getElementById(containerId);

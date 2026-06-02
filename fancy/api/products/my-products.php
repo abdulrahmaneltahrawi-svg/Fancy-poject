@@ -54,6 +54,7 @@ try {
             ON sub_categories.id = products.sub_category_id
 
         WHERE products.user_id = ?
+            AND products.status != 'deleted'
 
         ORDER BY products.id DESC
     ");

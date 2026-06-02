@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <link rel="icon" href="imges/img/fancy1.jfif" />
-    <title>تعديل البراند - Fancy Design</title>
+    <title>Edit brands- Fancy Design</title>
     <link rel="stylesheet" href="style.css">
     <style>
         .form-container { max-width: 700px; margin: 50px auto; padding: 30px; border: 1px solid #ddd; border-radius: 12px; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
@@ -20,54 +20,54 @@
 
     <div class="form-container">
         <div class="form-header">
-            <h2>تعديل بيانات العلامة التجارية</h2>
-            <p>قم بتحديث تفاصيل البراند الخاص بك</p>
+            <h2>Modify brand data:</h2>
+            <p>Update your brand details:</p>
         </div>
         <form id="editBrandForm">
             <input type="hidden" name="brand_id" id="brand_id_input">
             <div class="form-group">
-                <label>اسم العلامة التجارية</label>
+                <label>Brand name:</label>
                 <input type="text" name="brand_name" required>
             </div>
             <div class="form-group">
-                <label>نوع النشاط</label>
+                <label>Brand category:</label>
                 <input type="text" name="brand_type">
             </div>
             <div style="display: flex; gap: 15px;">
                 <div class="form-group" style="flex: 1;">
-                    <label>الدولة</label>
+                    <label>City:</label>
                     <input type="text" name="country" required>
                 </div>
                 <div class="form-group" style="flex: 1;">
-                    <label>المدينة</label>
+                    <label>State:</label>
                     <input type="text" name="city">
                 </div>
             </div>
             <div class="form-group">
-                <label>البريد الإلكتروني للعلامة التجارية</label>
+                <label>Brand email:</label>
                 <input type="email" name="email">
             </div>
             <div class="form-group">
-                <label>رقم الهاتف للعلامة التجارية</label>
+                <label>Brand phone number:</label>
                 <input type="tel" name="phone">
             </div>
             <div class="form-group">
-                <label>تحديث الشعار (Logo)</label>
+                <label>Logo (update):</label>
                 <input type="file" name="logo" accept="image/*">
             </div>
             <div class="form-group">
-                <label>تحديث صورة الغلاف (Cover Image)</label>
+                <label>cover image (update):</label>
                 <input type="file" name="cover_image" accept="image/*">
             </div>
             <div class="form-group">
-                <label>رابط الموقع الإلكتروني (إن وجد)</label>
+                <label>Website link (if available):</label>
                 <input type="url" name="website">
             </div>
             <div class="form-group">
-                <label>وصف عن العلامة التجارية</label>
+                <label>Brand description:</label>
                 <textarea name="description" rows="4"></textarea>
             </div>
-            <button type="submit" class="submit-btn">حفظ التغييرات</button>
+            <button type="submit" class="submit-btn">Save changes</button>
         </form>
     </div>
 

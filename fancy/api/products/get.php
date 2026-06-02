@@ -65,7 +65,7 @@ try {
 
         WHERE products.id = ?
           AND products.user_id = ?
-
+          AND products.status != 'deleted'
         LIMIT 1
     ");
 
