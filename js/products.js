@@ -63,6 +63,12 @@ async function loadProducts(containerId, limit = null, brandId = null, showContr
         brandId = urlParams.get('brand') || urlParams.get('brand_id');
     }
 
+    // التأكد من أن الدالة لا تعمل إلا إذا وجد brandId (حسب طلبك)
+    if (!brandId) {
+        console.warn("loadProducts: تم إيقاف التحميل لعدم وجود brandId في الرابط أو المعاملات.");
+        return;
+    }
+
     // التحقق من حالة المدير محلياً لتفعيل أدوات التحكم تلقائياً
     const userData = JSON.parse(localStorage.getItem('userData') || '{}');
     const isAdmin = userData.account_type === 'admin' || userData.role === 'admin';
@@ -70,7 +76,7 @@ async function loadProducts(containerId, limit = null, brandId = null, showContr
     try {
         // بناء الرابط مع فلتر البراند إن وجد
         let url = '/products/public-list.php';
-        if (brandId) url += `?brand_id=${brandId}`;
+        url += `?brand_id=${brandId}`;
         
         const result = await FancyAPI.get(url); 
 
@@ -120,7 +126,8 @@ async function loadSingleProductDetails(productId) {
 
         if (result && result.success && result.data.product) {
             const product = result.data.product;
-            document.getElementById('project-image').src = product.main_image || 'imges/placeholder.png';
+            // استخدام getSafeImageUrl لتصحيح مسار الصورة وتجنب 404
+            document.getElementById('project-image').src = typeof getSafeImageUrl === 'function' ? getSafeImageUrl(product.main_image) : (product.main_image || 'imges/placeholder.png');
             document.getElementById('project-name').innerText = product.product_name || 'منتج غير معروف';
             document.getElementById('project-desc').innerText = product.description || 'لا يوجد وصف لهذا المنتج.';
             document.getElementById('project-category').innerText = product.category_name || "";
@@ -235,8 +242,14 @@ async function submitProductUpdate(formData) {
 // دالة لإرسال منتج جديد إلى السيرفر
 async function submitNewProduct(formData) {
     try {
-        console.log("Sending product data as FormData...");
-        const result = await FancyAPI.post('/products/create.php', formData); 
+        // تحويل FormData إلى كائن JSON (لحل مشكلة رفض السيرفر للـ multipart/form-data)
+        // ملاحظة: إذا كان المنتج يحتوي على صورة (File)، فإن JSON لا يدعم إرسالها مباشرة.
+        // ولكن بناءً على طلبك بالتحويل لـ JSON، سنقوم بجمع النصوص:
+        const data = Object.fromEntries(formData.entries());
+        
+        console.log("Sending product data as JSON...", data);
+        
+        const result = await FancyAPI.post('/products/create.php', data); 
 
         if (result.success) {
             alert("تم إضافة المنتج بنجاح! هو الآن بانتظار مراجعة الإدارة.");
