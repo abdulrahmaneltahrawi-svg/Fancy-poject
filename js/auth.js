@@ -76,28 +76,25 @@ function switchAuthTab(type) {
 }
 
 async function loadUserProfile() {
-    // 1. القراءة الفورية من المتصفح لسرعة العرض
     const localData = localStorage.getItem('userData');
     if (localData) {
         const user = JSON.parse(localData);
         updateProfileUI(user);
     }
 
-    // 2. جلب أحدث البيانات من السيرفر
     try {
         const result = await FancyAPI.get('/auth/me.php');
         if (result && result.success) {
             const user = result.data.user || result.data;
             localStorage.setItem('userData', JSON.stringify(user));
             updateProfileUI(user);
-            updateAuthUI(); // تحديث الهيدر فوراً بعد جلب البيانات الجديدة
+            updateAuthUI();
         } else if (result.status === 401) {
-            // إذا رد السيرفر بـ 401، فهذا يعني أن الجلسة انتهت فعلياً
             console.warn("Session expired on server. Clearing local data.");
             localStorage.removeItem('userData');
-            updateAuthUI(); // سيعيد إظهار أزرار Login/Join
+            updateAuthUI();
             if (window.location.pathname.includes('profile.html')) {
-                window.location.href = 'index.html'; // توجيه للرئيسية لحماية صفحة البروفايل
+                window.location.href = 'index.html';
             }
         }
     } catch (error) {
@@ -105,10 +102,9 @@ async function loadUserProfile() {
     }
 }
 
-// دالة مساعدة لتحديث عناصر الصفحة (سهلة الصيانة)
 function updateProfileUI(user) {
     if (document.getElementById('prof-name')) 
-        document.getElementById('prof-name').textContent = `${user.first_name} ${user.last_name}`;
+        document.getElementById('prof-name').textContent = user.full_name || `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'مستخدم';
     
     if (document.getElementById('prof-avatar')) {
         const avatarUrl = user.image || user.logo || user.avatar;
@@ -126,19 +122,27 @@ function updateProfileUI(user) {
         
     const dateElem = document.getElementById('prof-date');
     if (dateElem && user.created_at) {
-        dateElem.textContent = new Date(user.created_at).toLocaleDateString('ar-EG');
+        dateElem.textContent = new Date(user.created_at).toLocaleDateString('ar-SA');
     }
 
     if (document.getElementById('prof-email')) 
         document.getElementById('prof-email').textContent = user.email || 'غير متوفر';
 
     if (document.getElementById('prof-phone')) 
-        document.getElementById('prof-phone').textContent = user.phone || 'غير متوفر';
+        document.getElementById('prof-phone').textContent = user.phone || user.phone_number || 'غير متوفر';
 
-    if (document.getElementById('prof-status')) 
-        document.getElementById('prof-status').textContent = 'Active';
+    const statusElem = document.getElementById('prof-status');
+    if (statusElem) {
+        const status = user.status || 'pending';
+        statusElem.textContent = status;
+        // تعيين الألوان بناءً على الحالة
+        if (status.toLowerCase() === 'active') {
+            statusElem.style.color = 'green';
+        } else {
+            statusElem.style.color = 'orange'; // للحالات المعلقة أو التي تتطلب إجراءً
+        }
+    }
     
-    // تهيئة التبويبات
     setupProfileTabs(user);
 }
 

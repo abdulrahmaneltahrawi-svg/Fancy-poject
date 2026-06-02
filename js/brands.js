@@ -77,7 +77,7 @@ async function displayAllBrands(containerId = 'brands-container') {
                 container.insertAdjacentHTML('beforeend', brandHtml);
             });
         } else if (result.success) {
-            container.innerHTML = `<p style="text-align: center; grid-column: 1/-1; padding: 50px;">لا توجد علامات تجارية نشطة حالياً في قاعدة البيانات.</p>`;
+            container.innerHTML = `<p style="text-align: center; grid-column: 1/-1; padding: 50px;">There are no currently active brands.</p>`;
         } else {
             // في حال خطأ 401 أو غيره
             container.innerHTML = `<p style="text-align: center; padding: 50px; grid-column: 1/-1;">يجب <a href="#" class="login-link">تسجيل الدخول</a> أولاً لعرض المحتوى.</p>`;

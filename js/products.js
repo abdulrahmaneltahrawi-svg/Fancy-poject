@@ -170,7 +170,7 @@ async function loadMyProducts(containerId) {
             container.innerHTML = ""; 
             
             if (result.data.products.length === 0) {
-                container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; padding: 40px;">ليس لديك أي منتجات حالياً. ابدأ بإضافة منتجك الأول!</p>';
+                container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; padding: 40px;">You currently have no products. Start by adding your first product!</p>';
                 return;
             }
 
