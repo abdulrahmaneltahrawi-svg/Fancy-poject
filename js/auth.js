@@ -116,7 +116,8 @@ function updateProfileUI(user) {
             const fullUrl = typeof getSafeImageUrl === 'function' ? getSafeImageUrl(avatarUrl) : avatarUrl;
             document.getElementById('prof-avatar').innerHTML = `<img src="${fullUrl}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
         } else {
-            document.getElementById('prof-avatar').textContent = user.first_name.charAt(0).toUpperCase();
+            const initial = (user.first_name || user.name || 'U').charAt(0).toUpperCase();
+            document.getElementById('prof-avatar').textContent = initial;
         }
     }
         

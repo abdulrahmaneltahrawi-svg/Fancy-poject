@@ -7,12 +7,13 @@ function getSafeImageUrl(path) {
     if (!path) return 'imges/img/fancy1.jfif'; // الصورة الافتراضية
     if (path.startsWith('data:') || path.startsWith('http')) return path;
     
-    // تنظيف المسار من أي سلاش زائد في البداية
-    const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+    const cleanPath = path.replace(/^\//, '');
+    // التأكد من إضافة مجلد uploads للمسار إذا لم يكن موجوداً
+    const finalPath = cleanPath.includes('uploads/') ? cleanPath : `uploads/${cleanPath}`;
     
-    // الربط مع مسار الـ API الموجود في FancyAPI (js/script.js)
-    // نفترض أن المجلد هو uploads في جذر الـ API
-    return `${FancyAPI.baseUrl}/${cleanPath}`;
+    // تصحيح المسار: إزالة /api فقط من نهاية baseUrl للوصول لمجلد uploads الموجود داخل مجلد Fancy
+    const baseProject = FancyAPI.baseUrl.replace(/\/api\/?$/, '');
+    return `${baseProject}/${finalPath}`;
 }
 
 // دالة لجلب وعرض جميع البراندات في الصفحة
@@ -26,20 +27,18 @@ async function displayAllBrands(containerId = 'brands-container') {
         
         console.log('Brands API Response:', result); // لمساعدتك في تتبع البيانات في الكونسول
 
-        let brands = null;
-        if (result.success && result.data) {
-            // محاولة استخراج البيانات سواء كانت في data مباشرة أو داخل data.brands
-            let rawData = result.data.brands || result.data;
-            
-            // إذا كانت البيانات مصفوفة نأخذها مباشرة، وإذا كانت Object نحولها لمصفوفة
-            if (Array.isArray(rawData)) {
-                brands = rawData;
-            } else if (typeof rawData === 'object' && rawData !== null) {
-                brands = Object.values(rawData);
-            }
+        // التعامل مع حالة عدم المصادقة (خطأ 401)
+        if (result.status === 401) {
+            localStorage.removeItem('userData'); // تنظيف أي بيانات جلسة قديمة محلياً
+            container.innerHTML = `<p style="text-align: center; grid-column: 1/-1; padding: 50px;">يرجى <a href="#" class="login-link" style="color: var(--primary-color); font-weight: bold;">تسجيل الدخول</a> لعرض العلامات التجارية.</p>`;
+            if (window.showAuthModal) window.showAuthModal('login');
+            return;
         }
 
-        if (result.ok && result.success && brands && brands.length > 0) {
+        // استخراج المصفوفة بشكل مرن
+        const brands = result.data?.brands || (Array.isArray(result.data) ? result.data : []);
+
+        if (result.success && brands.length > 0) {
             const userData = JSON.parse(localStorage.getItem('userData') || '{}');
             const isAdmin = userData.account_type === 'admin' || userData.role === 'admin';
 
@@ -49,10 +48,11 @@ async function displayAllBrands(containerId = 'brands-container') {
                 // التحقق من وجود صور جانبية لضبط التنسيق (Grid vs Single)
                 const hasSideImages = brand.side_img1 || brand.side_img2;
                 const gridClass = hasSideImages ? '' : 'single-layout';
+                const brandId = brand.id || brand.brand_id;
 
                 const brandHtml = `
                     <div class="brand-card">
-                        <a href="view_brands.html?brand=${brand.id}" style="text-decoration: none; color: inherit;">
+                        <a href="view_brands.html?brand=${brandId}" style="text-decoration: none; color: inherit;">
                             <div class="brand-images-grid ${gridClass}">
                                 <div class="main-img">
                                     <img src="${getSafeImageUrl(brand.cover_image || brand.main_image)}" alt="${brand.brand_name}" />
@@ -79,18 +79,18 @@ async function displayAllBrands(containerId = 'brands-container') {
                         </a>
                         ${isAdmin ? `
                         <div class="admin-mgmt-btns" style="padding: 10px; border-top: 1px solid #eee; background: #fdfdfd;">
-                            <button onclick="suspendBrand(${brand.id})" style=" padding: 6px; background: #ff0000; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;">Stop </button>
+                            <button onclick="suspendBrand(${brandId})" style=" padding: 6px; background: #ff0000; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;">Stop </button>
                         </div>
                         ` : ''}
                     </div>
                 `;
                 container.insertAdjacentHTML('beforeend', brandHtml);
             });
-        } else if (result.success && (!brands || brands.length === 0)) {
+        } else if (result.success) {
             container.innerHTML = `<p style="text-align: center; grid-column: 1/-1; padding: 50px;">لا توجد علامات تجارية نشطة حالياً في قاعدة البيانات.</p>`;
         } else {
-            console.error('API Validation Error:', result);
-            container.innerHTML = `<p style="text-align: center; color: red;">خطأ في تحميل البيانات: ${result.message || 'استجابة غير متوقعة'}</p>`;
+            // في حال خطأ 401 أو غيره
+            container.innerHTML = `<p style="text-align: center; padding: 50px; grid-column: 1/-1;">يجب <a href="#" class="login-link">تسجيل الدخول</a> أولاً لعرض المحتوى.</p>`;
         }
     } catch (error) {
         console.error('Error fetching brands:', error);
@@ -119,6 +119,11 @@ async function loadMyBrandForEdit(specificBrandId = null) {
         // استدعاء بيانات البراند عبر API الجلب
         const result = await FancyAPI.get(`/brands/get.php?brand_id=${brandId}`);
         
+        if (result.status === 401) {
+            if (window.showAuthModal) window.showAuthModal('login');
+            return;
+        }
+
         if (result.ok && result.success && result.data && result.data.brand) {
             const brand = result.data.brand;
             const form = document.getElementById('editBrandForm');
@@ -143,33 +148,15 @@ async function loadMyBrandForEdit(specificBrandId = null) {
 // دالة لإرسال تحديث بيانات البراند إلى السيرفر (Update)
 async function updateBrandProfile(formData) {
     try {
-        const data = {};
-        const fileToBase64 = (file) => new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
-        });
-
-        for (let [key, value] of formData.entries()) {
-            if (value instanceof File && value.size > 0) {
-                data[key] = await fileToBase64(value);
-            } else if (value instanceof File && value.size === 0) {
-                // إذا لم يتم اختيار ملف، لا نرسل هذا المفتاح للحفاظ على الصورة القديمة
-                continue;
-            } else {
-                data[key] = value;
-            }
-        }
-
-        const result = await FancyAPI.post('/brands/update.php', data);
+        console.log("Updating brand data as FormData...");
+        const result = await FancyAPI.post('/brands/update.php', formData);
 
         if (result.success) {
             alert("تم تحديث بيانات العلامة التجارية بنجاح!");
             
             // تحديث الاسم في localStorage لضمان ظهوره في الهيدر فوراً
             const userData = JSON.parse(localStorage.getItem('userData'));
-            userData.brand_name = data.brand_name;
+            userData.brand_name = formData.get('brand_name');
             localStorage.setItem('userData', JSON.stringify(userData));
             
             window.location.href = 'profile.html'; // العودة لصفحة البروفايل
@@ -184,40 +171,30 @@ async function updateBrandProfile(formData) {
 
 async function submitNewBrand(formData) {
     try {
-        const data = {};
-        const fileToBase64 = (file) => new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
-        });
-
-        for (let [key, value] of formData.entries()) {
-            if (value instanceof File) {
-                if (value.size > 0) {
-                    data[key] = await fileToBase64(value);
-                } else {
-                    data[key] = null; // إرسال null صريح لضمان معالجة الحقل في PHP
-                }
-            } else {
-                data[key] = value;
-            }
+        // التحقق من وجود البيانات الأساسية قبل الإرسال لتجنب 422
+        if (!formData.get('brand_name')) {
+            alert("اسم العلامة التجارية مطلوب");
+            return;
         }
 
-        console.log("Sending brand data as JSON with Base64 images...");
-        const result = await FancyAPI.post('/brands/create.php', data); 
+        console.log("Sending brand data as FormData...");
+        const result = await FancyAPI.post('/brands/create.php', formData); 
         
         if (result.success) {
-            alert(result.message || "تم إرسال طلب تسجيل البراند بنجاح!");
+            alert(result.message || "تم إنشاء العلامة التجارية بنجاح!");
             
             let userData = JSON.parse(localStorage.getItem('userData')) || {};
             if (result.data && (result.data.brand_id || result.data.id)) {
                 userData.brand_id = result.data.brand_id || result.data.id;
+                // تحديث الحالة أيضاً إذا كان السيرفر يعيدها
+                if (result.data.status) userData.status = result.data.status;
                 localStorage.setItem('userData', JSON.stringify(userData));
             }
             window.location.href = 'profile.html';
         } else {
-            alert("خطأ من السيرفر: " + (result.message || "فشل في إرسال الطلب"));
+            // عرض رسالة الخطأ المحددة القادمة من السيرفر (مثل: "البريد الإلكتروني موجود مسبقاً")
+            const errorDetail = result.errors ? Object.values(result.errors).join('\n') : (result.message || "فشل في معالجة البيانات");
+            alert("خطأ (422): " + errorDetail);
         }
     } catch (error) {
         console.error('Error submitting brand:', error);
@@ -233,6 +210,13 @@ async function displayUserBrands(containerId = 'user-brands-list') {
     try {
         // استدعاء API لجلب براندات المستخدم (يفترض وجود ملف my-brands.php)
         const result = await FancyAPI.get('/brands/my-brands.php'); 
+
+        if (result.status === 401) {
+            localStorage.removeItem('userData'); // تنظيف البيانات القديمة
+            container.innerHTML = `<p style="text-align: center; padding: 40px; grid-column: 1/-1;">يرجى <a href="#" class="login-link" style="color: var(--primary-color);">تسجيل الدخول</a> لعرض العلامات التجارية الخاصة بك.</p>`;
+            if (window.showAuthModal) window.showAuthModal('login');
+            return;
+        }
         
         let brands = null;
         if (result.success && result.data) {
@@ -285,8 +269,10 @@ async function displayUserBrands(containerId = 'user-brands-list') {
                 `;
                 container.insertAdjacentHTML('beforeend', brandHtml);
             });
-        } else {
+        } else if (result.success) {
             container.innerHTML = `<p style="text-align: center; padding: 40px; grid-column: 1/-1;">لا توجد علامات تجارية لعرضها حالياً.</p>`;
+        } else {
+            container.innerHTML = `<p style="text-align: center; color: red; grid-column: 1/-1;">فشل تحميل البيانات: ${result.message || 'حدث خطأ غير معروف'}</p>`;
         }
     } catch (error) {
         console.error('Error fetching user brands:', error);

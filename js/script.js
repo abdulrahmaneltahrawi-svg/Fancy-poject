@@ -28,19 +28,15 @@ const FancyAPI = {
             try {
                 result = text ? JSON.parse(text) : {};
             } catch (e) {
-                // إذا فشل تحويل النص لـ JSON، نعتبر العملية فشلت برمجياً لإظهار الخطأ الحقيقي
                 console.error(`Invalid JSON Response at [${endpoint}]:`, text);
-                return { success: false, message: 'خطأ في استجابة السيرفر البرمجية', status: response.status, error: text };
-
-                // طباعة الخطأ الحقيقي في الكونسول للمساعدة في البرمجة
-                console.error(`Raw Server Response Error at [${endpoint}]:`, text);
-                
-                // التحقق ما إذا كان الرد عبارة عن صفحة HTML (غالباً خطأ 404 أو 500)
-                const isHtml = text.startsWith('<');
+                const isHtml = text.trim().startsWith('<');
                 const errorMsg = isHtml ? 'خطأ في المسار أو السيرفر (404/500)' : 'استجابة غير صالحة من السيرفر';
                 return { success: false, message: errorMsg, status: response.status, error: text };
             }
-            return { ok: response.ok, status: response.status, success: result.success ?? response.ok, ...result };
+
+            // تصحيح: إذا كان الرد 200 أو 201 نعتبر العملية نجحت برمجياً ما لم يذكر السيرفر عكس ذلك
+            const isSuccess = (response.ok && result.success !== false) || result.success === true;
+            return { ok: response.ok, status: response.status, success: isSuccess, ...result };
         } catch (error) {
             console.error(`API Error (${endpoint}):`, error);
             return { success: false, message: 'حدث خطأ في الاتصال بالسيرفر' };

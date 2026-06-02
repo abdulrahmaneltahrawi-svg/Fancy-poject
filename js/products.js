@@ -74,6 +74,12 @@ async function loadProducts(containerId, limit = null, brandId = null, showContr
         
         const result = await FancyAPI.get(url); 
 
+        if (result.status === 401) {
+            container.innerHTML = `<p style="text-align: center; grid-column: 1/-1; padding: 40px;">يرجى <a href="#" class="login-link">تسجيل الدخول</a> لعرض المنتجات المتاحة.</p>`;
+            if (window.showAuthModal) window.showAuthModal('login');
+            return;
+        }
+
         if (result && result.success && Array.isArray(result.data.products)) {
             let productsToDisplay = result.data.products;
             if (limit !== null) {
@@ -151,6 +157,12 @@ async function loadMyProducts(containerId) {
     try {
         const result = await FancyAPI.get('/products/my-products.php');
 
+        if (result.status === 401) {
+            container.innerHTML = `<p style="text-align: center; color: #666; grid-column: 1/-1; padding: 40px;">يجب <a href="#" class="login-link">تسجيل الدخول</a> لإدارة منتجاتك.</p>`;
+            if (window.showAuthModal) window.showAuthModal('login');
+            return;
+        }
+
         if (result && result.success && Array.isArray(result.data.products)) {
             container.innerHTML = ""; 
             
@@ -205,31 +217,8 @@ async function loadProductDataForEdit(productId) {
 // دالة إرسال التحديث إلى update.php
 async function submitProductUpdate(formData) {
     try {
-        const data = {};
-        
-        const fileToBase64 = (file) => new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
-        });
-
-        // تحويل البيانات ومعالجة الملفات إن وجدت
-        for (let [key, value] of formData.entries()) {
-            if (value instanceof File) {
-                if (value.size > 0) data[key] = await fileToBase64(value);
-            } else {
-                data[key] = value === "" ? null : value;
-            }
-        }
-
-        // تأكيد الأنواع الرقمية لتوافق السيرفر
-        data.product_id = Number(data.product_id);
-        data.brand_id = Number(data.brand_id);
-        if (data.category_id) data.category_id = Number(data.category_id);
-        if (data.sub_category_id) data.sub_category_id = Number(data.sub_category_id);
-
-        const result = await FancyAPI.post('/products/update.php', data);
+        console.log("Updating product data as FormData...");
+        const result = await FancyAPI.post('/products/update.php', formData);
 
         if (result.success) {
             alert("تم تحديث المنتج بنجاح! التغييرات قيد المراجعة.");
@@ -246,38 +235,8 @@ async function submitProductUpdate(formData) {
 // دالة لإرسال منتج جديد إلى السيرفر
 async function submitNewProduct(formData) {
     try {
-        const data = {};
-        const userData = JSON.parse(localStorage.getItem('userData')) || {};
-
-        // دالة مساعدة لتحويل الملف إلى Base64
-        const fileToBase64 = (file) => new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
-        });
-
-        // تحويل FormData إلى Object ومعالجة الصور
-        for (let [key, value] of formData.entries()) {
-            if (value instanceof File) {
-                if (value.size > 0) {
-                    data[key] = await fileToBase64(value);
-                }
-            } else {
-                // إرسال القيم الفارغة كـ null لضمان قبولها في الـ PHP
-                data[key] = value === "" ? null : value;
-            }
-        }
-
-        // تحويل المعرفات إلى أرقام (Numbers) بدلاً من نصوص
-        data.brand_id = data.brand_id ? Number(data.brand_id) : 0;
-        data.category_id = data.category_id ? Number(data.category_id) : null;
-        if (data.sub_category_id) data.sub_category_id = Number(data.sub_category_id);
-
-        console.log("Payload being sent to server:", data);
-
-        // نستخدم المسار المباشر لملف الإنشـاء
-        const result = await FancyAPI.post('/products/create.php', data); 
+        console.log("Sending product data as FormData...");
+        const result = await FancyAPI.post('/products/create.php', formData); 
 
         if (result.success) {
             alert("تم إضافة المنتج بنجاح! هو الآن بانتظار مراجعة الإدارة.");
