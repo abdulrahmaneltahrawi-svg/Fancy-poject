@@ -1,21 +1,11 @@
-/**
- * brands.js - معالجة بيانات العلامة التجارية (تحديث الملف الشخصي للمصمم)
- */
-
-// دالة مساعدة لضمان صحة مسار الصورة (تضيف رابط الـ API إذا كان المسار نسبياً)
 function getSafeImageUrl(path) {
     if (!path) return 'imges/img/fancy1.jfif'; // الصورة الافتراضية
     if (path.startsWith('data:') || path.startsWith('http')) return path;
-    
-    const cleanPath = path.replace(/^\//, '');
-    // التأكد من إضافة مجلد uploads للمسار إذا لم يكن موجوداً
-    const finalPath = cleanPath.includes('uploads/') ? cleanPath : `uploads/${cleanPath}`;
-    
-    // تصحيح المسار: إزالة /api فقط من نهاية baseUrl للوصول لمجلد uploads الموجود داخل مجلد Fancy
-    const baseProject = FancyAPI.baseUrl.replace(/\/api\/?$/, '');
-    return `${baseProject}/${finalPath}`;
-}
 
+    // إزالة السلاش البادئة وإضافة المسار الصحيح للمجلد
+    const cleanPath = path.replace(/^\//, '').replace('uploads/', '');
+    return '/fancy-design/fancy/uploads/' + cleanPath;
+}
 // دالة لجلب وعرض جميع البراندات في الصفحة
 async function displayAllBrands(containerId = 'brands-container') {
     const container = document.getElementById(containerId);
@@ -262,8 +252,8 @@ async function displayUserBrands(containerId = 'user-brands-list') {
                             </div>
                         </a>
                         <div class="brand-mgmt-btns" style="display: flex; gap: 8px; padding: 10px; border-top: 1px solid #eee; background: #fafafa;">
-                            <button onclick="deactivateBrand(${brandId})" style="flex: 1; padding: 8px; border: 1px solid #ddd; background: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; color: #666; transition: 0.3s;">تعطيل</button>
-                            <button onclick="deleteBrand(${brandId})" style="flex: 1; padding: 8px; border: none; background: #d9534f; color: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; transition: 0.3s;">حذف</button>
+                            <button onclick="deactivateBrand(${brandId})" style="flex: 1; padding: 8px; border: 1px solid #ddd; background: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; color: #666; transition: 0.3s;">Deactivate</button>
+                            <button onclick="deleteBrand(${brandId})" style="flex: 1; padding: 8px; border: none; background: #d9534f; color: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; transition: 0.3s;">Delete</button>
                         </div>
                     </div>
                 `;
@@ -329,18 +319,18 @@ async function loadPendingBrandsForAdmin(containerId) {
         if (result.success && Array.isArray(result.data.brands)) {
             container.innerHTML = result.data.brands.length ? '' : '<p style="grid-column:1/-1; text-align:center;">لا توجد براندات معلقة.</p>';
             result.data.brands.forEach(brand => {
-                container.innerHTML += `
-                    <div class="brand-card" style="border: 1px solid #eee; padding: 15px; border-radius: 8px;">
-                        <img src="${brand.logo || 'imges/img/fancy1.jfif'}" style="width:50px; height:50px; border-radius:50%;">
-                        <h3>${brand.brand_name}</h3>
-                        <p>${brand.brand_type} - ${brand.country}</p>
-                        <div style="display:flex; gap:10px; margin-top:10px;">
-                            <button onclick="approveBrand(${brand.id})" style="flex:1; background:#5cb85c; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">قبول</button>
-                            <button onclick="rejectBrand(${brand.id})" style="flex:1; background:#d9534f; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">رفض</button>
-                        </div>
-                    </div>
-                `;
-            });
+    container.innerHTML += `
+        <div class="brand-card" style="border: 1px solid #eee; padding: 15px; border-radius: 8px;">
+            <img src="${getSafeImageUrl(brand.logo)}" style="width:50px; height:50px; border-radius:50%;">
+            <h3>${brand.brand_name}</h3>
+            <p>${brand.brand_type} - ${brand.country}</p>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <button onclick="approveBrand(${brand.id})" style="flex:1; background:#5cb85c; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">قبول</button>
+                <button onclick="rejectBrand(${brand.id})" style="flex:1; background:#d9534f; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">رفض</button>
+            </div>
+        </div>
+    `;
+});
         }
     } catch (error) { console.error(error); }
 }

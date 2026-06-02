@@ -1,6 +1,6 @@
 // تعريف كائن FancyAPI لمعالجة طلبات الـ API بشكل موحد وتجنب تكرار الكود
 const FancyAPI = {
-    baseUrl: '/Fancy-Design/fancy/api',
+    baseUrl: '/fancy-design/Fancy/api',
     async request(endpoint, options = {}) {
         // تنظيف المسار لضمان عدم وجود سلاش مزدوج
         const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
