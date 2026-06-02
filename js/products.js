@@ -63,12 +63,6 @@ async function loadProducts(containerId, limit = null, brandId = null, showContr
         brandId = urlParams.get('brand') || urlParams.get('brand_id');
     }
 
-    // التأكد من أن الدالة لا تعمل إلا إذا وجد brandId (حسب طلبك)
-    if (!brandId) {
-        console.warn("loadProducts: تم إيقاف التحميل لعدم وجود brandId في الرابط أو المعاملات.");
-        return;
-    }
-
     // التحقق من حالة المدير محلياً لتفعيل أدوات التحكم تلقائياً
     const userData = JSON.parse(localStorage.getItem('userData') || '{}');
     const isAdmin = userData.account_type === 'admin' || userData.role === 'admin';
@@ -76,7 +70,9 @@ async function loadProducts(containerId, limit = null, brandId = null, showContr
     try {
         // بناء الرابط مع فلتر البراند إن وجد
         let url = '/products/public-list.php';
-        url += `?brand_id=${brandId}`;
+        if (brandId) {
+            url += `?brand_id=${brandId}`;
+        }
         
         const result = await FancyAPI.get(url); 
 
