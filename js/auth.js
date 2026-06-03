@@ -31,7 +31,7 @@ function updateAuthUI() {
                 </div>
             `;
         } catch (e) {
-            console.error('خطأ في قراءة بيانات المستخدم:', e);
+            console.error('Error reading user data:', e);
         }
     }
 }
@@ -98,7 +98,7 @@ async function loadUserProfile() {
             }
         }
     } catch (error) {
-        console.error("خطأ في جلب بيانات البروفايل من السيرفر:", error);
+        console.error("Error fetching profile data from server:", error);
     }
 }
 
@@ -118,18 +118,18 @@ function updateProfileUI(user) {
     }
         
     if (document.getElementById('prof-type')) 
-        document.getElementById('prof-type').textContent = user.account_type || 'مستخدم';
+        document.getElementById('prof-type').textContent = user.account_type || 'User';
         
     const dateElem = document.getElementById('prof-date');
     if (dateElem && user.created_at) {
-        dateElem.textContent = new Date(user.created_at).toLocaleDateString('ar-SA');
+        dateElem.textContent = new Date(user.created_at).toLocaleDateString('en-US');
     }
 
     if (document.getElementById('prof-email')) 
-        document.getElementById('prof-email').textContent = user.email || 'غير متوفر';
+        document.getElementById('prof-email').textContent = user.email || 'Not available';
 
     if (document.getElementById('prof-phone')) 
-        document.getElementById('prof-phone').textContent = user.phone || user.phone_number || 'غير متوفر';
+        document.getElementById('prof-phone').textContent = user.phone || user.phone_number || 'Not available';
 
     const statusElem = document.getElementById('prof-status');
     if (statusElem) {
@@ -177,7 +177,7 @@ function setupProfileTabs(user) {
 
                 // التحقق: إذا كان لدى المستخدم براند، يوجهه لإضافة منتج. وإذا لم يكن لديه، يوجهه لإنشاء براند.
                 if (user.brand_id) {
-                    if (createText) createText.textContent = 'إضافة منتج جديد';
+                    if (createText) createText.textContent = 'Add new product';
                     if (createSection) createSection.href = 'add-product.html';
                     createSection?.classList.remove('hidden');
                 } else {
@@ -195,14 +195,14 @@ function setupProfileTabs(user) {
                 }
 
                 if (user.brand_id) {
-                    if (createText) createText.textContent = 'إضافة منتج جديد';
+                    if (createText) createText.textContent = 'Add new product';
                     if (createSection) createSection.href = 'add-product.html';
                     createSection?.classList.remove('hidden');
                 }
             }
             else if (this.id === 'tab-designer') {
                 createSection?.classList.remove('hidden');
-                if (createText) createText.textContent = 'إضافة مصمم';
+                if (createText) createText.textContent = 'Add Designer';
                 if (createSection) createSection.href = 'add-designer.html';
             }
         });
@@ -225,17 +225,17 @@ async function logoutUser() {
 }
 
 async function resendVerificationCode(email) {
-    displayMessage('emailVerificationMessage', 'جاري إعادة إرسال الرمز...', true);
+    displayMessage('emailVerificationMessage', 'Resending code...', true);
     try {
         const result = await FancyAPI.post('/auth/resend-verification-code.php', { email });
         if (result.success) {
-            displayMessage('emailVerificationMessage', result.message || 'تم إرسال رمز جديد بنجاح إلى بريدك.', true);
+            displayMessage('emailVerificationMessage', result.message || 'New code sent successfully to your email.', true);
         } else {
-            displayMessage('emailVerificationMessage', result.message || 'فشل إعادة إرسال الرمز.', false);
+            displayMessage('emailVerificationMessage', result.message || 'Failed to resend code.', false);
         }
 
     } catch (error) {
-        displayMessage('emailVerificationMessage', 'خطأ في الاتصال بالسيرفر.', false);
+        displayMessage('emailVerificationMessage', 'Server connection error.', false);
     }
 }
 
@@ -305,20 +305,20 @@ function initializeAuthListeners() {
 
         try {
             if (submitBtn) submitBtn.disabled = true;
-            displayMessage(regMsgId, 'جاري إرسال البيانات...', true);
+            displayMessage(regMsgId, 'Sending data...', true);
             const result = await FancyAPI.post('/auth/register.php', data);
             
             if (result?.success) {
-                displayMessage(regMsgId, result.message || 'تم التسجيل بنجاح! يرجى التحقق من بريدك الإلكتروني.', true);
+                displayMessage(regMsgId, result.message || 'Registration successful! Please check your email.', true);
                 setTimeout(() => {
                     form.reset();
                     showAuthModal('verify', data.email);
                 }, 2000);
             } else {
-                displayMessage('registrationMessage', result.message || 'خطأ في التسجيل', false);
+                displayMessage('registrationMessage', result.message || 'Registration error', false);
             }
         } catch (error) {
-            displayMessage('registrationMessage', 'خطأ في الاتصال بالخادم.', false);
+            displayMessage('registrationMessage', 'Server connection error.', false);
         } finally {
             if (submitBtn) submitBtn.disabled = false;
         }
@@ -332,7 +332,7 @@ function initializeAuthListeners() {
         const data = Object.fromEntries(new FormData(form).entries());
         try {
             if (submitBtn) submitBtn.disabled = true;
-            displayMessage('loginMessage', 'جاري تسجيل الدخول...', true);
+            displayMessage('loginMessage', 'Logging in...', true);
             const result = await FancyAPI.post('/auth/login.php', data);
             console.log('Login API Response:', result); // أضف هذا السطر
             if (result?.success) {
@@ -345,11 +345,11 @@ function initializeAuthListeners() {
                     showAuthModal('verify', data.email);
                     displayMessage('emailVerificationMessage', result.message, false);
                 } else {
-                    displayMessage('loginMessage', result.message || 'فشل الدخول', false);
+                    displayMessage('loginMessage', result.message || 'Login failed', false);
                 }
             }
         } catch (error) {
-            displayMessage('loginMessage', 'خطأ في الاتصال بالخادم.', false);
+            displayMessage('loginMessage', 'Server connection error.', false);
         } finally {
             if (submitBtn) submitBtn.disabled = false;
         }
@@ -365,14 +365,14 @@ function initializeAuthListeners() {
             if (submitBtn) submitBtn.disabled = true;
             const result = await FancyAPI.post('/auth/verify-email.php', data);
             if (result.success) {
-                displayMessage('emailVerificationMessage', result.message + '. يمكنك الآن تسجيل الدخول.', true);
+                displayMessage('emailVerificationMessage', result.message + '. You can now log in.', true);
                 form.reset();
                 setTimeout(() => switchAuthTab('login'), 2000);
             } else {
-                displayMessage('emailVerificationMessage', result.message || 'خطأ في التحقق', false);
+                displayMessage('emailVerificationMessage', result.message || 'Verification error', false);
             }
         } catch (error) {
-            displayMessage('emailVerificationMessage', 'خطأ في الاتصال بالخادم.', false);
+            displayMessage('emailVerificationMessage', 'Server connection error.', false);
         } finally {
             if (submitBtn) submitBtn.disabled = false;
         }

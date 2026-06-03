@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="icon" href="imges/img/fancy1.jfif" />
-    <title>إضافة منتج جديد - Fancy Design</title>
+    <title>Add New Product - Fancy Design</title>
     <link rel="stylesheet" href="style.css">
     <style>
         .form-container { max-width: 600px; margin: 50px auto; padding: 50px; border: 1px solid #ddd; border-radius: 8px;}
@@ -66,7 +66,7 @@
                     localStorage.setItem('userData', JSON.stringify(user));
                     
                     if (user.account_type === 'personal') {
-                        alert('عذراً، حسابات الأفراد لا يمكنها إضافة منتجات.');
+                        alert('Sorry, personal accounts cannot add products.');
                         window.location.href = 'index.html';
                         return;
                     }
@@ -75,7 +75,7 @@
                     const brandId = urlBrandId || user.brand_id;
 
                     if (!brandId) {
-                        alert('عذراً، يجب إنشاء علامة تجارية أولاً قبل إضافة المنتجات.');
+                        alert('Sorry, you must create a brand before adding products.');
                         window.location.href = 'add-brand.html';
                         return;
                     }
@@ -84,7 +84,7 @@
                     // تحميل الأقسام من قاعدة البيانات عند فتح الصفحة
                     loadCategoriesToSelect();
                 } else {
-                    alert('يجب تسجيل الدخول أولاً');
+                    alert('You must log in first');
                     window.location.href = 'login.html';
                 }
             });
@@ -126,7 +126,7 @@
             
             // تحقق أخير قبل الإرسال
             if (!formData.get('brand_id')) {
-                alert('خطأ: لم يتم التعرف على معرف العلامة التجارية. يرجى تحديث الصفحة.');
+                alert('Error: Brand ID not recognized. Please refresh the page.');
                 return;
             }
 

@@ -92,7 +92,7 @@
                 
                 if (result.success && result.data && result.data.brand) {
                     const brand = result.data.brand;
-                    document.getElementById('brandName').innerText = brand.brand_name || 'علامة تجارية';
+                    document.getElementById('brandName').innerText = brand.brand_name || 'Brand';
                     document.getElementById('brandAbout').innerText = brand.description || 'No description is available.';
                     // استبدل السطور القديمة بـ:
 document.getElementById('brandCover').src = getSafeImageUrl(brand.cover_image || 'imges/img/fancy3.jfif');
@@ -124,7 +124,7 @@ document.getElementById('brandLogo').src = getSafeImageUrl(brand.logo || 'imges/
                     }
                 } else {
                     console.error("Brand not found or API error:", result.message);
-                    alert("عذراً، لم يتم العثور على بيانات هذه العلامة التجارية.");
+                    alert("Sorry, brand data not found.");
                     window.location.href = 'page_brand.html';
                 }
             } catch (error) { console.error(error); }

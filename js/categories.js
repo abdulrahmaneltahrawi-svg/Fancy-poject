@@ -23,7 +23,7 @@ async function loadMainCategories(containerId) {
                 if (a.getAttribute('href') === "#") {
                     a.onclick = (e) => {
                         e.preventDefault();
-                        alert("لم يتم اضافة منتجات في الوقت الحالي لهذه الفئة");
+                        alert("No products have been added to this category yet.");
                     };
                 }
                 container.appendChild(a);

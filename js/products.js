@@ -6,7 +6,7 @@ function createProductCardHTML(data, options = {}) {
     const isAdmin = options.isAdmin || false;
     // تأكد من أن `data.id` موجود لتوليد رابط صحيح
     const productId = data.id || ''; 
-    const productTitle = data.product_name || 'منتج غير معروف';
+    const productTitle = data.product_name || 'Unknown Product';
     // استخدام getSafeImageUrl لضمان ظهور الصور المخزنة في قاعدة البيانات
     const productImage = typeof getSafeImageUrl === 'function' ? getSafeImageUrl(data.main_image) : (data.main_image || 'imges/placeholder.png');
     const productDesc = data.short_description || '';
@@ -78,7 +78,7 @@ async function loadProducts(containerId, limit = null, brandId = null, showContr
         const result = await FancyAPI.get(url); 
 
         if (result.status === 401) {
-            container.innerHTML = `<p style="text-align: center; grid-column: 1/-1; padding: 40px;">يرجى <a href="#" class="login-link">تسجيل الدخول</a> لعرض المنتجات المتاحة.</p>`;
+            container.innerHTML = `<p style="text-align: center; grid-column: 1/-1; padding: 40px;">Please <a href="#" class="login-link">log in</a> to view available products.</p>`;
             if (window.showAuthModal) window.showAuthModal('login');
             return;
         }
@@ -90,7 +90,7 @@ async function loadProducts(containerId, limit = null, brandId = null, showContr
             }
 
             if (productsToDisplay.length === 0) {
-                container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">لا توجد منتجات متاحة حالياً.</p>';
+                container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No products available currently.</p>';
                 return;
             }
 
@@ -99,13 +99,13 @@ async function loadProducts(containerId, limit = null, brandId = null, showContr
             const htmlContent = productsToDisplay.map(product => createProductCardHTML(product, { showControls: finalShowControls, isAdmin })).join('');
             container.innerHTML = htmlContent;
         } else {
-            const detail = result.status === 404 ? 'الملف list.php غير موجود في هذا المسار' : (result.message || 'خطأ غير معروف');
+            const detail = result.status === 404 ? 'File list.php not found' : (result.message || 'Unknown error');
             console.error('Failed to load products:', detail, `Status: ${result.status}`);
-            container.innerHTML = `<p style="text-align: center; color: red;">فشل تحميل المنتجات: ${detail}</p>`;
+            container.innerHTML = `<p style="text-align: center; color: red;">Failed to load products: ${detail}</p>`;
         }
     } catch (error) {
         console.error('Error fetching products:', error);
-        container.innerHTML = `<p style="text-align: center; color: red;">حدث خطأ في الاتصال بالخادم لتحميل المنتجات.</p>`;
+        container.innerHTML = `<p style="text-align: center; color: red;">Server connection error while loading products.</p>`;
     }
 }
 
@@ -162,7 +162,7 @@ async function loadMyProducts(containerId) {
         const result = await FancyAPI.get('/products/my-products.php');
 
         if (result.status === 401) {
-            container.innerHTML = `<p style="text-align: center; color: #666; grid-column: 1/-1; padding: 40px;">يجب <a href="#" class="login-link">تسجيل الدخول</a> لإدارة منتجاتك.</p>`;
+            container.innerHTML = `<p style="text-align: center; color: #666; grid-column: 1/-1; padding: 40px;">You must <a href="#" class="login-link">log in</a> to manage your products.</p>`;
             if (window.showAuthModal) window.showAuthModal('login');
             return;
         }
@@ -179,13 +179,13 @@ async function loadMyProducts(containerId) {
                 container.innerHTML += createProductCardHTML(product, { showControls: true });
             });
         } else {
-            const detail = result.status === 401 ? 'يجب تسجيل الدخول لعرض منتجاتك' : (result.message || 'خطأ غير معروف');
+            const detail = result.status === 401 ? 'You must log in to view products' : (result.message || 'Unknown error');
             console.error('Failed to load my products:', detail);
             container.innerHTML = `<p style="text-align: center; color: red; grid-column: 1/-1;">${detail}</p>`;
         }
     } catch (error) {
         console.error('Error fetching my products:', error);
-        container.innerHTML = `<p style="text-align: center; color: red; grid-column: 1/-1;">حدث خطأ في الاتصال بالسيرفر.</p>`;
+        container.innerHTML = `<p style="text-align: center; color: red; grid-column: 1/-1;">Server connection error.</p>`;
     }
 }
 
@@ -210,12 +210,12 @@ async function loadProductDataForEdit(productId) {
             form.elements['short_description'].value = product.short_description || '';
             form.elements['description'].value = product.description || '';
         } else {
-            alert("فشل في جلب بيانات المنتج: " + (result.message || "خطأ غير معروف"));
+            alert("Failed to fetch product data: " + (result.message || "Unknown error"));
             window.location.href = 'my-products.html';
         }
     } catch (error) {
         console.error('Error loading product for edit:', error);
-        alert("حدث خطأ أثناء تحميل البيانات.");
+        alert("An error occurred while loading data.");
     }
 }
 
@@ -240,11 +240,11 @@ async function submitProductUpdate(formData) {
         const result = await response.json();
         
         if (result.success) {
-            alert('تم التحديث بنجاح!');
+            alert('Updated successfully!');
             // العودة إلى صفحة البروفايل بعد الضغط على موافق في رسالة التنبيه
             window.location.href = 'profile.html';
         } else {
-            alert('فشل: ' + result.message);
+            alert('Failed: ' + result.message);
         }
     } catch (error) {
         console.error('Error:', error);
@@ -266,14 +266,14 @@ async function submitNewProduct(formData) {
         const result = await response.json();
 
         if (result.success) {
-            alert("تم إضافة المنتج بنجاح!");
+            alert("Product added successfully!");
             window.location.href = 'index.html';
         } else {
-            alert("خطأ: " + (result.message || "حدث خطأ"));
+            alert("Error: " + (result.message || "Something went wrong"));
         }
     } catch (error) {
         console.error('Error:', error);
-        alert("فشل الاتصال بالسيرفر.");
+        alert("Server connection failed.");
     }
 }
 // دالة لجلب وعرض المنتجات المعلقة (للمدير فقط)
@@ -283,7 +283,7 @@ async function loadPendingProductsForAdmin(containerId) {
 
     const userData = JSON.parse(localStorage.getItem('userData'));
     if (!userData || (userData.account_type !== 'admin' && userData.role !== 'admin')) {
-        container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; padding: 40px; color: red;">ليس لديك صلاحية الوصول لهذه الصفحة.</p>';
+        container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; padding: 40px; color: red;">You do not have permission to access this page.</p>';
         // يمكنك إعادة توجيه المستخدم لصفحة أخرى
         // window.location.href = 'index.html';
         return;
@@ -297,7 +297,7 @@ async function loadPendingProductsForAdmin(containerId) {
             container.innerHTML = ""; 
             
             if (result.data.products.length === 0) {
-                container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; padding: 40px;">لا توجد منتجات معلقة للمراجعة حالياً.</p>';
+                container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; padding: 40px;">No pending products for review currently.</p>';
                 return;
             }
 
@@ -305,25 +305,25 @@ async function loadPendingProductsForAdmin(containerId) {
                 container.innerHTML += createProductCardHTML(product, { showControls: true, isAdmin: true });
             });
         } else {
-            const detail = result.status === 401 ? 'يجب تسجيل الدخول كمدير لعرض المنتجات المعلقة' : (result.message || 'خطأ غير معروف');
+            const detail = result.status === 401 ? 'Admin login required' : (result.message || 'Unknown error');
             console.error('Failed to load pending products:', detail);
             container.innerHTML = `<p style="text-align: center; color: red; grid-column: 1/-1;">${detail}</p>`;
         }
     } catch (error) {
         console.error('Error fetching pending products:', error);
-        container.innerHTML = `<p style="text-align: center; color: red; grid-column: 1/-1;">حدث خطأ في الاتصال بالسيرفر.</p>`;
+        container.innerHTML = `<p style="text-align: center; color: red; grid-column: 1/-1;">Server connection error.</p>`;
     }
 }
 
 // دالة قبول المنتج
 async function approveProduct(id) {
-    if (!confirm('هل تريد الموافقة على هذا المنتج؟')) return;
+    if (!confirm('Approve this product?')) return;
     const result = await FancyAPI.post('/admin/approve-product.php', { product_id: id });
     if (result.success) {
-        alert('تم قبول المنتج بنجاح');
+        alert('Product approved successfully');
         loadPendingProductsForAdmin('pending-products-container');
     } else {
-        alert('فشل القبول: ' + result.message);
+        alert('Approval failed: ' + result.message);
     }
 }
 
@@ -333,41 +333,41 @@ async function rejectProduct(id) {
     if (reason === null) return;
     const result = await FancyAPI.post('/admin/reject-product.php', { product_id: id, reason: reason });
     if (result.success) {
-        alert('تم رفض المنتج');
+        alert('Product rejected');
         loadPendingProductsForAdmin('pending-products-container');
     } else {
-        alert('فشل الرفض: ' + result.message);
+        alert('Rejection failed: ' + result.message);
     }
 }
 
 // دالة إيقاف المنتج (للإدارة)
 async function suspendProduct(id) {
-    if (!confirm('هل تريد إيقاف هذا المنتج؟ سيختفي من العرض العام.')) return;
+    if (!confirm('Stop this product? It will be hidden from public view.')) return;
     const result = await FancyAPI.post('/admin/suspend-product.php', { product_id: id });
     if (result.success) {
-        alert('تم إيقاف المنتج بنجاح');
+        alert('Product stopped successfully');
         location.reload(); // تحديث الصفحة لرؤية التغييرات
     } else {
-        alert('فشل الإيقاف: ' + result.message);
+        alert('Suspension failed: ' + result.message);
     }
 }
 
 // دالة حذف المنتج نهائياً
 async function deleteProduct(id) {
-    if (!confirm('تحذير: هل أنت متأكد من حذف هذا المنتج نهائياً؟ لا يمكن التراجع عن هذا الإجراء.')) return;
+    if (!confirm('Warning: Are you sure you want to delete this product permanently? This action cannot be undone.')) return;
     try {
         // إرسال طلب الحذف إلى السيرفر
         const result = await FancyAPI.post('/products/delete.php', { product_id: id });
         if (result.success) {
-            alert(result.message || 'تم حذف المنتج بنجاح');
+            alert(result.message || 'Product deleted successfully');
             // إعادة تحميل الصفحة لتحديث القائمة
             location.reload();
         } else {
-            alert('فشل الحذف: ' + (result.message || 'حدث خطأ غير معروف'));
+            alert('Deletion failed: ' + (result.message || 'Unknown error'));
         }
     } catch (error) {
         console.error('Delete product error:', error);
-        alert('حدث خطأ أثناء محاولة الاتصال بالسيرفر لحذف المنتج.');
+        alert('Server connection error during product deletion.');
     }
 }
 

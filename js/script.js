@@ -30,7 +30,7 @@ const FancyAPI = {
             } catch (e) {
                 console.error(`Invalid JSON Response at [${endpoint}]:`, text);
                 const isHtml = text.trim().startsWith('<');
-                const errorMsg = isHtml ? 'خطأ في المسار أو السيرفر (404/500)' : 'استجابة غير صالحة من السيرفر';
+                const errorMsg = isHtml ? 'Path or server error (404/500)' : 'Invalid server response';
                 return { success: false, message: errorMsg, status: response.status, error: text };
             }
 
@@ -39,7 +39,7 @@ const FancyAPI = {
             return { ok: response.ok, status: response.status, success: isSuccess, ...result };
         } catch (error) {
             console.error(`API Error (${endpoint}):`, error);
-            return { success: false, message: 'حدث خطأ في الاتصال بالسيرفر' };
+            return { success: false, message: 'An error occurred while connecting to the server' };
         }
     },
     get(endpoint) { return this.request(endpoint, { method: 'GET' }); },
@@ -61,7 +61,7 @@ function loadHeader() {
     fetch('/Fancy-Design/components/header.html')
         .then(response => {
             if (!response.ok) {
-                throw new Error('لم يتم العثور على ملف الهيدر');
+                throw new Error('Header file not found');
             }
             return response.text();
         })
@@ -73,7 +73,7 @@ function loadHeader() {
             }
         })
         .catch(error => {
-            console.error('حدث خطأ أثناء تحميل الهيدر:', error);
+            console.error('Error loading header:', error);
         });
 }
 
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function loadFooter() {
     fetch('/Fancy-Design/components/footer.html')
         .then(res => {
-            if (!res.ok) throw new Error('فشل تحميل الفوتر');
+            if (!res.ok) throw new Error('Failed to load footer');
             return res.text();
         })
         .then(data => {
@@ -97,7 +97,7 @@ function loadFooter() {
             }
         })
         .catch(error => {
-            console.error('حدث خطأ أثناء تحميل الفوتر:', error);
+            console.error('Error loading footer:', error);
         });
 }
 // نستخدم هذا الكود لضمان العمل حتى لو تم تحميل الهيدر بـ fetch
