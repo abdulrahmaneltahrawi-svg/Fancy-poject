@@ -279,7 +279,7 @@ async function deactivateBrand(brandId) {
             alert(result.message || 'تم تعطيل البراند بنجاح');
             displayUserBrands(); // تحديث القائمة
         } else {
-            alert(result.message || 'فشل التعطيل');
+            alert(result.message || 'Disabling failed');
         }
     } catch (error) {
         console.error('Deactivate error:', error);
@@ -317,7 +317,7 @@ async function loadPendingBrandsForAdmin(containerId) {
     try {
         const result = await FancyAPI.get('/admin/pending-brands.php');
         if (result.success && Array.isArray(result.data.brands)) {
-            container.innerHTML = result.data.brands.length ? '' : '<p style="grid-column:1/-1; text-align:center;">لا توجد براندات معلقة.</p>';
+            container.innerHTML = result.data.brands.length ? '' : '<p style="grid-column:1/-1; text-align:center;">No brands pending</p>';
             result.data.brands.forEach(brand => {
     container.innerHTML += `
         <div class="brand-card" style="border: 1px solid #eee; padding: 15px; border-radius: 8px;">
@@ -326,7 +326,7 @@ async function loadPendingBrandsForAdmin(containerId) {
             <p>${brand.brand_type} - ${brand.country}</p>
             <div style="display:flex; gap:10px; margin-top:10px;">
                 <button onclick="approveBrand(${brand.id})" style="flex:1; background:#5cb85c; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">accept</button>
-                <button onclick="rejectBrand(${brand.id})" style="flex:1; background:#d9534f; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">refect</button>
+                <button onclick="rejectBrand(${brand.id})" style="flex:1; background:#d9534f; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">reject</button>
             </div>
         </div>
     `;

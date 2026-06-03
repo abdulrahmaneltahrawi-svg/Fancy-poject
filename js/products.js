@@ -34,8 +34,8 @@ function createProductCardHTML(data, options = {}) {
                 <div class="card-actions" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; display: flex; gap: 10px;">
                     ${isAdmin ? (
                         productStatus === 'pending_admin_approval' ? `
-                            <button onclick="approveProduct(${productId})" style="flex: 1; background: #5cb85c; color: #fff; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 12px;">قبول</button>
-                            <button onclick="rejectProduct(${productId})" style="flex: 1; background: #d9534f; color: #fff; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 12px;">رفض</button>
+                            <button onclick="approveProduct(${productId})" style="flex: 1; background: #5cb85c; color: #fff; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 12px;">accept</button>
+                            <button onclick="rejectProduct(${productId})" style="flex: 1; background: #d9534f; color: #fff; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 12px;">reject</button>
                         ` : `
                             <button onclick="suspendProduct(${productId})" style=" background: #ff0000; color: #fff; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 13px;">Stop</button>
                         `
@@ -329,7 +329,7 @@ async function approveProduct(id) {
 
 // دالة رفض المنتج
 async function rejectProduct(id) {
-    const reason = prompt('سبب الرفض:');
+    const reason = prompt('Reason for rejection:');
     if (reason === null) return;
     const result = await FancyAPI.post('/admin/reject-product.php', { product_id: id, reason: reason });
     if (result.success) {
