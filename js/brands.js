@@ -3,8 +3,8 @@ function getSafeImageUrl(path) {
     if (path.startsWith('data:') || path.startsWith('http')) return path;
 
     // إزالة السلاش البادئة وإضافة المسار الصحيح للمجلد
-    const cleanPath = path.replace(/^\//, '').replace('uploads/', '');
-    return '/fancy-design/fancy/uploads/' + cleanPath;
+    const cleanPath = path.replace(/^\//, '');
+    return '/Fancy-Design/fancy/' + (cleanPath.startsWith('uploads/') ? '' : 'uploads/') + cleanPath;
 }
 // دالة لجلب وعرض جميع البراندات في الصفحة
 async function displayAllBrands(containerId = 'brands-container') {

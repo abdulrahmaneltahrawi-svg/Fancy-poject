@@ -1,6 +1,6 @@
 // تعريف كائن FancyAPI لمعالجة طلبات الـ API بشكل موحد وتجنب تكرار الكود
 const FancyAPI = {
-    baseUrl: '/fancy-design/Fancy/api',
+    baseUrl: '/Fancy-Design/fancy/api',
     async request(endpoint, options = {}) {
         // تنظيف المسار لضمان عدم وجود سلاش مزدوج
         const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
@@ -59,7 +59,7 @@ function getSafeImageUrl(imagePath) {
     }
     // إذا كان المسار يبدأ بـ uploads، نضيف إليه مسار الـ API
     if (imagePath.startsWith('uploads/')) {
-        return `/fancy-design/fancy/${imagePath}`;
+        return `/Fancy-Design/fancy/${imagePath}`;
     }
     return imagePath;
 }

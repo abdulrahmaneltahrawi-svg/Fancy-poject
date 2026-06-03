@@ -5,7 +5,7 @@ function createProductCardHTML(data, options = {}) {
     const showControls = options.showControls || false;
     const isAdmin = options.isAdmin || false;
     // تأكد من أن `data.id` موجود لتوليد رابط صحيح
-    const productId = data.id || ''; 
+    const productId = data.id || data.product_id || ''; 
     const productTitle = data.product_name || 'Unknown Product';
     // استخدام getSafeImageUrl لضمان ظهور الصور المخزنة في قاعدة البيانات
     const productImage = typeof getSafeImageUrl === 'function' ? getSafeImageUrl(data.main_image) : (data.main_image || 'imges/placeholder.png');
@@ -118,8 +118,8 @@ async function loadSingleProductDetails(productId) {
     }
 
     try {
-        // افتراض وجود API endpoint لجلب منتج واحد
-        const result = await FancyAPI.get(`/products/view.php?id=${productId}`); 
+        // تغيير المسار إلى get.php وتوحيد المعرف ليكون product_id بدلاً من id
+        const result = await FancyAPI.get(`/products/get.php?product_id=${productId}`); 
 
         if (result && result.success && result.data.product) {
             const product = result.data.product;
@@ -129,8 +129,8 @@ async function loadSingleProductDetails(productId) {
             document.getElementById('project-desc').innerText = product.description || 'لا يوجد وصف لهذا المنتج.';
             document.getElementById('project-category').innerText = product.category_name || "";
 
-            // تحديث رابط الواتساب
             const whatsappBtn = document.getElementById('whatsapp-btn');
+            // تحديث رابط الواتساب
             if (whatsappBtn) {
                 const message = encodeURIComponent(`السلام عليكم، أود الاستفسار عن تفاصيل وسعر: ${product.product_name}`);
                 // يمكنك استبدال 'YOUR_DEFAULT_WHATSAPP_NUMBER' برقم واتساب افتراضي إذا لم يكن متوفراً في بيانات المنتج
@@ -140,8 +140,8 @@ async function loadSingleProductDetails(productId) {
             // هنا يمكنك إضافة منطق عرض الصور المصغرة (thumbnails) والألوان إذا كانت البيانات متوفرة في استجابة الـ API
             // حالياً، الكود في view.html يعتمد على `project.gallery` و `project.colors` من `data.js`
             // ستحتاج إلى تعديل الـ API ليعيد هذه البيانات أو تعديل الواجهة الأمامية لتعالجها بشكل مختلف.
-
         } else {
+            console.error('API Response Error:', result);
             const detail = result.status === 404 ? 'المنتج غير موجود أو الرابط خاطئ (404)' : result.message;
             console.error('Failed to load product details:', detail);
             alert(`خطأ: ${detail}`);
@@ -150,6 +150,34 @@ async function loadSingleProductDetails(productId) {
     } catch (error) {
         console.error('Error fetching single product:', error);
         window.location.href = "index.html"; // إعادة التوجيه للصفحة الرئيسية عند الخطأ
+    }
+}
+
+// دالة لجلب وعرض المنتجات المشابهة (You May Also Like)
+async function loadRelatedProducts(categoryId, currentProductId) {
+    const container = document.getElementById('related-products');
+    if (!container) return;
+
+    try {
+        // جلب المنتجات التي تنتمي لنفس القسم
+        const result = await FancyAPI.get(`/products/public-list.php?category_id=${categoryId}`);
+        
+        if (result && result.success && result.data && Array.isArray(result.data.products)) {
+            // تصفية المنتج الحالي من القائمة واختيار أول 4 منتجات فقط
+            const related = result.data.products
+                .filter(p => (p.id || p.product_id) != currentProductId)
+                .slice(0, 4);
+
+            if (related.length > 0) {
+                container.innerHTML = related.map(p => createProductCardHTML(p)).join('');
+            } else {
+                // إخفاء القسم بالكامل إذا لم تكن هناك منتجات مشابهة
+                const section = document.querySelector('.related-section');
+                if (section) section.style.display = 'none';
+            }
+        }
+    } catch (error) {
+        console.error('Error loading related products:', error);
     }
 }
 
@@ -375,6 +403,7 @@ async function deleteProduct(id) {
 window.createProductCardHTML = createProductCardHTML;
 window.loadProducts = loadProducts;
 window.loadSingleProductDetails = loadSingleProductDetails;
+window.loadRelatedProducts = loadRelatedProducts;
 window.loadMyProducts = loadMyProducts;
 window.loadProductDataForEdit = loadProductDataForEdit;
 window.submitProductUpdate = submitProductUpdate;

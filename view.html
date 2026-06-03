@@ -88,7 +88,7 @@
 
                 
                 <a id="whatsapp-btn" href="#" class="price-btn" style="margin-top: 30px;">
-                    <span>الاستفسار عن السعر</span>
+                    <span>Inquire about the price</span>
                     <img style="filter: brightness(0) invert(1);" src="imges/icons/phone-call.png" alt="whatsapp">
                 </a>
                 
@@ -110,7 +110,8 @@
     <script>
         // 1. جلب المعرف من الرابط
         const params = new URLSearchParams(window.location.search);
-        const projectId = params.get('id');
+        // البحث عن المعرف سواء كان باسم id أو product_id لضمان التوافق
+        const projectId = params.get('id') || params.get('product_id');
 
         document.addEventListener('DOMContentLoaded', () => {
             if (projectId) {

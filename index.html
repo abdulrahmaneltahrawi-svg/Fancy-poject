@@ -347,18 +347,21 @@
           targetPage = "view_brand.html";
         }
 
+        const itemId = data.id || data.product_id || "";
         const categoryText = data.category || "";
         const badgeText = data.type || data.tag || data.brand || "";
 
         return `
         <div class="project-card">
             <div class="card-image">
-                <a href="${targetPage}?id=${data.id || ""}">
+                <a href="${targetPage}?id=${itemId}">
                     <img src="${data.image}" alt="${data.title}">
                 </a>
             </div>
             <div class="card-content">
-                <h3 class="card-title">${data.title}</h3>
+                <a href="${targetPage}?id=${itemId}" style="text-decoration: none; color: inherit;">
+                    <h3 class="card-title">${data.title}</h3>
+                </a>
                 
                 <p class="card-description"  style="font-size: 14px; color: #666; margin: 10px 0;">
                     ${categoryText}
