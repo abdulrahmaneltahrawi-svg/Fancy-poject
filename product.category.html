@@ -170,7 +170,7 @@
     function renderProducts(products) {
         const grid = document.getElementById('projects-grid');
         if (!products || products.length === 0) {
-            grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; padding: 20px;'>لا توجد منتجات تطابق هذا التصنيف.</p>";
+            grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; padding: 20px;'>No products yet.</p>";
             return;
         }
         grid.innerHTML = products.map(product => createProductCardHTML(product)).join('');
