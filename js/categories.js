@@ -7,25 +7,21 @@ async function loadMainCategories(containerId) {
     if (!container) return;
 
     try {
-        // استدعاء API الأقسام من السيرفر
         const result = await FancyAPI.get('/categories/list.php');
 
         if (result && result.success && Array.isArray(result.data.categories)) {
             container.innerHTML = ""; 
             result.data.categories.forEach(cat => {
                 const a = document.createElement('a');
-                // توجيه الروابط بناءً على وجود صفحات فلترة جاهزة في المشروع
-                const existingPages = ['Furniture', 'Decore', 'Finishes'];
-                a.href = existingPages.includes(cat.name) ? `filter_${cat.name}.html` : "#";
+                
+                // التعديل هنا: الربط بصفحة القالب الموحد مباشرة
+                // لا نحتاج للتحقق من أسماء الصفحات بعد الآن
+                a.href = `product.category.html?id=${cat.id}`;
                 a.textContent = cat.name;
                 
-                // التعامل مع الروابط التي لم تكتمل صفحاتها بعد (تظهر رسالة تنبيه)
-                if (a.getAttribute('href') === "#") {
-                    a.onclick = (e) => {
-                        e.preventDefault();
-                        alert("No products have been added to this category yet.");
-                    };
-                }
+                // اختيارياً: يمكنك ترك منطق التنبيه إذا كان القسم فارغاً 
+                // (لكن يفضل التعامل معه داخل صفحة القالب الموحد نفسها)
+                
                 container.appendChild(a);
             });
         }

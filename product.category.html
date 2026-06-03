@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Category - Fancy Design</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+    
+    <!-- شريط الأقسام الرئيسية (يتم جلب بياناته من list.php) -->
+    <nav class="category-nav" id="main-category-nav"></nav>
+
+        <div class="filter-container">
+      <!-- قائمة الأقسام الفرعية - يتم تحديثها ديناميكياً بناءً على القسم الحالي -->
+             <div class="dropdown">
+        <button class="dropbtn" data-original-text="Materials">category<i class="arrow down"></i></button>
+        <div class="dropdown-content">
+          <input
+            type="text"
+            placeholder="Type to filter"
+            class="search-input"
+          />
+          <a href="#" class="all-option">All Materials</a>
+          <a href="#">Fabric</a>
+          <a href="#">Velvet</a>
+          <a href="#">Synthetic fiber</a>
+          <a href="#">Polyester</a>
+          <a href="#">Dacron®</a>
+          <a href="#">Microfiber</a>
+          <a href="#">Janus-fiber®</a>
+          <a href="#">Sunbrella®</a>
+        </div>
+      </div>
+
+
+      <div class="dropdown" id="sub-category-dropdown">
+        <button class="dropbtn" id="sub-category-btn" data-original-text="sub-categories">
+          All Products <i class="arrow down"></i>
+        </button>
+        <div class="dropdown-content" id="sub-category-content">
+          <input
+            type="text"
+            placeholder="Type to filter"
+            class="search-input"
+          />
+          <a href="#" class="all-option">sub-categories</a>
+        </div>
+      </div>
+      
+      <button class="clear-filters-btn" id="clear-all">Clear All</button>
+    </div>
+
+    <section class="projects-section">
+        <div class="container" style="display: flex; align-items: start;flex-direction: column;">
+            <h1 id="category-title" class="title" >Loading...</h1>
+            <div id="projects-grid" class="projects-grid"></div>
+        </div>
+    </section>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/script.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/categories.js"></script>
+
+    <script>
+        let allCategoryProducts = []; // لتخزين كافة منتجات القسم للفلترة المحلية
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            const catId = params.get('id');
+
+            // 1. استدعاء الفئات الرئيسية من list.php لعرضها في شريط التنقل
+            if (typeof loadMainCategories === 'function') {
+                loadMainCategories("main-category-nav");
+            }
+
+            if (!catId) {
+                document.getElementById('category-title').innerText = "Section not found";
+                return;
+            }
+
+            try {
+                // استخدام FancyAPI لضمان التعامل الصحيح مع المسارات والجلسة
+                const result = await FancyAPI.get(`/products/public-list.php?category_id=${catId}`);
+
+                if (result.success && result.data) {
+                    const categoryName = result.data.category_name || "Products";
+                    document.getElementById('category-title').innerText = categoryName;
+                    
+                    // تحديث نصوص الفلاتر لتناسب القسم الحالي
+                    updateFilterUI(categoryName);
+                    
+                    // تخزين المنتجات محلياً للتمكن من الفلترة السريعة دون إعادة طلب البيانات
+                    allCategoryProducts = result.data.products || [];
+                    renderProducts(allCategoryProducts);
+
+                    // 2. جلب الأقسام الفرعية التابعة لهذا القسم (Sub-categories)
+                    await loadSubFilters(catId);
+                } else {
+                    document.getElementById('projects-grid').innerHTML = "<p style='grid-column: 1/-1; text-align: center; padding: 50px;'>No products found in this category.</p>";
+                }
+            } catch (err) {
+                console.error("Error loading products:", err);
+            }
+
+            // تفعيل زر مسح الفلاتر (Clear All)
+            const clearBtn = document.getElementById('clear-all');
+            if (clearBtn) {
+                clearBtn.addEventListener('click', () => {
+                    // إعادة تعيين نصوص أزرار الفلترة للأصل
+                    document.querySelectorAll('.dropbtn').forEach(btn => {
+                        const originalText = btn.getAttribute('data-original-text');
+                        btn.innerHTML = `${originalText} <i class="arrow down"></i>`;
+                    });
+                    // عرض كافة المنتجات الأصلية
+                    renderProducts(allCategoryProducts);
+                    // مسح حقول البحث داخل الفلاتر
+                    document.querySelectorAll('.search-input').forEach(i => i.value = "");
+                });
+            }
+        });
+
+        function updateFilterUI(categoryName) {
+            const btn = document.getElementById('sub-category-btn');
+            if (btn) {
+                btn.setAttribute('data-original-text', `All ${categoryName}`);
+                btn.innerHTML = `All ${categoryName} <i class="arrow down"></i>`;
+            }
+            const allOpt = document.querySelector('.all-option');
+            if (allOpt) allOpt.innerText = `All ${categoryName}`;
+        }
+
+        // استخدام get-sub-categories.php لجلب الأقسام الفرعية وتنظيم الفلاتر ديناميكياً
+        async function loadSubFilters(catId) {
+            try {
+                // جلب الأقسام الفرعية التابعة للقسم الحالي مباشرة
+                const result = await FancyAPI.get(`/categories/get-sub-categories.php?category_id=${catId}`);
+                
+                const container = document.getElementById('sub-category-content');
+                if (result.success && result.data && result.data.sub_categories && container) {
+                    const subCategories = result.data.sub_categories;
+
+                    // تفعيل خيار "All Products" لإظهار كافة منتجات القسم الرئيسي
+                    const allOpt = container.querySelector('.all-option');
+                    if (allOpt) {
+                        allOpt.onclick = (e) => {
+                            e.preventDefault();
+                            const btn = document.getElementById('sub-category-btn');
+                            btn.innerHTML = `${btn.getAttribute('data-original-text')} <i class="arrow down"></i>`;
+                            renderProducts(allCategoryProducts);
+                        };
+                    }
+
+                    // إضافة الأقسام الفرعية المستلمة كخيارات في القائمة
+                    subCategories.forEach(sub => {
+                        const a = document.createElement('a');
+                        a.href = "#";
+                        a.textContent = sub.name;
+                        a.onclick = (e) => {
+                            e.preventDefault();
+                            document.getElementById('sub-category-btn').innerHTML = `${sub.name} <i class="arrow down"></i>`;
+
+                            // الفلترة المحلية بناءً على القسم الفرعي المختار (بالاسم أو المعرف)
+                            const filtered = allCategoryProducts.filter(p => p.sub_category_name === sub.name || p.sub_category_id == sub.id);
+                            renderProducts(filtered);
+                        };
+                        container.appendChild(a);
+                    });
+
+                    // تفعيل البحث داخل قائمة الفلتر (لتسهيل الوصول لقسم فرعي معين)
+                    const searchInput = container.querySelector('.search-input');
+                    if (searchInput) {
+                        searchInput.addEventListener('input', function() {
+                            const val = this.value.toLowerCase();
+                            container.querySelectorAll('a:not(.all-option)').forEach(link => {
+                                link.style.display = link.textContent.toLowerCase().includes(val) ? "" : "none";
+                            });
+                        });
+                    }
+                }
+            } catch (err) {
+                console.error("Error loading category tree for filters:", err);
+            }
+        }
+
+       function renderProducts(products) {
+            const grid = document.getElementById('projects-grid');
+            if (!products || products.length === 0) {
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; padding: 20px;'>لا توجد منتجات في هذا القسم.</p>";
+                return;
+            }
+            // استخدام الدالة الموحدة لإنشاء كروت المنتجات
+            grid.innerHTML = products.map(product => createProductCardHTML(product)).join('');
+}
+
+
+    </script>
+</body>
+</html>

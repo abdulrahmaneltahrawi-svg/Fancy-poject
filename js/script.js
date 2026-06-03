@@ -52,6 +52,19 @@ const FancyAPI = {
         }
 };
 
+// دالة عالمية لتصحيح مسار الصور وضمان ظهورها
+function getSafeImageUrl(imagePath) {
+    if (!imagePath || imagePath === "null" || imagePath === "") {
+        return "imges/img/fancy1.jfif"; // صورة افتراضية من شعار الموقع
+    }
+    // إذا كان المسار يبدأ بـ uploads، نضيف إليه مسار الـ API
+    if (imagePath.startsWith('uploads/')) {
+        return `/fancy-design/fancy/${imagePath}`;
+    }
+    return imagePath;
+}
+window.getSafeImageUrl = getSafeImageUrl;
+
 // وظيفة لجلب ملف الهيدر وحقنه في الصفحة
 function loadHeader() {
     const headerPlaceholder = document.getElementById('header-placeholder');
