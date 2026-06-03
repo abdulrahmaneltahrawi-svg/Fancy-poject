@@ -1,18 +1,23 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Category - Fancy Design</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
     <div id="header-placeholder"></div>
-    
 
-        <div class="filter-container">
+    <div class="filter-container">
       <!-- قائمة الأقسام الرئيسية - يتم تحديثها ديناميكياً من list.php لتسهيل التنقل -->
       <div class="dropdown">
-        <button class="dropbtn" id="main-category-filter-btn" data-original-text="Categories">Categories <i class="arrow down"></i></button>
+        <button
+          class="dropbtn"
+          id="main-category-filter-btn"
+          data-original-text="Categories"
+        >
+          Categories <i class="arrow down"></i>
+        </button>
         <div class="dropdown-content" id="main-category-filter-content">
           <input
             type="text"
@@ -22,9 +27,12 @@
         </div>
       </div>
 
-
       <div class="dropdown" id="sub-category-dropdown">
-        <button class="dropbtn" id="sub-category-btn" data-original-text="sub-categories">
+        <button
+          class="dropbtn"
+          id="sub-category-btn"
+          data-original-text="sub-categories"
+        >
           sub-categories <i class="arrow down"></i>
         </button>
         <div class="dropdown-content" id="sub-category-content">
@@ -36,15 +44,18 @@
           <a href="#" class="all-option">sub-categories</a>
         </div>
       </div>
-      
+
       <button class="clear-filters-btn" id="clear-all">Clear All</button>
     </div>
 
     <section class="projects-section">
-        <div class="container" style="display: flex; align-items: start;flex-direction: column;">
-            <h1 id="category-title" class="title" >Loading...</h1>
-            <div id="projects-grid" class="projects-grid"></div>
-        </div>
+      <div
+        class="container"
+        style="display: flex; align-items: start; flex-direction: column"
+      >
+        <h1 id="category-title" class="title">Loading...</h1>
+        <div id="projects-grid" class="projects-grid"></div>
+      </div>
     </section>
 
     <div id="footer-placeholder"></div>
@@ -54,127 +65,157 @@
     <script src="js/products.js"></script>
     <script src="js/categories.js"></script>
 
-<script>
-    let allCategoryProducts = []; // لتخزين كافة منتجات القسم للفلترة المحلية
+    <script>
+      let allCategoryProducts = []; // لتخزين كافة منتجات القسم للفلترة المحلية
 
-    document.addEventListener('DOMContentLoaded', async () => {
+      document.addEventListener("DOMContentLoaded", async () => {
         const params = new URLSearchParams(window.location.search);
-        const catId = params.get('id');
+        const catId = params.get("id");
 
-        if (typeof loadMainCategories === 'function') {
-            loadMainCategories("main-category-nav");
+        if (typeof loadMainCategories === "function") {
+          loadMainCategories("main-category-nav");
         }
 
         if (!catId) {
-            document.getElementById('category-title').innerText = "Section not found";
-            return;
+          document.getElementById("category-title").innerText =
+            "Section not found";
+          return;
         }
 
         try {
-            const result = await FancyAPI.get(`/products/public-list.php?category_id=${catId}`);
+          const result = await FancyAPI.get(
+            `/products/public-list.php?category_id=${catId}`,
+          );
 
-            if (result.success && result.data) {
-                const categoryName = result.data.category_name || "Products";
-                document.getElementById('category-title').innerText = categoryName;
-                
-                updateFilterUI(categoryName);
-                await loadMainCategoryFilters();
+          if (result.success && result.data) {
+            const categoryName = result.data.category_name || "Products";
+            document.getElementById("category-title").innerText = categoryName;
 
-                allCategoryProducts = result.data.products || [];
-                renderProducts(allCategoryProducts);
+            updateFilterUI(categoryName);
+            await loadMainCategoryFilters();
 
-                await loadSubFilters(catId);
-            } else {
-                document.getElementById('projects-grid').innerHTML = "<p style='grid-column: 1/-1; text-align: center; padding: 50px;'>No products found.</p>";
-            }
+            allCategoryProducts = result.data.products || [];
+            renderProducts(allCategoryProducts);
+
+            await loadSubFilters(catId);
+          } else {
+            document.getElementById("projects-grid").innerHTML =
+              "<p style='grid-column: 1/-1; text-align: center; padding: 50px;'>No products found.</p>";
+          }
         } catch (err) {
-            console.error("Error loading products:", err);
+          console.error("Error loading products:", err);
         }
 
-        const clearBtn = document.getElementById('clear-all');
+        const clearBtn = document.getElementById("clear-all");
         if (clearBtn) {
-            clearBtn.addEventListener('click', () => {
-                document.querySelectorAll('.dropbtn').forEach(btn => {
-                    const originalText = btn.getAttribute('data-original-text');
-                    btn.innerHTML = `${originalText} <i class="arrow down"></i>`;
-                });
-                renderProducts(allCategoryProducts);
-                document.querySelectorAll('.search-input').forEach(i => i.value = "");
+          clearBtn.addEventListener("click", () => {
+            document.querySelectorAll(".dropbtn").forEach((btn) => {
+              const originalText = btn.getAttribute("data-original-text");
+              btn.innerHTML = `${originalText} <i class="arrow down"></i>`;
             });
+            renderProducts(allCategoryProducts);
+            document
+              .querySelectorAll(".search-input")
+              .forEach((i) => (i.value = ""));
+          });
         }
-    });
+      });
 
-    function updateFilterUI(categoryName) {
-        const btn = document.getElementById('sub-category-btn');
+      function updateFilterUI(categoryName) {
+        const btn = document.getElementById("sub-category-btn");
         if (btn) {
-            btn.setAttribute('data-original-text', `All ${categoryName}`);
-            btn.innerHTML = `All ${categoryName} <i class="arrow down"></i>`;
+          btn.setAttribute("data-original-text", `All ${categoryName}`);
+          btn.innerHTML = `All ${categoryName} <i class="arrow down"></i>`;
         }
-        
-        const mainBtn = document.getElementById('main-category-filter-btn');
+
+        const mainBtn = document.getElementById("main-category-filter-btn");
         if (mainBtn) {
-            mainBtn.innerHTML = `${categoryName} <i class="arrow down"></i>`;
+          mainBtn.innerHTML = `${categoryName} <i class="arrow down"></i>`;
         }
 
-        const allOpt = document.querySelector('.all-option');
+        const allOpt = document.querySelector(".all-option");
         if (allOpt) allOpt.innerText = `All ${categoryName}`;
-    }
+      }
 
-    async function loadMainCategoryFilters() {
+      async function loadMainCategoryFilters() {
         try {
-            const result = await FancyAPI.get('/categories/list.php');
-            const container = document.getElementById('main-category-filter-content');
-            
-            if (result.success && result.data && result.data.categories && container) {
-                result.data.categories.forEach(cat => {
-                    const a = document.createElement('a');
-                    a.href = `product.category.html?id=${cat.id}`;
-                    a.textContent = cat.name;
-                    container.appendChild(a);
-                });
-            }
-        } catch (err) { console.error(err); }
-    }
+          const result = await FancyAPI.get("/categories/list.php");
+          const container = document.getElementById(
+            "main-category-filter-content",
+          );
 
-    async function loadSubFilters(catId) {
-    try {
-        const result = await FancyAPI.get(`/categories/get-sub-categories.php?category_id=${catId}`);
-        const container = document.getElementById('sub-category-content');
-        
-        if (result.success && result.data && result.data.sub_categories && container) {
+          if (
+            result.success &&
+            result.data &&
+            result.data.categories &&
+            container
+          ) {
+            result.data.categories.forEach((cat) => {
+              const a = document.createElement("a");
+              a.href = `product.category.html?id=${cat.id}`;
+              a.textContent = cat.name;
+              container.appendChild(a);
+            });
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      async function loadSubFilters(catId) {
+        try {
+          const result = await FancyAPI.get(
+            `/categories/get-sub-categories.php?category_id=${catId}`,
+          );
+          const container = document.getElementById("sub-category-content");
+
+          if (
+            result.success &&
+            result.data &&
+            result.data.sub_categories &&
+            container
+          ) {
             const subCategories = result.data.sub_categories;
 
             // ... (الكود الخاص بـ all-option يبقى كما هو)
 
-            subCategories.forEach(sub => {
-                const a = document.createElement('a');
-                a.href = "#";
-                a.textContent = sub.name;
-                a.onclick = (e) => {
-                    e.preventDefault();
-                    document.getElementById('sub-category-btn').innerHTML = `${sub.name} <i class="arrow down"></i>`;
+            subCategories.forEach((sub) => {
+              const a = document.createElement("a");
+              a.href = "#";
+              a.textContent = sub.name;
+              a.onclick = (e) => {
+                e.preventDefault();
+                document.getElementById("sub-category-btn").innerHTML =
+                  `${sub.name} <i class="arrow down"></i>`;
 
-                    // تعديل الفلترة لتكون مرنة:
-                    const filtered = allCategoryProducts.filter(p => 
-                        p.sub_category_id == sub.id || p.requested_sub_category_name === sub.name
-                    );
-                    
-                    renderProducts(filtered);
-                };
-                container.appendChild(a);
+                // تعديل الفلترة لتكون مرنة:
+                const filtered = allCategoryProducts.filter(
+                  (p) =>
+                    p.sub_category_id == sub.id ||
+                    p.requested_sub_category_name === sub.name,
+                );
+
+                renderProducts(filtered);
+              };
+              container.appendChild(a);
             });
+          }
+        } catch (err) {
+          console.error("Error loading sub-filters:", err);
         }
-    } catch (err) { console.error("Error loading sub-filters:", err); }
-}
+      }
 
-    function renderProducts(products) {
-        const grid = document.getElementById('projects-grid');
+      function renderProducts(products) {
+        const grid = document.getElementById("projects-grid");
         if (!products || products.length === 0) {
-            grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; padding: 20px;'>No products yet.</p>";
-            return;
+          grid.innerHTML =
+            "<p style='grid-column: 1/-1; text-align: center; padding: 20px;'>No products yet.</p>";
+          return;
         }
-        grid.innerHTML = products.map(product => createProductCardHTML(product)).join('');
-    }
-</script>
-</body>
+        grid.innerHTML = products
+          .map((product) => createProductCardHTML(product))
+          .join("");
+      }
+    </script>
+  </body>
 </html>

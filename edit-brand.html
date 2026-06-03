@@ -1,74 +1,113 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <link rel="icon" href="imges/img/fancy1.jfif" />
     <title>Edit brands- Fancy Design</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
     <style>
-        .form-container { max-width: 700px; margin: 50px auto; padding: 30px; border: 1px solid #ddd; border-radius: 12px; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .form-header { text-align: center; margin-bottom: 30px; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; }
-        .submit-btn { background: #000; color: white; padding: 15px 25px; border: none; border-radius: 6px; cursor: pointer; width: 100%; font-size: 17px; font-weight: bold; transition: background 0.3s; }
-        .submit-btn:hover { background: #383838; }
+      .form-container {
+        max-width: 700px;
+        margin: 50px auto;
+        padding: 30px;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      }
+      .form-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #333;
+      }
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 15px;
+      }
+      .submit-btn {
+        background: #000;
+        color: white;
+        padding: 15px 25px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        width: 100%;
+        font-size: 17px;
+        font-weight: bold;
+        transition: background 0.3s;
+      }
+      .submit-btn:hover {
+        background: #383838;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div id="header-placeholder"></div>
 
     <div class="form-container">
-        <div class="form-header">
-            <h2>Modify brand data:</h2>
-            <p>Update your brand details:</p>
+      <div class="form-header">
+        <h2>Modify brand data:</h2>
+        <p>Update your brand details:</p>
+      </div>
+      <form id="editBrandForm">
+        <input type="hidden" name="brand_id" id="brand_id_input" />
+        <div class="form-group">
+          <label>Brand name:</label>
+          <input type="text" name="brand_name" required />
         </div>
-        <form id="editBrandForm">
-            <input type="hidden" name="brand_id" id="brand_id_input">
-            <div class="form-group">
-                <label>Brand name:</label>
-                <input type="text" name="brand_name" required>
-            </div>
-            <div class="form-group">
-                <label>Brand category:</label>
-                <input type="text" name="brand_type">
-            </div>
-            <div style="display: flex; gap: 30px;">
-                <div class="form-group" style="flex: 1;">
-                    <label>City:</label>
-                    <input type="text" name="country" required>
-                </div>
-                <div class="form-group" style="flex: 1;">
-                    <label>State:</label>
-                    <input type="text" name="city">
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Brand email:</label>
-                <input type="email" name="email">
-            </div>
-            <div class="form-group">
-                <label>Brand phone number:</label>
-                <input type="tel" name="phone">
-            </div>
-            <div class="form-group">
-                <label>Logo (update):</label>
-                <input type="file" name="logo" accept="image/*">
-            </div>
-            <div class="form-group">
-                <label>cover image (update):</label>
-                <input type="file" name="cover_image" accept="image/*">
-            </div>
-            <div class="form-group">
-                <label>Website link (if available):</label>
-                <input type="url" name="website">
-            </div>
-            <div class="form-group">
-                <label>Brand description:</label>
-                <textarea name="description" rows="4"></textarea>
-            </div>
-            <button type="submit" class="submit-btn">Save changes</button>
-        </form>
+        <div class="form-group">
+          <label>Brand category:</label>
+          <input type="text" name="brand_type" />
+        </div>
+        <div style="display: flex; gap: 30px">
+          <div class="form-group" style="flex: 1">
+            <label>City:</label>
+            <input type="text" name="country" required />
+          </div>
+          <div class="form-group" style="flex: 1">
+            <label>State:</label>
+            <input type="text" name="city" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Brand email:</label>
+          <input type="email" name="email" />
+        </div>
+        <div class="form-group">
+          <label>Brand phone number:</label>
+          <input type="tel" name="phone" />
+        </div>
+        <div class="form-group">
+          <label>Logo (update):</label>
+          <input type="file" name="logo" accept="image/*" />
+        </div>
+        <div class="form-group">
+          <label>cover image (update):</label>
+          <input type="file" name="cover_image" accept="image/*" />
+        </div>
+        <div class="form-group">
+          <label>Website link (if available):</label>
+          <input type="url" name="website" />
+        </div>
+        <div class="form-group">
+          <label>Brand description:</label>
+          <textarea name="description" rows="4"></textarea>
+        </div>
+        <button type="submit" class="submit-btn">Save changes</button>
+      </form>
     </div>
 
     <div id="footer-placeholder"></div>
@@ -77,24 +116,26 @@
     <script src="js/brands.js"></script>
     <script src="js/auth.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const brandIdFromUrl = urlParams.get('brand_id');
+      document.addEventListener("DOMContentLoaded", async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const brandIdFromUrl = urlParams.get("brand_id");
 
-            // جلب بيانات البراند بناءً على الـ ID من الرابط أو من بيانات المستخدم
-            await loadMyBrandForEdit(brandIdFromUrl);
-        });
+        // جلب بيانات البراند بناءً على الـ ID من الرابط أو من بيانات المستخدم
+        await loadMyBrandForEdit(brandIdFromUrl);
+      });
 
-        document.getElementById('editBrandForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            
-            if (!formData.get('brand_id')) {
-                alert('خطأ: معرف البراند مفقود. يرجى تحديث الصفحة.');
-                return;
-            }
-            updateBrandProfile(formData);
+      document
+        .getElementById("editBrandForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const formData = new FormData(this);
+
+          if (!formData.get("brand_id")) {
+            alert("خطأ: معرف البراند مفقود. يرجى تحديث الصفحة.");
+            return;
+          }
+          updateBrandProfile(formData);
         });
     </script>
-</body>
+  </body>
 </html>

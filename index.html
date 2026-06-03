@@ -152,7 +152,7 @@
         background: #fff;
       }
 
-            /* تحسين استجابة قائمة الأقسام للموبايل */
+      /* تحسين استجابة قائمة الأقسام للموبايل */
       @media (max-width: 600px) {
         .category-nav {
           gap: 27px; /* تقليل المسافة بين الروابط */
@@ -163,7 +163,6 @@
         }
       }
 
-
       /**/
     </style>
 
@@ -172,14 +171,11 @@
     <nav class="category-nav" id="main-category-nav"></nav>
 
     <section class="hero-slider">
-  <div class="slider-container" id="dynamic-slider">
-    </div>
-  <button class="prev-btn">&#10094;</button>
-  <button class="next-btn">&#10095;</button>
-  <div class="dots-container" id="dots-container"></div>
-</section>
-
-
+      <div class="slider-container" id="dynamic-slider"></div>
+      <button class="prev-btn">&#10094;</button>
+      <button class="next-btn">&#10095;</button>
+      <div class="dots-container" id="dots-container"></div>
+    </section>
 
     <!--
 <section class="projects-section">
@@ -216,49 +212,49 @@
     <div id="footer-placeholder"></div>
 
     <script>
-     // نترك هذه المتغيرات فارغة في البداية
-let slides = [];
-let dots = [];
-let currentSlide = 0;
-let slideInterval; // لحفظ معرف الـ Interval وتجنب تكراره
+      // نترك هذه المتغيرات فارغة في البداية
+      let slides = [];
+      let dots = [];
+      let currentSlide = 0;
+      let slideInterval; // لحفظ معرف الـ Interval وتجنب تكراره
 
-function initSlider() {
-    // 1. إعادة تعريف العناصر بعد إضافة الـ HTML ديناميكياً
-    slides = document.querySelectorAll(".slide");
-    dots = document.querySelectorAll(".dot");
-    
-    if (slides.length === 0) return;
+      function initSlider() {
+        // 1. إعادة تعريف العناصر بعد إضافة الـ HTML ديناميكياً
+        slides = document.querySelectorAll(".slide");
+        dots = document.querySelectorAll(".dot");
 
-    // 2. تفعيل الأزرار (إضافة المستمعات مرة واحدة فقط)
-    document.querySelector(".next-btn").onclick = () => {
-        currentSlide = (currentSlide + 1) % slides.length;
-        showSlide(currentSlide);
-    };
+        if (slides.length === 0) return;
 
-    document.querySelector(".prev-btn").onclick = () => {
-        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-        showSlide(currentSlide);
-    };
+        // 2. تفعيل الأزرار (إضافة المستمعات مرة واحدة فقط)
+        document.querySelector(".next-btn").onclick = () => {
+          currentSlide = (currentSlide + 1) % slides.length;
+          showSlide(currentSlide);
+        };
 
-    // 3. التنقل التلقائي
-    if (slideInterval) clearInterval(slideInterval);
-    slideInterval = setInterval(() => {
-        currentSlide = (currentSlide + 1) % slides.length;
-        showSlide(currentSlide);
-    }, 5000);
-}
+        document.querySelector(".prev-btn").onclick = () => {
+          currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+          showSlide(currentSlide);
+        };
 
-function showSlide(index) {
-    // نستخدم المتغيرات العامة التي تم تحديثها
-    if (slides.length === 0) return;
-    
-    slides.forEach((slide) => slide.classList.remove("active"));
-    dots.forEach((dot) => dot.classList.remove("active"));
+        // 3. التنقل التلقائي
+        if (slideInterval) clearInterval(slideInterval);
+        slideInterval = setInterval(() => {
+          currentSlide = (currentSlide + 1) % slides.length;
+          showSlide(currentSlide);
+        }, 5000);
+      }
 
-    slides[index].classList.add("active");
-    dots[index].classList.add("active");
-    currentSlide = index;
-}
+      function showSlide(index) {
+        // نستخدم المتغيرات العامة التي تم تحديثها
+        if (slides.length === 0) return;
+
+        slides.forEach((slide) => slide.classList.remove("active"));
+        dots.forEach((dot) => dot.classList.remove("active"));
+
+        slides[index].classList.add("active");
+        dots[index].classList.add("active");
+        currentSlide = index;
+      }
       // انشاء الكروت وعرضها
       // مراجع الحاويات الفريدة (تأكد أن هذه الـ IDs موجودة في الـ HTML)
       const interiorContainer = document.getElementById("interior-container");
@@ -268,7 +264,7 @@ function showSlide(index) {
       document.addEventListener("DOMContentLoaded", async () => {
         // 0. جلب وتشغيل السلايدر الديناميكي
         if (typeof loadSliderProducts === "function") {
-            await loadSliderProducts();
+          await loadSliderProducts();
         }
 
         // 1. جلب وعرض الأقسام من الـ API

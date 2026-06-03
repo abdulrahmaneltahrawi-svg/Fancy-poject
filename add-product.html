@@ -1,137 +1,179 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <link rel="icon" href="imges/img/fancy1.jfif" />
     <title>Add New Product - Fancy Design</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
     <style>
-        .form-container { max-width: 600px; margin: 50px auto; padding: 50px; border: 1px solid #ddd; border-radius: 8px;}
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;  }
-        .submit-btn { background: #000; color: #fff; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; width: 100%; }
+      .form-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 50px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .submit-btn {
+        background: #000;
+        color: #fff;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div id="header-placeholder"></div>
     <div class="form-container">
-        <h2>Add new product</h2>
-        <form id="productForm">
-            <input type="hidden" name="brand_id" id="form_brand_id">
-            <div class="form-group">
-                <label>Product name:</label>
-                <input type="text" placeholder="Your product name here..." name="product_name" required>
-            </div>
-            <div class="form-group">
-                <label>Category:</label>
-                <select name="category_id" id="category_select" required>
-                    <option value="">Choose category...</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Sub Category:</label>
-                <select name="sub_category_id" id="sub_category_select" required>
-                    <option value="">Choose category first...</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Main product image:</label>
-                <input type="file" name="main_image" accept="image/*" required>
-            </div>
-            <div class="form-group">
-                <label>Short description:</label>
-                <textarea name="short_description" rows="2"></textarea>
-            </div>
-            <div class="form-group">
-                <label>Full description:</label>
-                <textarea name="description" rows="5"></textarea>
-            </div>
-            <button type="submit" class="submit-btn">Send product for review </button>
-        </form>
+      <h2>Add new product</h2>
+      <form id="productForm">
+        <input type="hidden" name="brand_id" id="form_brand_id" />
+        <div class="form-group">
+          <label>Product name:</label>
+          <input
+            type="text"
+            placeholder="Your product name here..."
+            name="product_name"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label>Category:</label>
+          <select name="category_id" id="category_select" required>
+            <option value="">Choose category...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Sub Category:</label>
+          <select name="sub_category_id" id="sub_category_select" required>
+            <option value="">Choose category first...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Main product image:</label>
+          <input type="file" name="main_image" accept="image/*" required />
+        </div>
+        <div class="form-group">
+          <label>Short description:</label>
+          <textarea name="short_description" rows="2"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Full description:</label>
+          <textarea name="description" rows="5"></textarea>
+        </div>
+        <button type="submit" class="submit-btn">
+          Send product for review
+        </button>
+      </form>
     </div>
     <script src="js/script.js"></script>
     <script src="js/categories.js"></script>
     <script src="js/products.js"></script>
     <script src="js/auth.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const urlBrandId = urlParams.get('brand_id');
+      document.addEventListener("DOMContentLoaded", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlBrandId = urlParams.get("brand_id");
 
-            // التأكد من تحديث بيانات المستخدم من السيرفر لجلب الـ brand_id الصحيح
-            FancyAPI.get('/auth/me.php').then(result => {
-                if (result && result.success) {
-                    const user = result.data.user || result.data;
-                    localStorage.setItem('userData', JSON.stringify(user));
-                    
-                    if (user.account_type === 'personal') {
-                        alert('Sorry, personal accounts cannot add products.');
-                        window.location.href = 'index.html';
-                        return;
-                    }
+        // التأكد من تحديث بيانات المستخدم من السيرفر لجلب الـ brand_id الصحيح
+        FancyAPI.get("/auth/me.php").then((result) => {
+          if (result && result.success) {
+            const user = result.data.user || result.data;
+            localStorage.setItem("userData", JSON.stringify(user));
 
-                    // الأولوية للمعرف في الرابط ثم المعرف في بيانات المستخدم
-                    const brandId = urlBrandId || user.brand_id;
+            if (user.account_type === "personal") {
+              alert("Sorry, personal accounts cannot add products.");
+              window.location.href = "index.html";
+              return;
+            }
 
-                    if (!brandId) {
-                        alert('Sorry, you must create a brand before adding products.');
-                        window.location.href = 'add-brand.html';
-                        return;
-                    }
-                    document.getElementById('form_brand_id').value = brandId;
+            // الأولوية للمعرف في الرابط ثم المعرف في بيانات المستخدم
+            const brandId = urlBrandId || user.brand_id;
 
-                    // تحميل الأقسام من قاعدة البيانات عند فتح الصفحة
-                    loadCategoriesToSelect();
-                } else {
-                    alert('You must log in first');
-                    window.location.href = 'login.html';
-                }
+            if (!brandId) {
+              alert("Sorry, you must create a brand before adding products.");
+              window.location.href = "add-brand.html";
+              return;
+            }
+            document.getElementById("form_brand_id").value = brandId;
+
+            // تحميل الأقسام من قاعدة البيانات عند فتح الصفحة
+            loadCategoriesToSelect();
+          } else {
+            alert("You must log in first");
+            window.location.href = "login.html";
+          }
+        });
+      });
+
+      async function loadCategoriesToSelect() {
+        const catSelect = document.getElementById("category_select");
+        try {
+          const result = await FancyAPI.get("/categories/list.php");
+          if (result.success && result.data && result.data.categories) {
+            result.data.categories.forEach((cat) => {
+              catSelect.add(new Option(cat.name, cat.id));
             });
-        });
-
-        async function loadCategoriesToSelect() {
-            const catSelect = document.getElementById('category_select');
-            try {
-                const result = await FancyAPI.get('/categories/list.php');
-                if (result.success && result.data && result.data.categories) {
-                    result.data.categories.forEach(cat => {
-                        catSelect.add(new Option(cat.name, cat.id));
-                    });
-                }
-            } catch (error) { console.error('Error loading categories:', error); }
+          }
+        } catch (error) {
+          console.error("Error loading categories:", error);
         }
+      }
 
-        document.getElementById('category_select').addEventListener('change', async function() {
-            const subSelect = document.getElementById('sub_category_select');
-            const catId = this.value; // استخدام المعرف (ID) بدلاً من الاسم
-            
-            subSelect.innerHTML = '<option value="">Loading...</option>';
-            
-            if (catId) {
-                // استدعاء الأقسام الفرعية بناءً على القسم الرئيسي المختار
-                const subCats = await loadSubCategoriesForFilter(catId);
-                subSelect.innerHTML = '<option value="">Choose sub category...</option>';
-                subCats.forEach(sub => {
-                    subSelect.add(new Option(sub.name, sub.id));
-                });
-            } else {
-                subSelect.innerHTML = '<option value="">Choose category first...</option>';
-            }
+      document
+        .getElementById("category_select")
+        .addEventListener("change", async function () {
+          const subSelect = document.getElementById("sub_category_select");
+          const catId = this.value; // استخدام المعرف (ID) بدلاً من الاسم
+
+          subSelect.innerHTML = '<option value="">Loading...</option>';
+
+          if (catId) {
+            // استدعاء الأقسام الفرعية بناءً على القسم الرئيسي المختار
+            const subCats = await loadSubCategoriesForFilter(catId);
+            subSelect.innerHTML =
+              '<option value="">Choose sub category...</option>';
+            subCats.forEach((sub) => {
+              subSelect.add(new Option(sub.name, sub.id));
+            });
+          } else {
+            subSelect.innerHTML =
+              '<option value="">Choose category first...</option>';
+          }
         });
 
-        document.getElementById('productForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            
-            // تحقق أخير قبل الإرسال
-            if (!formData.get('brand_id')) {
-                alert('Error: Brand ID not recognized. Please refresh the page.');
-                return;
-            }
+      document
+        .getElementById("productForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const formData = new FormData(this);
 
-            submitNewProduct(formData);
+          // تحقق أخير قبل الإرسال
+          if (!formData.get("brand_id")) {
+            alert("Error: Brand ID not recognized. Please refresh the page.");
+            return;
+          }
+
+          submitNewProduct(formData);
         });
     </script>
-</body>
+  </body>
 </html>
