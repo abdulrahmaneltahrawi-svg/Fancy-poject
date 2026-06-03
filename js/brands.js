@@ -292,10 +292,10 @@ async function deleteBrand(brandId) {
     try {
         const result = await FancyAPI.post('/brands/delete.php', { brand_id: brandId });
         if (result.success) {
-            alert(result.message || 'تم حذف البراند بنجاح');
+            alert(result.message || 'Brand deleted successfully');
             displayUserBrands(); // تحديث القائمة
         } else {
-            alert(result.message || 'فشل الحذف');
+            alert(result.message || 'Deletion failed');
         }
     } catch (error) {
         console.error('Delete error:', error);
@@ -337,38 +337,38 @@ async function loadPendingBrandsForAdmin(containerId) {
 
 // دالة قبول البراند
 async function approveBrand(id) {
-    if (!confirm('هل تريد قبول هذه العلامة التجارية؟')) return;
+    if (!confirm('Do you want to accept this trademark?')) return;
     const result = await FancyAPI.post('/admin/approve-brand.php', { brand_id: id });
     if (result.success) {
-        alert('تم قبول البراند');
+        alert('The brand has been accepted.');
         loadPendingBrandsForAdmin('pending-brands-list');
     } else {
-        alert('خطأ: ' + result.message);
+        alert('error: ' + result.message);
     }
 }
 
 // دالة رفض البراند
 async function rejectBrand(id) {
-    const reason = prompt('سبب الرفض:');
+    const reason = prompt('Reason for rejection:');
     if (reason === null) return;
     const result = await FancyAPI.post('/admin/reject-brand.php', { brand_id: id, reason: reason });
     if (result.success) {
-        alert('تم رفض البراند');
+        alert('Brand rejected');
         loadPendingBrandsForAdmin('pending-brands-list');
     } else {
-        alert('خطأ: ' + result.message);
+        alert('error: ' + result.message);
     }
 }
 
 // دالة إيقاف البراند (للإدارة)
 async function suspendBrand(id) {
-    if (!confirm('هل تريد إيقاف هذه العلامة التجارية؟ سيتم إخفاء البراند ومنتجاته.')) return;
+    if (!confirm('Do you want to disable this brand? The brand and its products will be hidden.')) return;
     const result = await FancyAPI.post('/admin/suspend-brand.php', { brand_id: id });
     if (result.success) {
-        alert('تم إيقاف العلامة التجارية بنجاح');
+        alert('The brand was successfully Stoped');
         location.reload();
     } else {
-        alert('خطأ: ' + result.message);
+        alert('error: ' + result.message);
     }
 }
 

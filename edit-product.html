@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <link rel="icon" href="imges/img/fancy1.jfif" />
@@ -16,56 +16,130 @@
 <body>
     <div id="header-placeholder"></div>
     <div class="form-container">
-        <h2>تعديل بيانات المنتج</h2>
+        <h2>Edit product data</h2>
         <form id="editProductForm">
             <input type="hidden" name="product_id">
             <input type="hidden" name="brand_id">
             
             <div class="form-group">
-                <label>اسم المنتج</label>
+                <label>Product Name:</label>
                 <input type="text" name="product_name" required>
             </div>
-            <div style="display: flex; gap: 15px;">
-                <div class="form-group" style="flex: 1;">
-                    <label>رقم القسم (Category ID)</label>
-                    <input type="number" name="category_id">
-                </div>
-                <div class="form-group" style="flex: 1;">
-                    <label>أو اسم قسم جديد</label>
-                    <input type="text" name="requested_category_name">
-                </div>
+            <div class="form-group">
+                <label>Category:</label>
+                <select name="category_id" id="category_select" required>
+                    <option value="">Choose category...</option>
+                </select>
             </div>
             <div class="form-group">
-                <label>القسم الفرعي المطلوب</label>
-                <input type="text" name="requested_sub_category_name" required>
+                <label>Sub Category:</label>
+                <select name="sub_category_id" id="sub_category_select" required>
+                    <option value="">Select category first...</option>
+                </select>
             </div>
             <div class="form-group">
-                <label>تغيير صورة المنتج (اختياري)</label>
-                <input type="file" name="image" accept="image/*">
+                <label>Product Image (Optional):</label>
+                <input type="file" name="main_image" accept="image/*">
             </div>
             <div class="form-group">
-                <label>وصف قصير</label>
+                <label>Short Description:</label>
                 <textarea name="short_description" rows="2"></textarea>
             </div>
             <div class="form-group">
-                <label>وصف كامل</label>
+                <label>Full Description:</label>
                 <textarea name="description" rows="5"></textarea>
             </div>
-            <button type="submit" class="submit-btn">حفظ التغييرات</button>
+            <button type="submit" class="submit-btn">Save Changes</button>
         </form>
     </div>
     <script src="js/script.js"></script>
+    <script src="js/categories.js"></script>
     <script src="js/products.js"></script>
     <script src="js/auth.js"></script>
     <script>
-        const params = new URLSearchParams(window.location.search);
-        const productId = params.get('id');
-        if (productId) loadProductDataForEdit(productId);
+        document.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            const productId = params.get('id');
+            
+            const form = document.getElementById('editProductForm');
+            if (productId && form) {
+                // تعيين المعرف من الرابط فوراً لضمان عدم إرسال النموذج فارغاً
+                form.elements['product_id'].value = productId;
+            }
+
+            // 1. جلب الأقسام الرئيسية أولاً
+            await loadCategoriesToSelect();
+
+            if (productId) {
+                // 2. جلب بيانات المنتج وتعبئتها في النموذج
+                const result = await FancyAPI.get(`/products/get.php?product_id=${productId}`);
+                if (result.success && result.data.product) {
+                    const product = result.data.product;
+                    
+                    // تعبئة البيانات الأساسية
+                    form.elements['product_name'].value = product.product_name;
+                    form.elements['category_id'].value = product.category_id || '';
+                    form.elements['short_description'].value = product.short_description || '';
+                    form.elements['description'].value = product.description || '';
+                    form.elements['brand_id'].value = product.brand_id || '';
+
+                    // تحميل الأقسام الفرعية واختيار القسم الحالي
+                    if (product.category_id) {
+                        await handleCategoryChange(product.category_id);
+                        if (product.sub_category_id) {
+                            document.getElementById('sub_category_select').value = product.sub_category_id;
+                        }
+                    }
+                } else {
+                    alert("Failed to load product data.");
+                    window.location.href = 'index.html';
+                }
+            }
+        });
+
+        async function loadCategoriesToSelect() {
+            const catSelect = document.getElementById('category_select');
+            try {
+                const result = await FancyAPI.get('/categories/list.php');
+                if (result.success && result.data && result.data.categories) {
+                    result.data.categories.forEach(cat => {
+                        catSelect.add(new Option(cat.name, cat.id));
+                    });
+                }
+            } catch (error) { console.error('Error loading categories:', error); }
+        }
+
+        async function handleCategoryChange(catId) {
+            const subSelect = document.getElementById('sub_category_select');
+            subSelect.innerHTML = '<option value="">Loading...</option>';
+            
+            if (catId) {
+                const subCats = await loadSubCategoriesForFilter(catId);
+                subSelect.innerHTML = '<option value="">Choose sub category...</option>';
+                subCats.forEach(sub => {
+                    subSelect.add(new Option(sub.name, sub.id)); // نستخدم المعرف ID كقيمة
+                });
+            } else {
+                subSelect.innerHTML = '<option value="">Choose category first...</option>';
+            }
+        }
+
+        document.getElementById('category_select').addEventListener('change', function() {
+            handleCategoryChange(this.value);
+        });
 
         document.getElementById('editProductForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            submitProductUpdate(new FormData(this));
-        });
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    // تأكد من إضافة الـ ID يدوياً لضمان وجوده
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get('id');
+    formData.append('product_id', productId); 
+
+    submitProductUpdate(formData);
+});
     </script>
 </body>
 </html>

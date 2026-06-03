@@ -40,7 +40,8 @@ function createProductCardHTML(data, options = {}) {
                             <button onclick="suspendProduct(${productId})" style=" background: #ff0000; color: #fff; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 13px;">Stop</button>
                         `
                     ) : `
-                        <a href="edit-product.html?id=${productId}" class="edit-btn" style="text-align: center; background: gray; color: #fff; padding: 5px; border-radius: 4px; text-decoration: none; font-size: 13px;">Edit</a>
+                        <a href="edit-product.html?id=${productId}" class="edit-btn" style="flex: 1; text-align: center; background: gray; color: #fff; padding: 5px; border-radius: 4px; text-decoration: none; font-size: 13px;">Edit</a>
+                        <button onclick="deleteProduct(${productId})" style="flex: 1; background: #d9534f; color: #fff; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 13px;">Delete</button>
                     `}
                 </div>
                 ` : ''}
@@ -200,11 +201,12 @@ async function loadProductDataForEdit(productId) {
             if (!form) return;
 
             // تعبئة الحقول
-            form.elements['product_id'].value = product.id;
+            // التأكد من جلب المعرف بأي صيغة يعود بها من السيرفر
+            form.elements['product_id'].value = product.id || product.product_id || '';
             form.elements['brand_id'].value = product.brand_id;
             form.elements['product_name'].value = product.product_name;
             form.elements['category_id'].value = product.category_id || '';
-            form.elements['requested_sub_category_name'].value = product.sub_category_name || product.requested_sub_category_name || '';
+            // سيتم تعيين القسم الفرعي في ملف HTML بعد تحميل الخيارات ديناميكياً
             form.elements['short_description'].value = product.short_description || '';
             form.elements['description'].value = product.description || '';
         } else {
@@ -219,19 +221,33 @@ async function loadProductDataForEdit(productId) {
 
 // دالة إرسال التحديث إلى update.php
 async function submitProductUpdate(formData) {
-    try {
-        console.log("Updating product data as FormData...");
-        const result = await FancyAPI.post('/products/update.php', formData);
+    // 1. تحويل الـ FormData إلى Object عادي
+    const data = {};
+    formData.forEach((value, key) => {
+        data[key] = value;
+    });
 
+    // 2. إرسال الطلب بتنسيق JSON
+    try {
+        const response = await fetch('/fancy-design/Fancy/api/products/update.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json' // أخبر السيرفر أنك ترسل JSON
+            },
+            body: JSON.stringify(data) // تحويل الكائن إلى نص JSON
+        });
+
+        const result = await response.json();
+        
         if (result.success) {
-            alert("تم تحديث المنتج بنجاح! التغييرات قيد المراجعة.");
-            window.location.href = 'index.html';
+            alert('تم التحديث بنجاح!');
+            // العودة إلى صفحة البروفايل بعد الضغط على موافق في رسالة التنبيه
+            window.location.href = 'profile.html';
         } else {
-            alert("خطأ في التحديث: " + (result.message || "فشل الطلب"));
+            alert('فشل: ' + result.message);
         }
     } catch (error) {
-        console.error('Error updating product:', error);
-        alert("فشل الاتصال بالسيرفر.");
+        console.error('Error:', error);
     }
 }
 
@@ -336,6 +352,25 @@ async function suspendProduct(id) {
     }
 }
 
+// دالة حذف المنتج نهائياً
+async function deleteProduct(id) {
+    if (!confirm('تحذير: هل أنت متأكد من حذف هذا المنتج نهائياً؟ لا يمكن التراجع عن هذا الإجراء.')) return;
+    try {
+        // إرسال طلب الحذف إلى السيرفر
+        const result = await FancyAPI.post('/products/delete.php', { product_id: id });
+        if (result.success) {
+            alert(result.message || 'تم حذف المنتج بنجاح');
+            // إعادة تحميل الصفحة لتحديث القائمة
+            location.reload();
+        } else {
+            alert('فشل الحذف: ' + (result.message || 'حدث خطأ غير معروف'));
+        }
+    } catch (error) {
+        console.error('Delete product error:', error);
+        alert('حدث خطأ أثناء محاولة الاتصال بالسيرفر لحذف المنتج.');
+    }
+}
+
 // جعل الدوال متاحة عالمياً
 window.createProductCardHTML = createProductCardHTML;
 window.loadProducts = loadProducts;
@@ -348,3 +383,4 @@ window.loadPendingProductsForAdmin = loadPendingProductsForAdmin;
 window.approveProduct = approveProduct;
 window.rejectProduct = rejectProduct;
 window.suspendProduct = suspendProduct;
+window.deleteProduct = deleteProduct;
