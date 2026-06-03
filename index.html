@@ -172,64 +172,14 @@
     <nav class="category-nav" id="main-category-nav"></nav>
 
     <section class="hero-slider">
-      <div class="slider-container">
+  <div class="slider-container" id="dynamic-slider">
+    </div>
+  <button class="prev-btn">&#10094;</button>
+  <button class="next-btn">&#10095;</button>
+  <div class="dots-container" id="dots-container"></div>
+</section>
 
-        <div class="slide active">
-          <div
-            class="slide-bg"
-            style="
-              background-image: url(&quot;imges/img/topslider04.webp&quot;);
-            "
-          ></div>
-          <div class="slide-content">
-            <h1>The RAIN FLOWER</h1>
-            <p>
-              A modern masterpiece that seemlessly blends comfort and style.
-            </p>
-          </div>
-        </div>
 
-        <div class="slide">
-          <div
-            class="slide-bg"
-            style="
-              background-image: url(&quot;imges/img/topslider03.webp&quot;);
-            "
-          ></div>
-          <div class="slide-content">
-            <h1>Flower Sofa</h1>
-            <p>
-              A versatile and inviting seating solution that blooms into endless
-              configurations.
-            </p>
-          </div>
-        </div>
-
-        <div class="slide">
-          <div
-            class="slide-bg"
-            style="
-              background-image: url(&quot;imges/img/topslider05.webp&quot;);
-            "
-          ></div>
-          <div class="slide-content">
-            <h1>The Koji Sofa</h1>
-            <p>
-              a sculptural seating experience that redefines modern minimalism.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <button class="prev-btn">&#10094;</button>
-      <button class="next-btn">&#10095;</button>
-
-      <div class="dots-container">
-        <span class="dot active"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-      </div>
-    </section>
 
     <!--
 <section class="projects-section">
@@ -266,57 +216,61 @@
     <div id="footer-placeholder"></div>
 
     <script>
-      const slides = document.querySelectorAll(".slide");
-      const dots = document.querySelectorAll(".dot");
-      let currentSlide = 0;
+     // نترك هذه المتغيرات فارغة في البداية
+let slides = [];
+let dots = [];
+let currentSlide = 0;
+let slideInterval; // لحفظ معرف الـ Interval وتجنب تكراره
 
-      function showSlide(index) {
-        // إضافة تحققات لمنع الأخطاء إذا كانت العناصر غير موجودة أو الـ index غير صالح
-        if (!slides || slides.length === 0) {
-          console.warn("Slider elements with class 'slide' not found.");
-          return;
-        }
-        if (!dots || dots.length === 0) {
-          console.warn("Dot elements with class 'dot' not found.");
-          return;
-        }
-        if (
-          isNaN(index) ||
-          index < 0 ||
-          index >= slides.length ||
-          index >= dots.length
-        )
-          return; // تأكد أن الـ index ضمن النطاق لجميع العناصر
-        slides.forEach((slide) => slide.classList.remove("active"));
-        dots.forEach((dot) => dot.classList.remove("active"));
+function initSlider() {
+    // 1. إعادة تعريف العناصر بعد إضافة الـ HTML ديناميكياً
+    slides = document.querySelectorAll(".slide");
+    dots = document.querySelectorAll(".dot");
+    
+    if (slides.length === 0) return;
 
-        if (slides[index]) slides[index].classList.add("active");
-        if (dots[index]) dots[index].classList.add("active");
-      }
-
-      document.querySelector(".next-btn").addEventListener("click", () => {
+    // 2. تفعيل الأزرار (إضافة المستمعات مرة واحدة فقط)
+    document.querySelector(".next-btn").onclick = () => {
         currentSlide = (currentSlide + 1) % slides.length;
         showSlide(currentSlide);
-      });
+    };
 
-      document.querySelector(".prev-btn").addEventListener("click", () => {
+    document.querySelector(".prev-btn").onclick = () => {
         currentSlide = (currentSlide - 1 + slides.length) % slides.length;
         showSlide(currentSlide);
-      });
+    };
 
-      // التنقل التلقائي كل 5 ثوانٍ
-      setInterval(() => {
+    // 3. التنقل التلقائي
+    if (slideInterval) clearInterval(slideInterval);
+    slideInterval = setInterval(() => {
         currentSlide = (currentSlide + 1) % slides.length;
         showSlide(currentSlide);
-      }, 5000);
+    }, 5000);
+}
 
+function showSlide(index) {
+    // نستخدم المتغيرات العامة التي تم تحديثها
+    if (slides.length === 0) return;
+    
+    slides.forEach((slide) => slide.classList.remove("active"));
+    dots.forEach((dot) => dot.classList.remove("active"));
+
+    slides[index].classList.add("active");
+    dots[index].classList.add("active");
+    currentSlide = index;
+}
       // انشاء الكروت وعرضها
       // مراجع الحاويات الفريدة (تأكد أن هذه الـ IDs موجودة في الـ HTML)
       const interiorContainer = document.getElementById("interior-container");
       const productContainer = document.getElementById("product-container");
       const brandContainer = document.getElementById("brand-container");
 
-      document.addEventListener("DOMContentLoaded", () => {
+      document.addEventListener("DOMContentLoaded", async () => {
+        // 0. جلب وتشغيل السلايدر الديناميكي
+        if (typeof loadSliderProducts === "function") {
+            await loadSliderProducts();
+        }
+
         // 1. جلب وعرض الأقسام من الـ API
         if (typeof loadMainCategories === "function") {
           loadMainCategories("main-category-nav");
@@ -385,5 +339,6 @@
     <script src="js/products.js"></script>
     <script src="js/brands.js"></script>
     <script src="js/auth.js"></script>
+    <script src="js/slider.js"></script>
   </body>
 </html>
