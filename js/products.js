@@ -40,7 +40,7 @@ function createProductCardHTML(data, options = {}) {
                             <button onclick="suspendProduct(${productId})" style=" background: #ff0000; color: #fff; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 13px;">Stop</button>
                         `
                     ) : `
-                        <a href="edit-product.html?id=${productId}" class="edit-btn" style="flex: 1; text-align: center; background: #f0ad4e; color: #fff; padding: 5px; border-radius: 4px; text-decoration: none; font-size: 13px;">تعديل</a>
+                        <a href="edit-product.html?id=${productId}" class="edit-btn" style="text-align: center; background: gray; color: #fff; padding: 5px; border-radius: 4px; text-decoration: none; font-size: 13px;">Edit</a>
                     `}
                 </div>
                 ` : ''}

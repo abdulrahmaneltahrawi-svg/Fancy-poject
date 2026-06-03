@@ -181,7 +181,7 @@ function setupProfileTabs(user) {
                     if (createSection) createSection.href = 'add-product.html';
                     createSection?.classList.remove('hidden');
                 } else {
-                    if (createText) createText.textContent = 'Create a new product';
+                    if (createText) createText.textContent = 'Create a new brand';
                     if (createSection) createSection.href = 'add-brand.html';
                     createSection?.classList.remove('hidden');
                 }

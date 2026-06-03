@@ -34,19 +34,24 @@ async function loadMainCategories(containerId) {
     }
 }
 
-// دالة استدعاء الأقسام الفرعية بناءً على اسم القسم الرئيسي
-async function loadSubCategoriesForFilter(categoryName, callback) {
+// دالة استدعاء الأقسام الفرعية بناءً على اسم القسم أو المعرف
+async function loadSubCategoriesForFilter(categoryParam, callback) {
     try {
-        // استدعاء ملف get-sub-categories.php مع تمرير اسم القسم
-        const result = await FancyAPI.get(`/categories/get-sub-categories.php?category_name=${encodeURIComponent(categoryName)}`);
+        // تحديد ما إذا كان المعرف المرسل رقماً أم نصاً لتحديد اسم المعامل (Param)
+        const paramName = isNaN(categoryParam) ? 'category_name' : 'category_id';
+        
+        // استدعاء ملف get-sub-categories.php
+        const result = await FancyAPI.get(`/categories/get-sub-categories.php?${paramName}=${encodeURIComponent(categoryParam)}`);
 
-        if (result && result.success && Array.isArray(result.data)) {
+        // السيرفر يعيد المصفوفة داخل result.data.sub_categories وليس result.data مباشرة
+        const subCategories = result.data?.sub_categories;
+        if (result && result.success && Array.isArray(subCategories)) {
             if (typeof callback === 'function') {
-                callback(result.data);
+                callback(subCategories);
             }
-            return result.data;
+            return subCategories;
         } else {
-            console.warn(`No sub-categories found for: ${categoryName}`);
+            console.warn(`No sub-categories found for: ${categoryParam}`);
             return [];
         }
     } catch (error) {

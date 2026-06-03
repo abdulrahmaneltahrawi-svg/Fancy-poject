@@ -23,23 +23,21 @@
                 <label>Product name:</label>
                 <input type="text" placeholder="Your product name here..." name="product_name" required>
             </div>
-            <div style="display: flex; gap: 25px;">
-                <div class="form-group" style="flex: 1;">
-                    <label>Category:</label>
-                    <input type="number" name="category_id" placeholder="EX: 1">
-                </div>
-                <div class="form-group" style="flex: 1;">
-                    <label>Category Name:</label>
-                    <input type="text" name="requested_category_name" placeholder="Modern furniture">
-                </div>
+            <div class="form-group">
+                <label>Category:</label>
+                <select name="category_id" id="category_select" required>
+                    <option value="">Choose category...</option>
+                </select>
             </div>
             <div class="form-group">
                 <label>Sub Category:</label>
-                <input type="text" name="requested_sub_category_name" placeholder="EX: Chairs Tables..." required>
+                <select name="requested_sub_category_name" id="sub_category_select" required>
+                    <option value="">Choose category first...</option>
+                </select>
             </div>
             <div class="form-group">
                 <label>Main product image:</label>
-                <input type="file" name="image" accept="image/*" required>
+                <input type="file" name="main_image" accept="image/*" required>
             </div>
             <div class="form-group">
                 <label>Short description:</label>
@@ -53,6 +51,7 @@
         </form>
     </div>
     <script src="js/script.js"></script>
+    <script src="js/categories.js"></script>
     <script src="js/products.js"></script>
     <script src="js/auth.js"></script>
     <script>
@@ -81,11 +80,44 @@
                         return;
                     }
                     document.getElementById('form_brand_id').value = brandId;
+
+                    // تحميل الأقسام من قاعدة البيانات عند فتح الصفحة
+                    loadCategoriesToSelect();
                 } else {
                     alert('يجب تسجيل الدخول أولاً');
                     window.location.href = 'login.html';
                 }
             });
+        });
+
+        async function loadCategoriesToSelect() {
+            const catSelect = document.getElementById('category_select');
+            try {
+                const result = await FancyAPI.get('/categories/list.php');
+                if (result.success && result.data && result.data.categories) {
+                    result.data.categories.forEach(cat => {
+                        catSelect.add(new Option(cat.name, cat.id));
+                    });
+                }
+            } catch (error) { console.error('Error loading categories:', error); }
+        }
+
+        document.getElementById('category_select').addEventListener('change', async function() {
+            const subSelect = document.getElementById('sub_category_select');
+            const catId = this.value; // استخدام المعرف (ID) بدلاً من الاسم
+            
+            subSelect.innerHTML = '<option value="">Loading...</option>';
+            
+            if (catId) {
+                // استدعاء الأقسام الفرعية بناءً على القسم الرئيسي المختار
+                const subCats = await loadSubCategoriesForFilter(catId);
+                subSelect.innerHTML = '<option value="">Choose sub category...</option>';
+                subCats.forEach(sub => {
+                    subSelect.add(new Option(sub.name, sub.name));
+                });
+            } else {
+                subSelect.innerHTML = '<option value="">Choose category first...</option>';
+            }
         });
 
         document.getElementById('productForm').addEventListener('submit', function(e) {
