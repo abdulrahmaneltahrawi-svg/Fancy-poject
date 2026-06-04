@@ -1,6 +1,10 @@
 // تعريف كائن FancyAPI لمعالجة طلبات الـ API بشكل موحد وتجنب تكرار الكود
 const FancyAPI = {
-    baseUrl: '/Fancy-Design/fancy/api',
+    // إذا كنت ترفع على GitHub، يجب أن يشير هذا الرابط إلى سيرفر خارجي يدعم PHP
+    // حالياً سنتركه نسبياً ليعمل في البيئة المحلية
+    baseUrl: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+             ? '/Fancy-Design/fancy/api' 
+             : 'https://your-remote-api-domain.com/api', 
     async request(endpoint, options = {}) {
         // تنظيف المسار لضمان عدم وجود سلاش مزدوج
         const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
@@ -57,9 +61,9 @@ function getSafeImageUrl(imagePath) {
     if (!imagePath || imagePath === "null" || imagePath === "") {
         return "imges/img/fancy1.jfif"; // صورة افتراضية من شعار الموقع
     }
-    // إذا كان المسار يبدأ بـ uploads، نضيف إليه مسار الـ API
-    if (imagePath.startsWith('uploads/')) {
-        return `/Fancy-Design/fancy/${imagePath}`;
+    // استخدام مسار نسبي لضمان العمل على GitHub Pages
+    if (imagePath.startsWith('uploads/') || imagePath.startsWith('fancy/uploads/')) {
+        return imagePath.startsWith('fancy/') ? imagePath : `fancy/${imagePath}`;
     }
     return imagePath;
 }
@@ -70,8 +74,8 @@ function loadHeader() {
     const headerPlaceholder = document.getElementById('header-placeholder');
     if (!headerPlaceholder) return;
 
-    // استخدام مسار يبدأ بـ / لضمان العمل من أي صفحة
-    fetch('/Fancy-Design/components/header.html')
+    // استخدام مسار نسبي ليعمل على GitHub Pages بشكل صحيح
+    fetch('components/header.html')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Header file not found');
@@ -98,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // وظيفه جلب الارجل
 function loadFooter() {
-    fetch('/Fancy-Design/components/footer.html')
+    fetch('components/footer.html')
         .then(res => {
             if (!res.ok) throw new Error('Failed to load footer');
             return res.text();

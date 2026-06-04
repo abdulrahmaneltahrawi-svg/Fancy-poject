@@ -4,7 +4,7 @@ function getSafeImageUrl(path) {
 
     // إزالة السلاش البادئة وإضافة المسار الصحيح للمجلد
     const cleanPath = path.replace(/^\//, '');
-    return '/Fancy-Design/fancy/' + (cleanPath.startsWith('uploads/') ? '' : 'uploads/') + cleanPath;
+    return 'fancy/' + (cleanPath.startsWith('uploads/') ? '' : 'uploads/') + cleanPath;
 }
 // دالة لجلب وعرض جميع البراندات في الصفحة
 async function displayAllBrands(containerId = 'brands-container') {
