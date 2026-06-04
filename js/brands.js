@@ -6,9 +6,7 @@ async function displayAllBrands(containerId = 'brands-container') {
 
     try {
         // جلب قائمة العلامات التجارية النشطة من السيرفر
-        const result = await FancyAPI.get('/brands/active-brands.php'); 
-        
-        console.log('Brands API Response:', result); // لمساعدتك في تتبع البيانات في الكونسول
+        const result = await FancyAPI.get('/brands/active-brands.php');
 
         // التعامل مع حالة عدم المصادقة (خطأ 401)
         if (result.status === 401) {
@@ -18,18 +16,24 @@ async function displayAllBrands(containerId = 'brands-container') {
             return;
         }
 
-        // استخراج المصفوفة بشكل مرن
-        const brands = result.data?.brands || (Array.isArray(result.data) ? result.data : []);
+        if (result && result.success) {
+            // استخراج المصفوفة بشكل مرن (سواء كانت داخل data.brands أو data مباشرة)
+            const brands = result.data?.brands || (Array.isArray(result.data) ? result.data : []);
+            
+            container.innerHTML = ''; // تفريغ الحاوية قبل البدء
 
-        if (result.success && brands.length > 0) {
+            if (brands.length === 0) {
+                container.innerHTML = `<p style="text-align: center; grid-column: 1/-1; padding: 50px;">There are no currently active brands.</p>`;
+                return;
+            }
+
             const userData = JSON.parse(localStorage.getItem('userData') || '{}');
             const isAdmin = userData.account_type === 'admin' || userData.role === 'admin';
-
-            container.innerHTML = ''; // تفريغ الحاوية
 
             brands.forEach(brand => {
                 // التحقق من وجود صور جانبية لضبط التنسيق (Grid vs Single)
                 const hasSideImages = brand.side_img1 || brand.side_img2;
+
                 const gridClass = hasSideImages ? '' : 'single-layout';
                 const brandId = brand.id || brand.brand_id;
 
@@ -56,7 +60,7 @@ async function displayAllBrands(containerId = 'brands-container') {
                                 <div class="brand-text">
                                     <h3>${brand.brand_name || brand.name || 'Brand'}</h3>
                                     <p>${brand.country || ''} | ${brand.city || ''}</p>
-                                    <span style="pad">${brand.brand_type || ''}</span>
+                                    <span>${brand.brand_type || ''}</span>
                                 </div>
                             </div>
                         </a>
@@ -69,11 +73,14 @@ async function displayAllBrands(containerId = 'brands-container') {
                 `;
                 container.insertAdjacentHTML('beforeend', brandHtml);
             });
-        } else if (result.success) {
-            container.innerHTML = `<p style="text-align: center; grid-column: 1/-1; padding: 50px;">There are no currently active brands.</p>`;
         } else {
-            // في حال خطأ 401 أو غيره
-            container.innerHTML = `<p style="text-align: center; padding: 50px; grid-column: 1/-1;">You must <a href="#" class="login-link">log in</a> first to view content.</p>`;
+            // تحسين الرسالة: إذا كان هناك بيانات مستخدم في المتصفح، فالخطأ تقني وليس نقص تسجيل دخول
+            const hasSession = localStorage.getItem('userData');
+            if (hasSession) {
+                container.innerHTML = `<p style="text-align: center; padding: 50px; grid-column: 1/-1; color: #666;">Failed to load brands. Please try again later.</p>`;
+            } else {
+                container.innerHTML = `<p style="text-align: center; padding: 50px; grid-column: 1/-1;">Please <a href="#" class="login-link">log in</a> to view brands.</p>`;
+            }
         }
     } catch (error) {
         console.error('Error fetching brands:', error);

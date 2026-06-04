@@ -347,14 +347,13 @@ body {
 }
 
 .title {
-  max-width: 1200px; /* جعل العرض الأقصى متطابق مع الكروت */
-  margin: 0 0 20px 120px; /* تحريك العنوان لليمين قليلاً لزيادة التباعد */
-  padding: 0 20px; /* إضافة نفس الحواف الجانبية للكروت */
+
   font-weight: bold;
   font-size: 28px;
   /* الحل هنا */
   display: flex;
-  align-items: center; /* لتوسيط الخط عمودياً مع النص تماماً */
+  justify-content: center;
+  margin-right: 1000px;
   gap: 15px; /* مسافة بين الخط والكلمة */
 }
 

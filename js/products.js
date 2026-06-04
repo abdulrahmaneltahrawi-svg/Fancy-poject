@@ -10,6 +10,7 @@ function createProductCardHTML(data, options = {}) {
     const productTitle = data.product_name || 'Unknown Product';
     // استخدام getSafeImageUrl لضمان ظهور الصور المخزنة في قاعدة البيانات
     const productImage = typeof getSafeImageUrl === 'function' ? getSafeImageUrl(data.main_image) : (data.main_image || 'imges/placeholder.png');
+    const brandName = data.brand_name || ''; // افتراض أن اسم العلامة التجارية متاح في بيانات المنتج
     const productDesc = data.short_description || '';
     const productCategory = data.category_name || '';
     const productStatus = data.status || 'active';
@@ -30,6 +31,7 @@ function createProductCardHTML(data, options = {}) {
                 </p>
                 <div class="card-meta">
                     <span class="category" style="font-weight: bold; text-transform: uppercase; font-size: 12px;">${productCategory}</span>
+                    ${brandName ? `<span class="brand-name" style="font-size: 11px; color: #999; margin-left: 5px;">(${brandName})</span>` : ''}
                 </div>
                 ${showControls ? `
                 <div class="card-actions" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; display: flex; gap: 10px;">
@@ -86,6 +88,12 @@ async function loadProducts(containerId, limit = null, brandId = null, showContr
 
         if (result && result.success && Array.isArray(result.data.products)) {
             let productsToDisplay = result.data.products;
+
+            // فلترة المنتجات برمجياً للتأكد من أن كل براند يعرض منتجاته فقط
+            if (brandId) {
+                productsToDisplay = productsToDisplay.filter(p => p.brand_id == brandId);
+            }
+
             if (limit !== null) {
                 productsToDisplay = productsToDisplay.slice(0, limit);
             }
@@ -182,12 +190,16 @@ async function loadRelatedProducts(subCategoryId, currentProductId) {
 }
 
 // دالة لجلب وعرض منتجات المستخدم المسجل حالياً
-async function loadMyProducts(containerId) {
+async function loadMyProducts(containerId, brandId = null) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
     try {
-        const result = await FancyAPI.get('/products/my-products.php');
+        let url = '/products/my-products.php';
+        if (brandId) {
+            url += `?brand_id=${brandId}`;
+        }
+        const result = await FancyAPI.get(url);
 
         if (result.status === 401) {
             container.innerHTML = `<p style="text-align: center; color: #666; grid-column: 1/-1; padding: 40px;">You must <a href="#" class="login-link">log in</a> to manage your products.</p>`;
@@ -204,6 +216,11 @@ async function loadMyProducts(containerId) {
             }
 
             result.data.products.forEach(product => {
+                // فلترة المنتجات برمجياً للتأكد من أن كل براند يعرض منتجاته فقط
+                if (brandId && product.brand_id != brandId) {
+                    return; // تخطي المنتجات التي لا تنتمي للبراند المحدد
+                }
+
                 container.innerHTML += createProductCardHTML(product, { showControls: true });
             });
         } else {

@@ -132,7 +132,7 @@
           id="brandAbout"
           style="
             max-width: 1500px;
-            line-height: 1.8;
+            line-height: 2.0;
             margin-top: 20px;
             background: white;
             padding: 20px;
@@ -204,7 +204,7 @@
 
             // إذا كان المستخدم هو صاحب البراند، نستخدم API "منتجاتي" (my-products.php) لعرض القائمة الكاملة
             if (showProductControls) {
-              loadMyProducts("productsGrid");
+              loadMyProducts("productsGrid", brand.id);
             } else {
               // للزوار العاديين، نستخدم القائمة العامة المفلترة بمعرف البراند
               loadProducts("productsGrid", null, brand.id, false);
