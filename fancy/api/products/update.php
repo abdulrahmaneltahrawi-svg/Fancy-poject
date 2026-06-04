@@ -6,6 +6,7 @@ error_reporting(E_ALL);
 
 require_once __DIR__ . "/../../core/cors.php";
 require_once __DIR__ . "/../../config/database.php";
+require_once __DIR__ . "/../../config/app.php";
 require_once __DIR__ . "/../../core/response.php";
 require_once __DIR__ . "/../../core/helpers.php";
 require_once __DIR__ . "/../../core/auth.php";
@@ -16,25 +17,113 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $auth = requireAuth();
 
-$input = getJsonInput();
+function imageUrl($path)
+{
+    if (!$path) {
+        return null;
+    }
 
-$productId = (int)($input['product_id'] ?? 0);
-$brandId = (int)($input['brand_id'] ?? 0);
+    return rtrim(APP_URL, '/') . '/' . ltrim($path, '/');
+}
 
-$categoryId = isset($input['category_id']) && $input['category_id'] !== ''
-    ? (int)$input['category_id']
+function deleteOldProductImage($path)
+{
+    if (!$path) {
+        return;
+    }
+
+    $fullPath = __DIR__ . "/../../" . ltrim($path, '/');
+
+    if (file_exists($fullPath) && is_file($fullPath)) {
+        unlink($fullPath);
+    }
+}
+
+function uploadProductImage($fileInputName)
+{
+    if (!isset($_FILES[$fileInputName]) || $_FILES[$fileInputName]['error'] === UPLOAD_ERR_NO_FILE) {
+        return null;
+    }
+
+    $file = $_FILES[$fileInputName];
+
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        jsonResponse(false, "File upload error", [
+            "code" => "FILE_UPLOAD_ERROR",
+            "field" => $fileInputName,
+            "error_number" => $file['error']
+        ], 400);
+    }
+
+    $maxSize = 3 * 1024 * 1024; // 3MB
+
+    if ($file['size'] > $maxSize) {
+        jsonResponse(false, "Image size must not exceed 3MB", [
+            "code" => "IMAGE_TOO_LARGE",
+            "field" => $fileInputName
+        ], 422);
+    }
+
+    $allowedMimeTypes = [
+        'image/jpeg' => 'jpg',
+        'image/png'  => 'png',
+        'image/webp' => 'webp'
+    ];
+
+    $mimeType = mime_content_type($file['tmp_name']);
+
+    if (!array_key_exists($mimeType, $allowedMimeTypes)) {
+        jsonResponse(false, "Only JPG, PNG and WEBP images are allowed", [
+            "code" => "INVALID_IMAGE_TYPE",
+            "field" => $fileInputName,
+            "mime_type" => $mimeType
+        ], 422);
+    }
+
+    $extension = $allowedMimeTypes[$mimeType];
+
+    $uploadDir = __DIR__ . "/../../uploads/products/";
+
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0775, true);
+    }
+
+    $fileName = $fileInputName . "_" . time() . "_" . bin2hex(random_bytes(8)) . "." . $extension;
+
+    $destination = $uploadDir . $fileName;
+
+    if (!move_uploaded_file($file['tmp_name'], $destination)) {
+        jsonResponse(false, "Could not save uploaded image", [
+            "code" => "IMAGE_SAVE_FAILED",
+            "field" => $fileInputName
+        ], 500);
+    }
+
+    return "uploads/products/" . $fileName;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Get form-data input
+|--------------------------------------------------------------------------
+*/
+$productId = (int)($_POST['product_id'] ?? 0);
+$brandId = (int)($_POST['brand_id'] ?? 0);
+
+$categoryId = isset($_POST['category_id']) && $_POST['category_id'] !== ''
+    ? (int)$_POST['category_id']
     : null;
 
-$subCategoryId = isset($input['sub_category_id']) && $input['sub_category_id'] !== ''
-    ? (int)$input['sub_category_id']
+$subCategoryId = isset($_POST['sub_category_id']) && $_POST['sub_category_id'] !== ''
+    ? (int)$_POST['sub_category_id']
     : null;
 
-$requestedCategoryName = cleanInput($input['requested_category_name'] ?? '');
-$requestedSubCategoryName = cleanInput($input['requested_sub_category_name'] ?? '');
+$requestedCategoryName = cleanInput($_POST['requested_category_name'] ?? '');
+$requestedSubCategoryName = cleanInput($_POST['requested_sub_category_name'] ?? '');
 
-$productName = cleanInput($input['product_name'] ?? '');
-$shortDescription = cleanInput($input['short_description'] ?? '');
-$description = cleanInput($input['description'] ?? '');
+$productName = cleanInput($_POST['product_name'] ?? '');
+$shortDescription = cleanInput($_POST['short_description'] ?? '');
+$description = cleanInput($_POST['description'] ?? '');
 
 if ($productId <= 0) {
     jsonResponse(false, "Product ID is required", [
@@ -73,12 +162,18 @@ try {
     |--------------------------------------------------------------------------
     */
     $stmt = $pdo->prepare("
-        SELECT id, user_id, status
+        SELECT 
+            id,
+            user_id,
+            status,
+            main_image
         FROM products
         WHERE id = ?
           AND user_id = ?
+          AND status != 'deleted'
         LIMIT 1
     ");
+
     $stmt->execute([$productId, $auth['user_id']]);
     $product = $stmt->fetch();
 
@@ -106,6 +201,7 @@ try {
           AND user_id = ?
         LIMIT 1
     ");
+
     $stmt->execute([$brandId, $auth['user_id']]);
     $brand = $stmt->fetch();
 
@@ -135,6 +231,7 @@ try {
               AND status = 'active'
             LIMIT 1
         ");
+
         $stmt->execute([$categoryId]);
         $category = $stmt->fetch();
 
@@ -159,6 +256,7 @@ try {
               AND status = 'active'
             LIMIT 1
         ");
+
         $stmt->execute([$subCategoryId, $categoryId]);
         $subCategory = $stmt->fetch();
 
@@ -171,7 +269,20 @@ try {
 
     /*
     |--------------------------------------------------------------------------
-    | 5. Generate unique slug if product name changed
+    | 5. Upload new image if sent
+    |--------------------------------------------------------------------------
+    */
+    $newMainImagePath = uploadProductImage('main_image');
+
+    $finalMainImagePath = $newMainImagePath ?: $product['main_image'];
+
+    if ($newMainImagePath && $product['main_image']) {
+        deleteOldProductImage($product['main_image']);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | 6. Generate unique slug
     |--------------------------------------------------------------------------
     */
     $baseSlug = createSlug($productName);
@@ -186,6 +297,7 @@ try {
               AND id != ?
             LIMIT 1
         ");
+
         $stmt->execute([$slug, $productId]);
 
         if (!$stmt->fetch()) {
@@ -198,15 +310,20 @@ try {
 
     /*
     |--------------------------------------------------------------------------
-    | 6. Update product
+    | 7. Status after update
     |--------------------------------------------------------------------------
-    | لو المنتج كان active وعدّله المستخدم، هنرجعه pending_admin_approval
+    | لو المنتج كان active ورجع المستخدم عدله، نخليه pending_admin_approval
     | عشان الأدمن يراجع التعديل.
     */
     $newStatus = $product['status'] === 'active'
         ? 'pending_admin_approval'
         : $product['status'];
 
+    /*
+    |--------------------------------------------------------------------------
+    | 8. Update product
+    |--------------------------------------------------------------------------
+    */
     $stmt = $pdo->prepare("
         UPDATE products
         SET
@@ -219,6 +336,7 @@ try {
             slug = :slug,
             short_description = :short_description,
             description = :description,
+            main_image = :main_image,
             status = :status
         WHERE id = :id
           AND user_id = :user_id
@@ -234,6 +352,7 @@ try {
         ":slug" => $slug,
         ":short_description" => $shortDescription ?: null,
         ":description" => $description ?: null,
+        ":main_image" => $finalMainImagePath,
         ":status" => $newStatus,
         ":id" => $productId,
         ":user_id" => $auth['user_id']
@@ -242,6 +361,8 @@ try {
     jsonResponse(true, "Product updated successfully", [
         "product_id" => $productId,
         "slug" => $slug,
+        "main_image" => $finalMainImagePath,
+        "main_image_url" => imageUrl($finalMainImagePath),
         "status" => $newStatus
     ]);
 

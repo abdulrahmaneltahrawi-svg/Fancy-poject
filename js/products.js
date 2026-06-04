@@ -249,50 +249,31 @@ async function loadProductDataForEdit(productId) {
 
 // دالة إرسال التحديث إلى update.php
 async function submitProductUpdate(formData) {
-    // 1. تحويل الـ FormData إلى Object عادي
-    const data = {};
-    formData.forEach((value, key) => {
-        data[key] = value;
-    });
-
-    // 2. إرسال الطلب بتنسيق JSON
     try {
-        const response = await fetch('/fancy-design/Fancy/api/products/update.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json' // أخبر السيرفر أنك ترسل JSON
-            },
-            body: JSON.stringify(data) // تحويل الكائن إلى نص JSON
-        });
+        // التأكد من وجود product_id داخل الـ FormData في حال كان الحقل يسمى id في النموذج
+        if (!formData.has('product_id') && formData.has('id')) {
+            formData.append('product_id', formData.get('id'));
+        }
 
-        const result = await response.json();
+        // إرسال الـ formData مباشرة بدلاً من تحويلها لـ JSON
+        // هذا يسمح للـ PHP بقراءة البيانات عبر $_POST ومعالجة الملفات عبر $_FILES
+        const result = await FancyAPI.post('/products/update.php', formData);
         
         if (result.success) {
             alert('Updated successfully!');
-            // العودة إلى صفحة البروفايل بعد الضغط على موافق في رسالة التنبيه
             window.location.href = 'profile.html';
         } else {
-            alert('Failed: ' + result.message);
+            alert('Failed: ' + (result.message || 'Validation error (422)'));
         }
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Update Error:', error);
+        alert("An error occurred while updating the product.");
     }
 }
 
 async function submitNewProduct(formData) {
     try {
-        console.log("Sending product data...");
-        
-        // ملاحظة: لا تحول formData إلى JSON
-        // إذا كان FancyAPI يضيف JSON Header تلقائياً، فقد تحتاج لاستخدام fetch العادي أو تعديل FancyAPI
-        const response = await fetch('/fancy-design/Fancy/api/products/create.php', {
-            method: 'POST',
-            body: formData // أرسل الـ formData مباشرة
-            // لا تضع Content-Type هنا، المتصفح سيضعها تلقائياً مع الـ boundary الصحيح
-        });
-
-        const result = await response.json();
-
+        const result = await FancyAPI.post('/products/create.php', formData);
         if (result.success) {
             alert("Product added successfully!");
             window.location.href = 'index.html';
