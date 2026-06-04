@@ -1,10 +1,11 @@
 // تعريف كائن FancyAPI لمعالجة طلبات الـ API بشكل موحد وتجنب تكرار الكود
 const FancyAPI = {
-    // إذا كنت ترفع على GitHub، يجب أن يشير هذا الرابط إلى سيرفر خارجي يدعم PHP
-    // حالياً سنتركه نسبياً ليعمل في البيئة المحلية
-    baseUrl: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-             ? '/Fancy-Design/fancy/api' 
-             : 'https://your-remote-api-domain.com/api', 
+    // تنبيه هام: GitHub Pages لا يدعم تشغيل ملفات PHP نهائياً.
+    // لكي يعمل الموقع على GitHub، يجب رفع مجلد (fancy) على استضافة تدعم PHP 
+    // (مثل InfinityFree, 000webhost, أو Hostinger) ثم وضع رابط الـ API الكامل هنا.
+    baseUrl: (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+             ? '/Fancy-Design/fancy/api'
+             : 'https://your-remote-php-server.com/fancy/api', // استبدل هذا برابط السيرفر الحقيقي
     async request(endpoint, options = {}) {
         // تنظيف المسار لضمان عدم وجود سلاش مزدوج
         const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
@@ -32,9 +33,15 @@ const FancyAPI = {
             try {
                 result = text ? JSON.parse(text) : {};
             } catch (e) {
-                console.error(`Invalid JSON Response at [${endpoint}]:`, text);
                 const isHtml = text.trim().startsWith('<');
-                const errorMsg = isHtml ? 'Path or server error (404/500)' : 'Invalid server response';
+                
+                if (isHtml && window.location.hostname.includes('github.io')) {
+                    console.error("ERROR: GitHub Pages cannot execute PHP files. You need a remote PHP hosting for your API.");
+                } else {
+                    console.error(`Invalid JSON Response at [${endpoint}]:`, text);
+                }
+
+                const errorMsg = isHtml ? 'Server returned HTML instead of JSON (Check PHP/Path)' : 'Invalid server response';
                 return { success: false, message: errorMsg, status: response.status, error: text };
             }
 
@@ -61,11 +68,13 @@ function getSafeImageUrl(imagePath) {
     if (!imagePath || imagePath === "null" || imagePath === "") {
         return "imges/img/fancy1.jfif"; // صورة افتراضية من شعار الموقع
     }
+    // إذا كان الرابط خارجياً بالفعل
+    if (imagePath.startsWith('data:') || imagePath.startsWith('http')) return imagePath;
+
     // استخدام مسار نسبي لضمان العمل على GitHub Pages
-    if (imagePath.startsWith('uploads/') || imagePath.startsWith('fancy/uploads/')) {
-        return imagePath.startsWith('fancy/') ? imagePath : `fancy/${imagePath}`;
-    }
-    return imagePath;
+    // إزالة السلاش البادئة لضمان صحة المسار النسبي
+    const cleanPath = imagePath.replace(/^\//, '');
+    return cleanPath.startsWith('fancy/') ? cleanPath : `fancy/${cleanPath.startsWith('uploads/') ? '' : 'uploads/'}${cleanPath}`;
 }
 window.getSafeImageUrl = getSafeImageUrl;
 

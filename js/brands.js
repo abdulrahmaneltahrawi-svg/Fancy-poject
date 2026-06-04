@@ -1,11 +1,4 @@
-function getSafeImageUrl(path) {
-    if (!path) return 'imges/img/fancy1.jfif'; // Default image
-    if (path.startsWith('data:') || path.startsWith('http')) return path;
-
-    // إزالة السلاش البادئة وإضافة المسار الصحيح للمجلد
-    const cleanPath = path.replace(/^\//, '');
-    return 'fancy/' + (cleanPath.startsWith('uploads/') ? '' : 'uploads/') + cleanPath;
-}
+// دالة getSafeImageUrl معرفة عالمياً في script.js
 // دالة لجلب وعرض جميع البراندات في الصفحة
 async function displayAllBrands(containerId = 'brands-container') {
     const container = document.getElementById(containerId);
