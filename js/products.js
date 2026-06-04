@@ -5,7 +5,8 @@ function createProductCardHTML(data, options = {}) {
     const showControls = options.showControls || false;
     const isAdmin = options.isAdmin || false;
     // تأكد من أن `data.id` موجود لتوليد رابط صحيح
-    const productId = data.id || data.product_id || ''; 
+    // تم عكس الترتيب هنا لإعطاء الأولوية لـ product_id لتجنب تضارب المعرفات مع الأقسام
+    const productId = data.product_id || data.id || ''; 
     const productTitle = data.product_name || 'Unknown Product';
     // استخدام getSafeImageUrl لضمان ظهور الصور المخزنة في قاعدة البيانات
     const productImage = typeof getSafeImageUrl === 'function' ? getSafeImageUrl(data.main_image) : (data.main_image || 'imges/placeholder.png');

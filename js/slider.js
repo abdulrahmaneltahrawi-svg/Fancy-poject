@@ -11,6 +11,7 @@ async function loadSliderProducts() {
             const dotsContainer = document.getElementById('dots-container');
 
             products.forEach((product, index) => {
+                const productId = product.product_id || product.id || '';
                 // إنشاء الشريحة
                 const slide = document.createElement('div');
                 slide.className = `slide ${index === 0 ? 'active' : ''}`;
@@ -19,7 +20,7 @@ async function loadSliderProducts() {
                     <div class="slide-content">
                         <h1>${product.product_name}</h1>
                         <p>${product.short_description || ''}</p>
-                        <a href="view.html?id=${product.id || product.product_id}" class="btn" style="display: inline-block; margin-top: 20px; background: #fff; color: #000; padding: 10px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">View Product</a>
+                        <a href="view.html?id=${productId}" class="btn" style="display: inline-block; margin-top: 20px; background: #fff; color: #000; padding: 10px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">View Product</a>
                     </div>
                 `;
                 container.appendChild(slide);
