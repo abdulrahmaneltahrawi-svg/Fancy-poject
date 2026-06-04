@@ -149,11 +149,11 @@ async function loadSingleProductDetails(productId) {
             // تحميل المنتجات المشابهة بناءً على القسم الفرعي (Sub-Category) لزيادة الدقة
             loadRelatedProducts(product.sub_category_id, productId);
         } else {
-            console.error('API Response Error:', result);
-            const detail = result.status === 404 ? 'المنتج غير موجود أو الرابط خاطئ (404)' : result.message;
-            console.error('Failed to load product details:', detail);
-            alert(`خطأ: ${detail}`);
-            window.location.href = "index.html";
+            console.error('Product Access Error:', result);
+            const detail = result.message || 'Product not found or access denied.';
+            // بدلاً من التنبيه المزعج، يمكننا عرض رسالة داخل الصفحة أو الاكتفاء بالتحويل
+            console.warn(`Redirecting: ${detail}`);
+            // window.location.href = "index.html"; 
         }
     } catch (error) {
         console.error('Error fetching single product:', error);
