@@ -136,10 +136,9 @@ async function loadSingleProductDetails(productId) {
                 // يمكنك استبدال 'YOUR_DEFAULT_WHATSAPP_NUMBER' برقم واتساب افتراضي إذا لم يكن متوفراً في بيانات المنتج
                 whatsappBtn.href = `https://wa.me/${product.whatsapp || '966500000000'}?text=${message}`; 
             }
-
-            // هنا يمكنك إضافة منطق عرض الصور المصغرة (thumbnails) والألوان إذا كانت البيانات متوفرة في استجابة الـ API
-            // حالياً، الكود في view.html يعتمد على `project.gallery` و `project.colors` من `data.js`
-            // ستحتاج إلى تعديل الـ API ليعيد هذه البيانات أو تعديل الواجهة الأمامية لتعالجها بشكل مختلف.
+            
+            // تحميل المنتجات المشابهة بناءً على القسم الفرعي (Sub-Category) لزيادة الدقة
+            loadRelatedProducts(product.sub_category_id, productId);
         } else {
             console.error('API Response Error:', result);
             const detail = result.status === 404 ? 'المنتج غير موجود أو الرابط خاطئ (404)' : result.message;
@@ -154,13 +153,13 @@ async function loadSingleProductDetails(productId) {
 }
 
 // دالة لجلب وعرض المنتجات المشابهة (You May Also Like)
-async function loadRelatedProducts(categoryId, currentProductId) {
+async function loadRelatedProducts(subCategoryId, currentProductId) {
     const container = document.getElementById('related-products');
-    if (!container) return;
+    if (!container || !subCategoryId) return;
 
     try {
-        // جلب المنتجات التي تنتمي لنفس القسم
-        const result = await FancyAPI.get(`/products/public-list.php?category_id=${categoryId}`);
+        // جلب المنتجات التي تنتمي لنفس القسم الفرعي
+        const result = await FancyAPI.get(`/products/public-list.php?sub_category_id=${subCategoryId}`);
         
         if (result && result.success && result.data && Array.isArray(result.data.products)) {
             // تصفية المنتج الحالي من القائمة واختيار أول 4 منتجات فقط
