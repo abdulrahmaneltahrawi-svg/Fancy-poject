@@ -8,14 +8,16 @@ require_once __DIR__ . "/../../core/cors.php";
 require_once __DIR__ . "/../../config/database.php";
 require_once __DIR__ . "/../../core/response.php";
 require_once __DIR__ . "/../../core/helpers.php";
-require_once __DIR__ . "/../../core/auth.php";
+// require_once __DIR__ . "/../../core/auth.php"; // مابقتش محتاجه هنا لو مش هتستخدمه
+
 require_once __DIR__ . "/../../config/app.php";
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     jsonResponse(false, "Method not allowed", [], 405);
 }
 
-$auth = requireAuth();
+// ❌ تم إزالة السطر ده عشان نلغي إجبار الـ Login
+// $auth = requireAuth(); 
 
 $brandId = (int)($_GET['brand_id'] ?? 0);
 
@@ -25,16 +27,6 @@ if ($brandId <= 0) {
     ], 422);
 }
 
-/*
-|--------------------------------------------------------------------------
-| Build base URL
-|--------------------------------------------------------------------------
-| Example:
-| http://localhost/fancy/
-|--------------------------------------------------------------------------
-*/
-
-
 function imageUrl($path)
 {
     if (!$path) {
@@ -43,7 +35,9 @@ function imageUrl($path)
 
     return rtrim(APP_URL, '/') . '/' . ltrim($path, '/');
 }
+
 try {
+    // 🛠️ تم تعديل الاستعلام وإزالة شرط الـ user_id
     $stmt = $pdo->prepare("
         SELECT
             id,
@@ -64,12 +58,12 @@ try {
             updated_at
         FROM brands
         WHERE id = ?
-          AND user_id = ?
           AND status != 'deleted'
         LIMIT 1
     ");
 
-    $stmt->execute([$brandId, $auth['user_id']]);
+    // 🛠️ بنمرر الـ brandId بس في الـ execute
+    $stmt->execute([$brandId]);
     $brand = $stmt->fetch();
 
     if (!$brand) {

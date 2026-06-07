@@ -8,13 +8,14 @@ require_once __DIR__ . "/../../core/cors.php";
 require_once __DIR__ . "/../../config/database.php";
 require_once __DIR__ . "/../../core/response.php";
 require_once __DIR__ . "/../../core/helpers.php";
-require_once __DIR__ . "/../../core/auth.php";
+// require_once __DIR__ . "/../../core/auth.php"; // مابقتش محتاجه هنا لو مش هتستخدمه في مكان تاني بالملف
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     jsonResponse(false, "Method not allowed", [], 405);
 }
 
-$auth = requireAuth();
+// ❌ تم إزالة سطر الـ requireAuth عشان الـ endpoint تكون العامة (Public)
+// $auth = requireAuth();
 
 $productId = (int)($_GET['product_id'] ?? 0);
 
@@ -64,16 +65,17 @@ try {
             ON sub_categories.id = products.sub_category_id
 
         WHERE products.id = ?
-          AND products.user_id = ?
-          AND products.status != 'deleted'
+          AND products.status != 'deleted' 
         LIMIT 1
-    ");
+    "); // 🛠️ تم حذف سطر AND products.user_id = ? من هنا
 
-    $stmt->execute([$productId, $auth['user_id']]);
+    // 🛠️ بنمرر الـ productId بس في الـ execute
+    $stmt->execute([$productId]);
     $product = $stmt->fetch();
 
     if (!$product) {
-        jsonResponse(false, "Product not found or you do not have permission", [
+        // 🛠️ تم تعديل رسالة الخطأ لتناسب أن الـ Endpoint أصبحت عامة
+        jsonResponse(false, "Product not found", [
             "code" => "PRODUCT_NOT_FOUND"
         ], 404);
     }
