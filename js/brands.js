@@ -1,12 +1,12 @@
 // دالة getSafeImageUrl معرفة عالمياً في script.js
 // دالة لجلب وعرض جميع البراندات في الصفحة
-async function displayAllBrands(containerId = 'brands-container') {
+async function displayAllBrands(containerId = 'brands-container', limit = null) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
     try {
-        // جلب قائمة العلامات التجارية النشطة من السيرفر
-        const result = await FancyAPI.get('/brands/active-brands.php');
+        // جلب قائمة العلامات التجارية العامة من السيرفر
+        const result = await FancyAPI.get('/brands/public-list.php');
 
         // التعامل مع حالة عدم المصادقة (خطأ 401)
         if (result.status === 401) {
@@ -18,9 +18,14 @@ async function displayAllBrands(containerId = 'brands-container') {
 
         if (result && result.success) {
             // استخراج المصفوفة بشكل مرن (سواء كانت داخل data.brands أو data مباشرة)
-            const brands = result.data?.brands || (Array.isArray(result.data) ? result.data : []);
+            let brands = result.data?.brands || (Array.isArray(result.data) ? result.data : []);
             
             container.innerHTML = ''; // تفريغ الحاوية قبل البدء
+
+            // تطبيق الحد الأقصى للعرض إذا تم تحديده (مفيد للرئيسية)
+            if (limit !== null) {
+                brands = brands.slice(0, limit);
+            }
 
             if (brands.length === 0) {
                 container.innerHTML = `<p style="text-align: center; grid-column: 1/-1; padding: 50px;">There are no currently active brands.</p>`;
