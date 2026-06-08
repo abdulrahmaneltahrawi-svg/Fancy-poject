@@ -756,6 +756,20 @@ body {
   top: 120% !important;
 }
 
+/* تنسيق الدائرة التي تحتوي على الحرف الأول من اسم المستخدم */
+.user-initial-avatar {
+  width: 30px; /* حجم الدائرة */
+  height: 30px; /* حجم الدائرة */
+  border-radius: 50%; /* لجعلها دائرية */
+  background-color: #007bff; /* لون خلفية الدائرة */
+  color: #fff; /* لون النص داخل الدائرة */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px; /* حجم خط الحرف */
+}
+
 /* تنسيق الحاوية الجديدة للأزرار والاسم */
 .user-nav-container {
   display: flex;

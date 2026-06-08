@@ -9,12 +9,14 @@ function updateAuthUI() {
     if (userData) {
         try {
             const user = JSON.parse(userData);
+            const userInitial = user.first_name ? user.first_name.charAt(0).toUpperCase() : '';
 
             authLinks.innerHTML = `
                 <div class="user-nav-container">
 
                     <div class="user-menu-wrapper" style="position: relative;">
                         <button id="user-menu-toggle" class="user-name-btn">
+                            <span class="user-initial-avatar">${userInitial}</span>
                             ${user.first_name} ${user.last_name}
                             <i class="arrow-down"></i>
                         </button>
