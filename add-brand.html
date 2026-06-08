@@ -59,12 +59,12 @@
 
     <div class="form-container">
       <div class="form-header">
-        <h2>Registering a new Brand</h2>
+        <h2>Create a new Brand</h2>
         <p>Enter your brand details for review by management.</p>
       </div>
       <form id="brandForm">
         <div class="form-group">
-          <label>Registering a new Brand:</label>
+          <label>Brand name:</label>
           <input
             type="text"
             name="brand_name"
@@ -73,9 +73,9 @@
           />
         </div>
         <div class="form-group">
-          <label>Product type (category):</label>
+          <label>Brand type (category):</label>
           <select name="brand_type" id="brand_type_select" required>
-            <option value="">Choose the product type...</option>
+            <option value="">Choose the Brand type...</option>
           </select>
         </div>
         <div style="display: flex; gap: 35px">
@@ -130,7 +130,7 @@
           const result = await FancyAPI.get("/categories/list.php");
           if (result.success && result.data && result.data.categories) {
             selectElem.innerHTML =
-              '<option value="">chosse product category...</option>';
+              '<option value="">chosse brand category...</option>';
             result.data.categories.forEach((cat) => {
               const option = document.createElement("option");
               option.value = cat.name; // نرسل اسم القسم كنوع للنشاط
