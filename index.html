@@ -14,7 +14,8 @@
         justify-content: center; /* لتوسيط القائمة في الصفحة */
         margin-top: 30px;
         gap: 30px; /* المسافة بين الكلمات */
-        padding: 30px;
+        margin-right: 250px;
+        
         font-family: Arial, sans-serif; /* نوع الخط القريب من الصورة */
       }
 
@@ -34,8 +35,8 @@
       .hero-slider {
         position: relative;
         width: 90%; /* يمكنك تقليل النسبة حسب الرغبة، مثلاً 80% */
-        max-width: 1450px; /* يمنع السلايدر من التمدد بشكل مفرط في الشاشات الكبيرة جداً */
-        height: 90vh; /* يمكنك أيضاً تقليل الارتفاع ليناسب العرض الجديد */
+        max-width: 1100px; /* يمنع السلايدر من التمدد بشكل مفرط في الشاشات الكبيرة جداً */
+        height: 80vh; /* يمكنك أيضاً تقليل الارتفاع ليناسب العرض الجديد */
         margin: 20px auto; /* auto تقوم بتوسيط السلايدر في المنتصف أفقياً */
         border-radius: 15px; /* اختيارياً: إضافة زوايا منحنية تعطي شكلاً عصرياً */
         overflow: hidden;
@@ -45,6 +46,14 @@
         width: 100%;
         height: 100%;
       }
+
+      .slider-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;      /* هذا هو الحل الأساسي لمشكلة القص */
+    object-position: center; /* لضمان تركيز الصورة في المنتصف دائماً */
+    flex-shrink: 0;         /* لمنع انضغاط الصور */
+}
 
       .slide {
         position: absolute;
@@ -74,7 +83,8 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-size: cover;
+        background-size: contain;
+        background-repeat: no-repeat;
         background-position: center;
         z-index: -1;
       }
@@ -181,7 +191,7 @@
       <div class="dots-container" id="dots-container"></div>
     </section>
 
-    <!--
+
 <section class="projects-section">
     <p class="title">Magazine</p>
     <div class="container">
@@ -191,7 +201,7 @@
     <div class="read-more"><button>GO TO MAGAZINE</button></div>
     </a>
 </section>
--->
+
 
     <section class="projects-section">
       <p class="title">Product</p>
