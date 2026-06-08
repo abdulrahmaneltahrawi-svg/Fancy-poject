@@ -18,12 +18,13 @@ body {
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1500px;
   margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
   padding: 0 20px;
+ 
 }
 
 .logo img {
@@ -40,7 +41,7 @@ body {
 
 .header-bottom-part {
   flex: 1;
-  max-width: 700px;
+  max-width: 850px;
 }
 
 .search-box {

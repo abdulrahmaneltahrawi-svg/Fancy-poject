@@ -29,7 +29,7 @@ function updateAuthUI() {
                             <hr style="border: 0; border-top: 1px solid #eee; margin: 5px 0;">
                             <a href="#" id="logout-btn"><li style="color: #d9534f;">Logout</li></a>
                         </div>
-                    </div>
+                    </div>              
                 </div>
             `;
         } catch (e) {

@@ -9,12 +9,24 @@
   </head>
   <body>
     <style>
+      .second-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 270px;
+        margin-top: 30px;
+      }
+
+      .publish{
+        color: black;
+        text-decoration: underline;
+      }
+
       .category-nav {
         display: flex;
         justify-content: center; /* لتوسيط القائمة في الصفحة */
-        margin-top: 30px;
         gap: 30px; /* المسافة بين الكلمات */
-        margin-right: 310px;
+       
         
         font-family: Arial, sans-serif; /* نوع الخط القريب من الصورة */
       }
@@ -97,7 +109,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.2);
+        background: rgba(0, 0, 0, 0.1);
       }
 
       .slide-content {
@@ -182,7 +194,15 @@
 
     <div id="header-placeholder"></div>
 
+    <div class="second-header">
+
+
+
     <nav class="category-nav" id="main-category-nav"></nav>
+
+    <a href="add-brand.html"><p class="publish">Publish your Products</p></a>
+
+    </div>
 
     <section class="hero-slider">
       <div class="slider-container" id="dynamic-slider"></div>
