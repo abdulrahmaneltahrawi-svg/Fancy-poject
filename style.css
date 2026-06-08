@@ -1,6 +1,7 @@
 body {
   margin: 0;
   padding: 0;
+  padding-top: 120px; /* تعويض مساحة الهيدر الثابت لكي لا يختفي المحتوى تحته */
   box-sizing: border-box;
 }
 :root {
@@ -15,6 +16,10 @@ body {
   border-bottom: 1px solid var(--border-color);
   background: #fff;
   font-family: Lato, "Helvetica Neue", Arial, Helvetica, sans-serif;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
 }
 
 .container {

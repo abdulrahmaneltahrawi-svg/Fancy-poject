@@ -8,7 +8,300 @@
 
   </head>
   <body>
+    <style>
+      .navbar {
+            display: flex;
+
+            justify-content: space-around;
+            align-items: center;
+            padding: 20px 50px;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+            font-family: sans-serif;
+        }
+        .nav-links { list-style: none; display: flex; gap: 30px; margin: 0; padding: 0; }
+        .nav-links a { text-decoration: none; color: #333; font-size: 16px; }
+        .start-btn { text-decoration: none; color: #000; font-weight: bold; border: 1px solid #000; padding: 8px 20px; border-radius: 5px; }
+
+        /**/
+        .hero-section {
+            text-align: center;
+            padding: 80px 20px;
+            font-family: sans-serif;
+            background-color: #ffffff;
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: 600;
+            margin: 0;
+            color: #000;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .hero-description {
+            max-width: 700px;
+            margin: 0 auto 40px auto;
+            color: #555;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .btn-start {
+            background-color: #000;
+            color: #fff;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        /**/
+        .feature-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 80px 50px;
+            font-family: sans-serif;
+        }
+
+        .image-collage {
+            flex: 1;
+            background-image: url('imges/img/Search_products_copy_ngjxbf.png');
+            min-height: 500px; /* أو أي ارتفاع تريده */
+    background-size: contain; /* لتناسب الصورة داخل المساحة */
+    background-repeat: no-repeat;
+    background-position: center;
+
+            
+        }
+
+        .text-content {
+            flex: 1;
+        }
+
+        .text-content h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .text-content p {
+            color: #666;
+            line-height: 1.6;
+            font-size: 18px;
+            margin-bottom: 20px;
+            max-width: 700px;
+        }
+
+        /**/
+        .services-section {
+            padding: 80px 50px;
+            background-color: #f9f9f9;
+            text-align: center;
+            font-family: sans-serif;
+        }
+
+        .section-header {
+            max-width: 700px;
+            margin: 0 auto 60px auto;
+        }
+        .section-header h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+
+        .services-grid {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+    
+        }
+
+        .service-card {
+            padding: 20px;
+        }
+
+      
+
+        .service-card h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .service-card p {
+            color: #666;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        /**/
+
+        .info-section {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 90px;
+        padding: 60px 50px;
+    }
+
+    .image-container img { width: 100%; height: auto; border-radius: 10px; max-width: 600px;}
+    
+    .text-container { flex: 1; max-width: 600px; }
+    .text-container h2 { font-size: 32px; margin-bottom: 20px;}
+    .text-container p { color: #555; margin-bottom: 20px; line-height: 1.6; }
+    
+    .features-list { list-style: none; padding: 0; }
+    .features-list li { 
+        font-weight: bold; 
+        margin-bottom: 10px; 
+        display: flex; 
+        align-items: center;
+    }
+    /* إضافة علامة صح صغيرة أو نقطة بجانب الليست */
+    .features-list li::before {
+        content: "•";
+        color: #000;
+        margin-right: 10px;
+        font-size: 20px;
+    }
+
+    
+    </style>
     <div id="header-placeholder"></div>
+
+    <nav class="navbar">
+        <ul class="nav-links">
+            <li><a href="#">Overview</a></li>
+            <li><a href="#">Products catalogues</a></li>
+            <li><a href="#">Service Features</a></li>
+            <li><a href="#">Cases Overview</a></li>
+            <li><a href="#">Work Timeline</a></li>
+        </ul>
+        <a href="#" class="start-btn">Start new project</a>
+    </nav>
+
+
+    <section class="hero-section">
+    <h1 class="hero-title">Procurement service</h1>
+    <p class="hero-subtitle">Source, quote and purchase Design product</p>
+    
+    <p class="hero-description">
+        Sourcing architecture products from the finest manufacturers in china is made easier and faster with Arch17. 
+        From Furniture, Decor and Rug to Materials, Lighting and construction products. 
+        We offer you a comprehensive procurement service from product sourcing, purchasing, and shipping.
+    </p>
+
+    <div class="buttons-container">
+        <a href="#" class="btn-start">Start New Project</a>
+
+    </div>
+</section>
+
+
+<section class="feature-section">
+    <!-- الجزء الخاص بالصور (Collage) -->
+    <div class="image-collage">
+        <!-- ضع صورك هنا -->
+    </div>
+
+    <!-- الجزء الخاص بالنصوص -->
+    <div class="text-content">
+        <h2>Comprehensive Design & Purchasing service.</h2>
+        <p>We offer design companies and customers around the world a comprehensive service from products sourcing, procurement and manage delivery.</p>
+        <p>Our mission is to optimize the work flow for the architecture projects from the creative phases to production and logistics management ensuring the products quality and best prices.</p>
+    </div>
+</section>
+
+
+<section class="services-section">
+    <div class="section-header">
+        <h2>Fancy backed with a team of designers, logistics and experts in the industry, and we are ready to deliver different level of creative and procurement services for designers and end client between them and you can choose where you need our support</h2>
+    </div>
+
+    <div class="services-grid">
+        <div class="service-card">
+            <div class="service-icon"><img src="imges/icons/Group_836_wvgkat.png" alt=""></div>
+            <h3>Products sourcing</h3>
+            <p>You have a ready design. We can help you or your designer source design products for your projects, and create FF&E specification, and keep it on time and budget.</p>
+        </div>
+        
+        <div class="service-card">
+            <div class="service-icon"><img src="imges/icons/Group_841_mspza5.png" alt=""></div>
+            <h3>Interior Styling</h3>
+            <p>From decorative accessories to rug and window-dressing, our creative team can help you to create a great space according to your style.</p>
+        </div>
+
+        <div class="service-card">
+            <div class="service-icon"><img src="imges/icons/Group_845_xlelq3.png" alt=""></div>
+            <h3>Design services</h3>
+            <p>You have an empty space and start from scratch. Our team can put together product options and create floor plans for your projects.</p>
+        </div>
+
+        <div class="service-card">
+            <div class="service-icon"><img src="imges/icons/fork (1).png" alt=""></div>
+            <h3>Accessories and OS&E Package</h3>
+            <p>From Appliances, to Cutlery, Kitchenware, and Bathroom Accessories Arch17 can offers a package according to your OS&E budget for home, office, and hotel.</p>
+        </div>
+
+        <div class="service-card">
+            <div class="service-icon"><img src="imges/icons/Group_851_fymqke.png" alt=""></div>
+            <h3>Consolidated delivery</h3>
+            <p>With best shipping prices, We’ll consolidate orders from multiple suppliers and deliver when required.</p>
+        </div>
+
+        <div class="service-card">
+            <div class="service-icon"><img src="imges/icons/Group_855_vqfpaq.png" alt=""></div>
+            <h3>Installation</h3>
+            <p>Our project managers will communicate with local installation workers and supervise them to install all products on site.</p>
+        </div>
+    </div>
+</section>
+
+
+<section class="info-section">
+    <div class="image-container">
+        <img src="imges/img/05_copy_hm6lgg.png" alt="Design Chair">
+    </div>
+    <div class="text-container">
+        <h2>Reach reliable High-quality design brands with affordable prices in china.</h2>
+        <p>Instead of going online and struggling to communicate with Chinese suppliers, we made it easier for the designers to find and order design products, furniture, lighting and materials from China. All the brands on Arch17 are vetted and only high quality and original design products are listed.</p>
+        
+        <ul class="features-list">
+            <li>Unique Designs</li>
+            <li>Fine Materials</li>
+            <li>Affordable Prices</li>
+        </ul>
+    </div>
+</section>
+
+
+
+    <section class="projects-section">
+      <p class="title">Authorized seller
+
+</p>
+      <p class="sub-title">Fancy is authorized seller and legal representative of over 300 high quality architecture products manufacturers and brands in china from furniture decoration and construction materials.</p>
+       <div id="brands-container" class="brands-container">
+      <!-- سيتم تحميل البراندات هنا تلقائياً -->
+    </div>
+      <a href="page_brand.html">
+        <div class="read-more"><button>SEE ALL BRANDS</button></div>
+      </a>
+    </section>
 
  
 
@@ -19,4 +312,11 @@
     <script src="js/auth.js"></script>
   
   </body>
+  <script>
+     document.addEventListener("DOMContentLoaded", () => {
+        if (typeof displayAllBrands === "function") {
+          displayAllBrands();
+        }
+      });
+  </script>
 </html>
