@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="imges/img/fancy1.jfif" />
+    <title>Add New Product - Fancy Design</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .form-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 50px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .submit-btn {
+        background: #000;
+        color: #fff;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="header-placeholder"></div>
+    <div class="form-container">
+      <h2>Add new product</h2>
+      <form id="productForm">
+        <input type="hidden" name="brand_id" id="form_brand_id" />
+        <div class="form-group">
+          <label>designer name:</label>
+          <input
+            type="text"
+            placeholder="Your designer name here..."
+            name="product_name"
+            required
+          />
+
+        </div>
+        <div class="form-group">
+          <label>designer type :</label>
+          <input
+            type="text"
+            placeholder="Your design type here..."
+            name="product_name"
+            required
+          />
+        </div>
+                 <div class="form-group" style="flex: 1">
+            <label>City:</label>
+            <input type="text" name="country" required />
+          </div>
+          <div class="form-group" style="flex: 1">
+            <label>State:</label>
+            <input type="text" name="city" />
+          </div>
+          <div class="form-group" style="flex: 1">
+            <label>Services</label>
+            <input type="text" name="service" />
+          </div>
+          
+        <div class="form-group">
+          <label>designer logo:</label>
+          <input type="file" name="main_image" accept="image/*" required />
+        </div>
+        <div class="form-group">
+          <label>Instagram:</label>
+          <input type="email" name="email" placeholder="brand@example.com" />
+        </div>
+        <div class="form-group">
+          <label>Linedin:</label>
+          <input type="email" name="email" placeholder="brand@example.com" />
+        </div>
+        <div class="form-group">
+          <label>WhatsApp:</label>
+          <input type="email" name="email" placeholder="brand@example.com" />
+        </div>
+        <div class="form-group">
+          <label>Email:</label>
+          <input type="email" name="email" placeholder="brand@example.com" />
+        </div>
+        <div class="form-group">
+          <label>Short description:</label>
+          <textarea name="short_description" rows="2"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Full description:</label>
+          <textarea name="description" rows="5"></textarea>
+        </div>
+        <button type="submit" class="submit-btn">
+          Send product for review
+        </button>
+      </form>
+    </div>
+    <script src="js/script.js"></script>
+    <script src="js/categories.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/auth.js"></script>
+
+  </body>
+</html>

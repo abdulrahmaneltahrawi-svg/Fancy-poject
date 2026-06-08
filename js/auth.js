@@ -155,6 +155,7 @@ function setupProfileTabs(user) {
     const brandsSection = document.getElementById('brands-tab-content');
     const productsSection = document.getElementById('products-tab-content');
     const overviewSection = document.getElementById('overview-tab-content');
+    const designersSection = document.getElementById('designers-tab-content');
 
     tabs.forEach(tab => {
         tab.addEventListener('click', function() {
@@ -163,7 +164,7 @@ function setupProfileTabs(user) {
             this.classList.add('active');
 
             // إخفاء جميع الأقسام أولاً
-            [overviewSection, brandsSection, productsSection, createSection].forEach(sec => sec?.classList.add('hidden'));
+            [overviewSection, brandsSection, productsSection, designersSection, createSection].forEach(sec => sec?.classList.add('hidden'));
 
             // 2. تغيير المحتوى بناءً على التبويب
             if (this.id === 'tab-overview') {
@@ -202,7 +203,14 @@ function setupProfileTabs(user) {
                     createSection?.classList.remove('hidden');
                 }
             }
-            else if (this.id === 'tab-designer') {
+            else if (this.id === 'tab-designers') {
+                designersSection?.classList.remove('hidden');
+                
+                // استدعاء دالة جلب المصممين (إذا كانت متوفرة)
+                if (typeof window.displayUserDesigners === 'function') {
+                    window.displayUserDesigners('user-designers-list');
+                }
+
                 createSection?.classList.remove('hidden');
                 if (createText) createText.textContent = 'Add Designer';
                 if (createSection) createSection.href = 'add-designer.html';
