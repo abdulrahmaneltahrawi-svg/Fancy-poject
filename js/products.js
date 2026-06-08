@@ -99,7 +99,7 @@ async function loadProducts(containerId, limit = null, brandId = null, showContr
             }
 
             if (productsToDisplay.length === 0) {
-                container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No products available currently.</p>';
+                container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No products yet.</p>';
                 return;
             }
 
@@ -211,7 +211,7 @@ async function loadMyProducts(containerId, brandId = null) {
             container.innerHTML = ""; 
             
             if (result.data.products.length === 0) {
-                container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; padding: 40px;">You currently have no products. Start by adding your first product!</p>';
+                container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; padding: 40px;">No products yet.</p>';
                 return;
             }
 
