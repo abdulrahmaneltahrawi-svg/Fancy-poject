@@ -81,8 +81,6 @@
       .projects-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 25px;
-        margin-top: 20px;
       }
       .container-p {
         margin-top: 100px;
@@ -94,6 +92,16 @@
           flex-direction: column;
           align-items: center;
         }
+      }
+
+      .projects-grid{
+
+        margin-left: 100px;
+        padding: 90px;
+      }
+
+      .title{
+        margin-left: 90px;
       }
     </style>
   </head>
@@ -138,15 +146,14 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-left: 90px;
           "
         ></p>
       </section>
 
       <section class="products-section">
         <div class="container-p">
-          <div>
             <p class="title">Product</p>
-          </div>
           <div class="projects-grid" id="productsGrid">
             <!-- سيتم تحميل المنتجات هنا تلقائياً -->
           </div>

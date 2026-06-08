@@ -356,7 +356,7 @@ body {
   /* الحل هنا */
   display: flex;
   justify-content: flex-start;
-  margin-left: 200px;
+  margin-left: 325px;
   gap: 15px; /* مسافة بين الخط والكلمة */
 }
 
@@ -366,6 +366,12 @@ body {
   height: 35px;
   background-color: #000;
   display: inline-block; /* نغيرها من block إلى inline-block */
+}
+
+.sub-title{
+  margin-left: 335px;
+  color: #b6b5b5;
+  margin-bottom: 40px;
 }
 
 .projects-grid {
