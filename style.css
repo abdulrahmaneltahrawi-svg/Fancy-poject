@@ -25,22 +25,10 @@ body {
   justify-content: space-between;
   padding: 0 20px;
 }
-.logo h1 a {
-  text-decoration: none; /* إزالة الخط السفلي */
-  color: #000; /* التأكد من اللون الأسود */
-  outline: none; /* إزالة أي إطار عند الضغط */
-}
-/* الشعار */
-.logo h1 {
-  font-size: 24px;
-  font-weight: bold;
-  margin: 0;
-  letter-spacing: -1px;
-  color: #000;
-}
 
 .logo img {
-  width:120px;
+  width:130px;
+  margin-left: 60px;
 }
 
 /* شريط البحث */
