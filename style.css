@@ -14,7 +14,7 @@ body {
   padding: 10px 0;
   border-bottom: 1px solid var(--border-color);
   background: #fff;
-  font-family: sans-serif;
+  font-family: Lato, "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 
 .container {

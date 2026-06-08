@@ -189,6 +189,67 @@
         }
       }
 
+
+      .descrition {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+
+      }
+      .des1{
+        font-size: 20px;
+        
+      }
+      .des2{
+        font-size: 15px;
+        color:rgb(173, 172, 172)
+        
+      }
+
+      /* تنسيق القسم الرئيسي */
+.gallery-section {
+    padding: 40px 20px;
+    background-color: #ffffff;
+}
+
+/* تنسيق الحاوية */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 250px;
+    gap: 20px; /* مسافة مريحة بين البطاقات */
+    max-width: 1200px;
+    margin: 0 auto; /* توسيط القسم في الصفحة */
+}
+
+/* نمط البطاقة */
+.card {
+    background-color: #eee;
+    border-radius: 12px; /* زوايا منحنية تعطي طابعاً عصرياً */
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.2s ease; /* حركة بسيطة عند التفاعل */
+}
+
+.card:hover {
+    transform: scale(1.02); /* تأثير خفيف عند تمرير الماوس */
+}
+
+.card-wide { grid-column: span 2; }
+.card-tall { grid-row: span 2; }
+
+/* استجابة الموبايل */
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: repeat(1, 1fr); /* عمود واحد للموبايل */
+        grid-auto-rows: 200px;
+    }
+    .card-wide, .card-tall {
+        grid-column: span 1;
+        grid-row: span 1;
+    }
+}
       /**/
     </style>
 
@@ -210,6 +271,14 @@
       <button class="next-btn">&#10095;</button>
       <div class="dots-container" id="dots-container"></div>
     </section>
+
+
+
+    <section class="descrition">
+      <p class="des1">Hot solutions by brands and designers inspires you to design and build</p>
+      <p class="des2">Source Ideas for your projects, explore products catalogues, get CAD / 3D files and shop design products</p>
+    </section>
+
 
 
 <section class="projects-section">
