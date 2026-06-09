@@ -9,6 +9,9 @@
   </head>
   <body>
     <style>
+      html {
+  scroll-behavior: smooth;
+}
       .navbar {
             display: flex;
 
@@ -314,13 +317,13 @@ button:hover { background: #464545; }
 
     <nav class="navbar">
         <ul class="nav-links">
-            <li><a href="#">Overview</a></li>
-            <li><a href="#">Products catalogues</a></li>
+            <li><a href="#overview-id">Overview</a></li>
+            <li><a href="#catalogues-id">Products catalogues</a></li>
             <li><a href="#">Service Features</a></li>
             <li><a href="#">Cases Overview</a></li>
-            <li><a href="#">Work Timeline</a></li>
+            <li><a href="#timeline-id">Work Timeline</a></li>
         </ul>
-        <a href="#" class="start-btn">Start new project</a>
+        <a href="#new-project-id" class="start-btn">Start new project</a>
     </nav>
 
 
@@ -335,13 +338,13 @@ button:hover { background: #464545; }
     </p>
 
     <div class="buttons-container">
-        <a href="#" class="btn-start">Start New Project</a>
+        <a href="#new-project-id" class="btn-start">Start New Project</a>
 
     </div>
 </section>
 
 
-<section class="feature-section">
+<section class="feature-section" id="overview-id">
     <!-- الجزء الخاص بالصور (Collage) -->
     <div class="image-collage">
         <!-- ضع صورك هنا -->
@@ -433,7 +436,7 @@ button:hover { background: #464545; }
     </section>
 
 
-    <section class="products-section">
+    <section class="products-section" id="catalogues-id">
   <div class="header">
     <h2>Comprehensive product sourcing & procurement.</h2>
     <p>Facncy offer architecture products from multi brands and manufacturer, furniture, lighting, decor, finishes materials and more.</p>
@@ -521,7 +524,7 @@ button:hover { background: #464545; }
 
 
 
-<section class="timeline-section">
+<section class="timeline-section" id="timeline-id">
   <div class="header">
     <h2>Work Timeline</h2>
     <p>Realize interior design project from sourcing, production to delivery in maximum 6 Weeks</p>
@@ -557,7 +560,7 @@ button:hover { background: #464545; }
 
 
 
-<section class="contact-section">
+<section class="contact-section" id="new-project-id">
   <div class="header">
     <h2>Need start a new project or more informations? Get in touch with our team</h2>
     <p>Contact us via live chat, <a href="https://api.whatsapp.com/send/?phone=966530559095&text&type=phone_number&app_absent=0">WhatsApp</a>, Phone: 0530559095 or fill out the form and we will get back to you as soon as possible.</p>
