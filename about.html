@@ -179,6 +179,135 @@
         font-size: 20px;
     }
 
+    /**/
+    .header{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+
+    }
+    .products-grid {
+  display: grid;
+  /* تقسيم الشبكة لـ 5 أعمدة كما في الصورة */
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  padding: 20px;
+}
+
+.product-card {
+  position: relative;
+  border-radius: 12px; /* لتدوير الزوايا */
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.product-card img {
+  width: 100%;
+  height: 450px; /* أو حسب الطول المناسب */
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.product-card h3 {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  color: white;
+  margin: 0;
+  font-weight: 600;
+}
+
+/* تأثير التكبير عند التحويم */
+.product-card:hover img {
+  transform: scale(1.05);
+}
+
+
+/**/
+.timeline {
+  list-style: none;
+  padding: 0;
+  position: relative;
+  max-width: 600px;
+  margin: 40px auto;
+}
+
+/* الخط العمودي */
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 30px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #000;
+}
+
+.timeline li {
+  position: relative;
+  padding-left: 70px;
+  margin-bottom: 40px;
+}
+
+/* النقاط السوداء */
+.timeline li::before {
+  content: '';
+  position: absolute;
+  left: 24px;
+  top: 5px;
+  width: 14px;
+  height: 14px;
+  background: #000;
+  border-radius: 50%;
+}
+
+.timeline h3 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+}
+
+.timeline p {
+  color: #666;
+  line-height: 1.5;
+}
+
+
+/**/
+.header a {
+    color: #000;
+    font-weight: bold;
+}
+.contact-section { max-width: 800px; margin: 50px auto; padding: 20px; }
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  box-sizing: border-box; /* لضمان عدم خروج الحقول عن الإطار */
+}
+
+textarea { resize: vertical; }
+
+button {
+  background: rgb(187, 186, 186);
+  color: black;
+  padding: 10px 30px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.3s ease;
+}
+
+button:hover { background: #464545; }
+
     
     </style>
     <div id="header-placeholder"></div>
@@ -303,13 +432,194 @@
       </a>
     </section>
 
+
+    <section class="products-section">
+  <div class="header">
+    <h2>Comprehensive product sourcing & procurement.</h2>
+    <p>Facncy offer architecture products from multi brands and manufacturer, furniture, lighting, decor, finishes materials and more.</p>
+  </div>
+  
+  <div class="products-grid">
+    <!-- كرر هذا الجزء لكل صورة -->
+    <div class="product-card">
+      <img src="imges/img/Group_871_hgyj01.png" alt="Product Name">
+      <h3>Living Furniture</h3>
+    </div>
+    <!-- ... -->
+     <div class="product-card">
+      <img src="imges/img/Group_880_r1kzyr.png" alt="Product Name">
+      <h3>Contract Furniture
+</h3>
+    </div>
+
+    <div class="product-card">
+      <img src="imges/img/Group_890_drpwxt.png" alt="Product Name">
+      <h3>Office Furniture</h3>
+    </div>
+
+    <div class="product-card">
+      <img src="imges/img/Group_904_w5cqmj.png" alt="Product Name">
+      <h3>Decor</h3>
+    </div>
+
+    <div class="product-card">
+      <img src="imges/img/Group_897_xzosw6.png" alt="Product Name">
+      <h3>Outdoor Furniture</h3>
+    </div>
+
+    <div class="product-card">
+      <img src="imges/img/Group_912_okdqfp.png" alt="Product Name">
+      <h3>Rug</h3>
+    </div>
+
+    <div class="product-card">
+      <img src="imges/img/Group_918_uibybq.png" alt="Product Name">
+      <h3>Carpet Tiles</h3>
+    </div>
+
+    <div class="product-card">
+      <img src="imges/img/Group_925_sprkjn.png" alt="Product Name">
+      <h3>Curtains</h3>
+    </div>
+
+    <div class="product-card">
+      <img src="imges/img/Group_959_blhyae.png" alt="Product Name">
+      <h3>Architecture Lighting</h3>
+    </div>
+
+    <div class="product-card">
+      <img src="imges/img/Group_968_gcknlr.png" alt="Product Name">
+      <h3>Decoration Lighting</h3>
+    </div>
+
+    <div class="product-card">
+      <img src="imges/img/Group_950_y2os5r.png" alt="Product Name">
+      <h3>Acoustic Panels</h3>
+    </div>
+
+    <div class="product-card">
+      <img src="imges/img/Group_941_rwkymh.png" alt="Product Name">
+      <h3>PVC Flooring</h3>
+    </div>
+
+    <div class="product-card">
+      <img src="imges/img/Group_931_ws75nz.png" alt="Product Name">
+      <h3>Ceramic & Porcelain Tiles</h3>
+    </div>
+
+    <div class="product-card">
+      <img src="imges/img/Group_987_hovx5j.png" alt="Product Name">
+      <h3>Bathroom</h3>
+    </div>
+
+    <div class="product-card">
+      <img src="imges/img/Group_977_sy9ru1.png" alt="Product Name">
+      <h3>Kitchen</h3>
+    </div>
+  </div>
+</section>
+
+
+
+<section class="timeline-section">
+  <div class="header">
+    <h2>Work Timeline</h2>
+    <p>Realize interior design project from sourcing, production to delivery in maximum 6 Weeks</p>
+  </div>
+
+  <ul class="timeline">
+    <li>
+      <h3>Receive your Request</h3>
+      <p>Communicate with our team through the platform contact channels to provide us your project info and requirements.</p>
+    </li>
+    <li>
+      <h3>Source & Quotation 5 Days</h3>
+      <p>Our team works on sourcing the best options and providing detailed quotations.</p>
+    </li>
+    <li>
+      <h3>Prepare & Send Materials Samples 3 - 5 days</h3>
+      <p>Prepare the material samples and create a design mood board based on the materials and products images.</p>
+    </li>
+    <li>
+      <h3>Production 5 - 30 days</h3>
+      <p>After paying the 50% deposit, the brands will start to produce the products based on your requirements.</p>
+    </li>
+    <li>
+      <h3>Products Inspection 3 days</h3>
+      <p>Our team will inspect the details of the product and send images and video for the final product to let designers confirm before delivery.</p>
+    </li>
+    <li>
+      <h3>Collect and Deliver 2 days</h3>
+      <p>Collect the products from multi companies and brands and prepare them for shipping.</p>
+    </li>
+  </ul>
+</section>
+
+
+
+<section class="contact-section">
+  <div class="header">
+    <h2>Need start a new project or more informations? Get in touch with our team</h2>
+    <p>Contact us via live chat, <a href="https://api.whatsapp.com/send/?phone=966530559095&text&type=phone_number&app_absent=0">WhatsApp</a>, Phone: 0530559095 or fill out the form and we will get back to you as soon as possible.</p>
+  </div>
+
+  <form class="contact-form" id="contact-form">
+    <div class="form-grid">
+      <input type="text" name="user_name" placeholder="Name" required>
+      <input type="email" name="user_email" placeholder="E-mail" required>
+      <select name="profession">
+        <option>Profession</option>
+        <option>Designer</option>
+        <option>Architect</option>
+        <option>interior designer</option>
+        <option>Other</option>
+      </select>
+      <input type="text" name="company" placeholder="Company / Studio Name">
+    </div>
+    <textarea name="message" placeholder="Your message" rows="6" required></textarea>
+    <button type="submit" id="send-btn">Send</button>
+  </form>
+</section>
+
+
+
+
+
  
 
     <div id="footer-placeholder"></div>
 
+    <!-- تحميل مكتبة EmailJS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="js/script.js"></script>
     <script src="js/brands.js"></script>
     <script src="js/auth.js"></script>
+
+    <script>
+      (function() {
+          // استبدل YOUR_PUBLIC_KEY بالـ Public Key الحقيقي من حسابك في EmailJS
+          emailjs.init("YOUR_PUBLIC_KEY"); 
+      })();
+
+      document.getElementById('contact-form').addEventListener('submit', function(event) {
+          event.preventDefault();
+          
+          const btn = document.getElementById('send-btn');
+          const originalBtnText = btn.innerText;
+          btn.innerText = 'Sending...';
+
+          emailjs.sendForm('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', this)
+              .then(() => {
+                  btn.innerText = originalBtnText;
+                  alert('Your message has been sent successfully!');
+                  this.reset(); // تفريغ النموذج بعد الإرسال
+              }, (error) => {
+                  btn.innerText = 'Send';
+                  alert('Failed to send message. Please try again later.');
+                  console.log('FAILED...', error);
+              });
+      });
+    </script>
   
   </body>
   <script>
