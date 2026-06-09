@@ -71,29 +71,40 @@
 
       document.addEventListener("DOMContentLoaded", async () => {
         const params = new URLSearchParams(window.location.search);
-        const catId = params.get("id");
+        let catId = params.get("id");
+        const categoryNameFromUrl = params.get("category_name");
+        const subCategoryNameFromUrl = params.get("sub_category_name");
+
+        // إذا لم يوجد ID، نحاول البحث عن ID القسم باستخدام الاسم
+        if (categoryNameFromUrl && !catId) {
+          const mainCategoriesResult = await FancyAPI.get("/categories/list.php");
+          if (mainCategoriesResult.success && mainCategoriesResult.data && mainCategoriesResult.data.categories) {
+            const foundCategory = mainCategoriesResult.data.categories.find(cat => cat.name === categoryNameFromUrl);
+            if (foundCategory) {
+              catId = foundCategory.id;
+            }
+          }
+        }
 
         if (typeof loadMainCategories === "function") {
           loadMainCategories("main-category-nav");
         }
 
         if (!catId) {
-          document.getElementById("category-title").innerText =
-            "Section not found";
+          document.getElementById("category-title").innerText = "Section not found";
           return;
         }
 
         try {
-          const result = await FancyAPI.get(
+          let result = await FancyAPI.get(
             `/products/public-list.php?category_id=${catId}`,
           );
 
           if (result.success && result.data) {
             const categoryName = result.data.category_name || "Products";
             document.getElementById("category-title").innerText = categoryName;
-
             updateFilterUI(categoryName);
-            await loadMainCategoryFilters();
+            // No need to call loadMainCategoryFilters() here, it's already called above to populate the main category dropdown.
 
             allCategoryProducts = result.data.products || [];
             renderProducts(allCategoryProducts);
@@ -102,6 +113,17 @@
           } else {
             document.getElementById("projects-grid").innerHTML =
               "<p style='grid-column: 1/-1; text-align: center; padding: 50px;'>No products found.</p>";
+          }
+
+          // Apply sub-category filter if present in URL after initial load
+          if (subCategoryNameFromUrl && allCategoryProducts.length > 0) {
+            const filtered = allCategoryProducts.filter(
+              (p) => p.sub_category_name === subCategoryNameFromUrl
+            );
+            renderProducts(filtered);
+            if (document.getElementById("sub-category-btn")) {
+                document.getElementById("sub-category-btn").innerHTML = `${subCategoryNameFromUrl} <i class="arrow down"></i>`;
+            }
           }
         } catch (err) {
           console.error("Error loading products:", err);
@@ -114,8 +136,10 @@
               const originalText = btn.getAttribute("data-original-text");
               btn.innerHTML = `${originalText} <i class="arrow down"></i>`;
             });
-            renderProducts(allCategoryProducts);
-            document
+            // When clearing filters, re-render all products for the main category
+            renderProducts(allCategoryProducts); 
+            
+            document 
               .querySelectorAll(".search-input")
               .forEach((i) => (i.value = ""));
           });
@@ -133,34 +157,6 @@
         if (mainBtn) {
           mainBtn.innerHTML = `${categoryName} <i class="arrow down"></i>`;
         }
-
-        const allOpt = document.querySelector(".all-option");
-        if (allOpt) allOpt.innerText = `All ${categoryName}`;
-      }
-
-      async function loadMainCategoryFilters() {
-        try {
-          const result = await FancyAPI.get("/categories/list.php");
-          const container = document.getElementById(
-            "main-category-filter-content",
-          );
-
-          if (
-            result.success &&
-            result.data &&
-            result.data.categories &&
-            container
-          ) {
-            result.data.categories.forEach((cat) => {
-              const a = document.createElement("a");
-              a.href = `product.category.html?id=${cat.id}`;
-              a.textContent = cat.name;
-              container.appendChild(a);
-            });
-          }
-        } catch (err) {
-          console.error(err);
-        }
       }
 
       async function loadSubFilters(catId) {
@@ -168,38 +164,60 @@
           const result = await FancyAPI.get(
             `/categories/get-sub-categories.php?category_id=${catId}`,
           );
-          const container = document.getElementById("sub-category-content");
+          const subCategoryDropdownContent = document.getElementById("sub-category-content");
 
           if (
             result.success &&
             result.data &&
             result.data.sub_categories &&
-            container
+            subCategoryDropdownContent
           ) {
             const subCategories = result.data.sub_categories;
 
-            // ... (الكود الخاص بـ all-option يبقى كما هو)
+            // Clear existing sub-category options except the "All" option
+            subCategoryDropdownContent.querySelectorAll('a:not(.all-option)').forEach(el => el.remove());
+
+            const allOption = document.createElement("a");
+            allOption.href = "#";
+            allOption.className = "all-option";
+            allOption.textContent = `All ${document.getElementById("category-title").innerText}`;
+            allOption.onclick = (e) => {
+              e.preventDefault();
+              document.getElementById("sub-category-btn").innerHTML =
+                `${allOption.textContent} <i class="arrow down"></i>`;
+              renderProducts(allCategoryProducts);
+            };
+            subCategoryDropdownContent.appendChild(allOption);
 
             subCategories.forEach((sub) => {
               const a = document.createElement("a");
               a.href = "#";
+              a.setAttribute("data-sub-category-name", sub.name); // Add data attribute for easier selection
               a.textContent = sub.name;
               a.onclick = (e) => {
                 e.preventDefault();
                 document.getElementById("sub-category-btn").innerHTML =
                   `${sub.name} <i class="arrow down"></i>`;
 
-                // تعديل الفلترة لتكون مرنة:
+                // Apply filter based on selected sub-category
                 const filtered = allCategoryProducts.filter(
                   (p) =>
-                    p.sub_category_id == sub.id ||
+                    p.sub_category_id == sub.id || // Filter by sub_category_id
                     p.requested_sub_category_name === sub.name,
                 );
 
                 renderProducts(filtered);
               };
-              container.appendChild(a);
+              subCategoryDropdownContent.appendChild(a);
             });
+
+            // If subCategoryNameFromUrl is present, select it in the dropdown and filter
+            if (subCategoryNameFromUrl) {
+              const matchingSubCatLink = subCategoryDropdownContent.querySelector(`a[data-sub-category-name="${subCategoryNameFromUrl}"]`);
+              if (matchingSubCatLink) {
+                matchingSubCatLink.click(); // Simulate click to apply filter and update button text
+              }
+            }
           }
         } catch (err) {
           console.error("Error loading sub-filters:", err);
