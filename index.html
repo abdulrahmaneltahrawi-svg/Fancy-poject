@@ -13,7 +13,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 270px;
+        gap: 300px;
         margin-top: 30px;
       }
 
@@ -46,11 +46,10 @@
 
       .hero-slider {
         position: relative;
-        width: 90%; /* يمكنك تقليل النسبة حسب الرغبة، مثلاً 80% */
-        max-width: 1100px; /* يمنع السلايدر من التمدد بشكل مفرط في الشاشات الكبيرة جداً */
-        height: 70vh; /* يمكنك أيضاً تقليل الارتفاع ليناسب العرض الجديد */
+        width: 100%; /* يمكنك تقليل النسبة حسب الرغبة، مثلاً 80% */
+        max-width: 1400px; /* يمنع السلايدر من التمدد بشكل مفرط في الشاشات الكبيرة جداً */
+        height: 90vh; /* يمكنك أيضاً تقليل الارتفاع ليناسب العرض الجديد */
         margin: 20px auto; /* auto تقوم بتوسيط السلايدر في المنتصف أفقياً */
-        border-radius: 15px; /* اختيارياً: إضافة زوايا منحنية تعطي شكلاً عصرياً */
         overflow: hidden;
       }
 
@@ -140,7 +139,8 @@
         border: none;
         padding: 12px 20px;
         cursor: pointer;
-        font-size: 20px;
+        font-size: 25px;
+        font-weight: bold;
         border-radius: 60%;
       }
 
@@ -175,7 +175,7 @@
       }
 
       .dot.active {
-        background: #fff;
+        background: #000000;
       }
 
       /* تحسين استجابة قائمة الأقسام للموبايل */
@@ -199,18 +199,28 @@
 
       }
       .des1{
-        font-size: 20px;
+        font-size: 25px;
         
       }
       .des2{
-        font-size: 15px;
+        font-size: 20px;
         color:rgb(173, 172, 172)
         
+      }
+      .descrition button{
+        margin:10px;
+        padding: 7px 23px;
+        color: white;
+        background-color: rgb(246, 63, 63);
+        font-weight: bold;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
       }
 
       /* تنسيق السكشن الرئيسي */
     .gallery-section {
-        max-width: 1200px;
+        max-width: 1300px;
         margin: 0 auto;
      
     }
@@ -286,6 +296,31 @@
       cursor: pointer;
     }
       /**/
+      .trends{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        margin-bottom: 30px;
+      }
+
+      .Fancy-logo {
+        display: flex;  
+        align-items: center;
+        margin-right: 20px;
+
+      }
+
+       .Fancy-logo img {
+        width: 150px;
+       }
+
+       .Fancy-logo p {
+        font-size: 35px;
+        font-family: "Roboto" !important;
+        font-weight: 200;
+        color: #414040;
+       }
     </style>
 
     <div id="header-placeholder"></div>
@@ -312,6 +347,7 @@
     <section class="descrition">
       <p class="des1">Hot solutions by brands and designers inspires you to design and build</p>
       <p class="des2">Source Ideas for your projects, explore products catalogues, get CAD / 3D files and shop design products</p>
+      <button id="join-now-btn">JOIN NOW</button>
     </section>
 
       <section class="gallery-section">
@@ -394,7 +430,13 @@ offers both privacy and comfort.</p>
 
 
 <section class="projects-section">
-    <p class="title">Magazine</p>
+    <div class="trends">
+      <div class="Fancy-logo">
+        <img src="imges/img/WhatsApp Image 2026-06-08 at 9.44.06 AM.png" alt="">
+        <p>Selected</p>
+      </div>
+      <p class="des2">Explore Design Projects, News & trends</p>
+    </div>
     <div class="container">
         <div id="interior-container" class="projects-grid"></div>
     </div>
@@ -544,6 +586,13 @@ offers both privacy and comfort.</p>
       window.createGenericCardHTML = createGenericCardHTML;
     </script>
     <!-- EmailJS SDK - يجب أن يتم تحميله قبل أي سكريبت يستخدم emailjs -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('join-now-btn').addEventListener('click', () => {
+          showAuthModal('register');
+        });
+      });
+    </script>
     <script
       type="text/javascript"
       src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"

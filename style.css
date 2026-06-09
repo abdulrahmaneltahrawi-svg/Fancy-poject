@@ -356,26 +356,25 @@ body {
 }
 
 .title {
-
-  font-weight: bold;
-  font-size: 28px;
+   font-family: Roboto;
+  font-size: 45px;
   /* الحل هنا */
   display: flex;
   justify-content: flex-start;
-  margin-left: 325px;
+  margin-left: 25px;
   gap: 15px; /* مسافة بين الخط والكلمة */
 }
 
 .title::before {
   content: "";
   width: 5px;
-  height: 35px;
+  height: 50px;
   background-color: #000;
   display: inline-block; /* نغيرها من block إلى inline-block */
 }
 
 .sub-title{
-  margin-left: 335px;
+  margin-left: 35px;
   color: #b6b5b5;
   margin-bottom: 40px;
 }
