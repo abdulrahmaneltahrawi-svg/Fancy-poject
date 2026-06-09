@@ -24,14 +24,11 @@ function createProductCardHTML(data, options = {}) {
             </div>
             <div class="card-content">
                 <a href="view.html?id=${productId}" style="text-decoration: none; color: inherit;">
-                    <h3 class="card-title">${productTitle}</h3>
+                    <h3 class="card-title">${brandName || 'Brand'}</h3>
                 </a>
-                <p class="card-description" style="font-size: 14px; color: #666; margin: 10px 0;">
-                    ${productDesc.substring(0, 70)}${productDesc.length > 70 ? '...' : ''}
-                </p>
+                <p class="card-product-name" style="font-size: 15px; color: #636161; margin: 5px 0; font-weight: 250;">${productTitle}</p>
                 <div class="card-meta">
-                    <span class="category" style="font-weight: bold; text-transform: uppercase; font-size: 12px;">${productCategory}</span>
-                    ${brandName ? `<span class="brand-name" style="font-size: 11px; color: #999; margin-left: 5px;">(${brandName})</span>` : ''}
+                    <span class="category" style="font-weight: 100; text-transform: uppercase; font-size: 12px;">${productCategory}</span>
                 </div>
                 ${showControls ? `
                 <div class="card-actions" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; display: flex; gap: 10px;">
