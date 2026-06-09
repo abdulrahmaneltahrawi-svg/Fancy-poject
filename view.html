@@ -9,13 +9,12 @@
     <style>
       /* التنسيقات الخاصة بالصفحة */
       .view-container {
-        max-width: 1100px;
+        max-width: 2000px;
         margin: 100px auto;
         padding: 0 20px;
       }
       .view-content {
         display: flex;
-        gap: 80px;
         align-items: center;
       }
       .view-image-section {
@@ -29,7 +28,9 @@
       .view-image-section img {
         width: 100%;
         border-radius: 8px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+
+    
+
       }
       .view-details-section {
         flex: 1;
@@ -93,19 +94,22 @@
         gap: 15px;
         transition: 0.3s;
         font-weight: bold;
+        font-size: 30px;
       }
       .price-btn:hover {
         background: #333;
         transform: translateY(-3px);
       }
       .price-btn img {
-        width: 20px;
+        width: 40px;
+        filter: brightness(0) invert(1);
       }
       .back-link {
         display: block;
-        margin-top: 20px;
+        margin-top: 25px;
         color: #999;
         text-decoration: none;
+        font-size: 25px;
       }
 
       /* تنسيق معرض الصور المصغر */
@@ -175,22 +179,25 @@
         background: #fff;
         border-radius: 8px;
         border: 1px solid #eee;
+        font-size: 30px;
       }
       .specs-section h4 {
         margin-bottom: 10px;
         border-bottom: 1px solid #eee;
         padding-bottom: 5px;
+       
       }
       .options-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-        gap: 15px;
+        gap: 55px;
         margin-top: 20px;
       }
       .option-item {
         text-align: center;
-        font-size: 12px;
+        font-size: 22px;
         cursor: pointer;
+        white-space:nowrap;
       }
     </style>
   </head>
