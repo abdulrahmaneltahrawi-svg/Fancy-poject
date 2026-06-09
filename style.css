@@ -361,7 +361,7 @@ body {
   /* الحل هنا */
   display: flex;
   justify-content: flex-start;
-  margin-left: 25px;
+  margin-left: 230px;
   gap: 15px; /* مسافة بين الخط والكلمة */
 }
 
@@ -374,21 +374,23 @@ body {
 }
 
 .sub-title{
-  margin-left: 35px;
+  margin-left: 230px;
   color: #b6b5b5;
   margin-bottom: 40px;
+  font-size: 22px;
 }
 
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 أعمدة متساوية */
+  grid-template-columns: repeat(4, 1fr); /* 3 أعمدة متساوية */
   gap: 30px; /* المسافة بين البطاقات */
 }
 
 .project-card {
   background: #fff;
   cursor: pointer;
-  height: 100%;
+  width: 100%;
+  max-width: 900px;
   display: flex;
   flex-direction: column;
   padding: 10px;
@@ -408,6 +410,7 @@ body {
   height: 320px;
   overflow: hidden;
   margin-bottom: 15px;
+  
 }
 
 .card-image img {

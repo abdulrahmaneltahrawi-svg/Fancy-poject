@@ -6,7 +6,7 @@ async function loadSliderProducts() {
         const response = await FancyAPI.get('/products/public-list.php'); 
         
         if (response.success && response.data && response.data.products) {
-            const products = response.data.products.slice(0, 3); // نأخذ أول 3 منتجات
+            const products = response.data.products.slice(0, 6); // نأخذ أول 3 منتجات
             const container = document.getElementById('dynamic-slider');
             const dotsContainer = document.getElementById('dots-container');
 
