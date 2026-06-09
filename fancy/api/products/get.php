@@ -8,14 +8,10 @@ require_once __DIR__ . "/../../core/cors.php";
 require_once __DIR__ . "/../../config/database.php";
 require_once __DIR__ . "/../../core/response.php";
 require_once __DIR__ . "/../../core/helpers.php";
-// require_once __DIR__ . "/../../core/auth.php"; // مابقتش محتاجه هنا لو مش هتستخدمه في مكان تاني بالملف
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     jsonResponse(false, "Method not allowed", [], 405);
 }
-
-// ❌ تم إزالة سطر الـ requireAuth عشان الـ endpoint تكون العامة (Public)
-// $auth = requireAuth();
 
 $productId = (int)($_GET['product_id'] ?? 0);
 
@@ -26,6 +22,12 @@ if ($productId <= 0) {
 }
 
 try {
+    /*
+    |--------------------------------------------------------------------------
+    | 1. استعلام جلب بيانات المنتج الأساسية والبراند والأقسام
+    |--------------------------------------------------------------------------
+    | ملاحظة: تم إضافة products.technical_data لضمان جلب كل البيانات المخزنة
+    */
     $stmt = $pdo->prepare("
         SELECT
             products.id,
@@ -39,6 +41,7 @@ try {
             products.slug,
             products.short_description,
             products.description,
+            products.technical_data,
             products.main_image,
             products.status,
             products.created_at,
@@ -67,28 +70,60 @@ try {
         WHERE products.id = ?
           AND products.status != 'deleted' 
         LIMIT 1
-    "); // 🛠️ تم حذف سطر AND products.user_id = ? من هنا
+    ");
 
-    // 🛠️ بنمرر الـ productId بس في الـ execute
     $stmt->execute([$productId]);
     $product = $stmt->fetch();
 
+    // إذا لم يتم العثور على المنتج أو كان محذوفاً (Soft Deleted)
     if (!$product) {
-        // 🛠️ تم تعديل رسالة الخطأ لتناسب أن الـ Endpoint أصبحت عامة
         jsonResponse(false, "Product not found", [
             "code" => "PRODUCT_NOT_FOUND"
         ], 404);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | 2. استعلام جلب الأوبشنز (Options) الخاصة بالمنتج الحالي
+    |--------------------------------------------------------------------------
+    */
+    $stmtOptions = $pdo->prepare("
+        SELECT 
+            id,
+            option_name,
+            type_size,
+            sku,
+            cbm,
+            image_path
+        FROM product_options 
+        WHERE product_id = ?
+    ");
+    $stmtOptions->execute([$productId]);
+    $options = $stmtOptions->fetchAll();
+
+    // تحويل أنواع البيانات الرقمية للـ Options لضمان نظافة الـ JSON للفرونت إند
+    foreach ($options as $index => $option) {
+        $options[$index]['id'] = (int)$option['id'];
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | 3. تجهيز وعمل Cast للبيانات المرجوعة للفرونت إند
+    |--------------------------------------------------------------------------
+    */
     $product['id'] = (int)$product['id'];
     $product['user_id'] = (int)$product['user_id'];
     $product['brand_id'] = (int)$product['brand_id'];
     $product['category_id'] = $product['category_id'] !== null ? (int)$product['category_id'] : null;
     $product['sub_category_id'] = $product['sub_category_id'] !== null ? (int)$product['sub_category_id'] : null;
 
+    // دمج مصفوفة الأوبشنز داخل أوبجكت المنتج الرئيسي
+    $product['options'] = $options;
+
+    // إرسال الرد النهائي بنجاح
     jsonResponse(true, "Product retrieved successfully", [
         "product" => $product
-    ]);
+    ], 200);
 
 } catch (Exception $e) {
     jsonResponse(false, "Something went wrong", [

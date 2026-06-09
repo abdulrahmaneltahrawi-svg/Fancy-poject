@@ -138,6 +138,38 @@ async function loadSingleProductDetails(productId) {
             document.getElementById('project-desc').innerText = product.description || 'لا يوجد وصف لهذا المنتج.';
             document.getElementById('project-category').innerText = product.category_name || "";
 
+            // عرض البيانات التقنية إذا وجدت
+            const specsContainer = document.getElementById('specs-container');
+            if (product.technical_data && specsContainer) {
+                document.getElementById('project-specs').innerText = product.technical_data;
+                specsContainer.classList.remove('hidden');
+            }
+
+            // عرض خيارات المنتج (Variants)
+            const variantsContainer = document.getElementById('variants-container');
+            const optionsGrid = document.getElementById('options-grid');
+            if (product.options && product.options.length > 0 && optionsGrid) {
+                variantsContainer.classList.remove('hidden');
+                optionsGrid.innerHTML = product.options.map(opt => `
+                    <div class="option-item" onclick="document.getElementById('project-image').src = '${getSafeImageUrl(opt.image_path || product.main_image)}'">
+                        <img src="${getSafeImageUrl(opt.image_path || product.main_image)}" 
+                             style="width: 100%; height: 100px; object-fit: cover; border-radius: 4px; margin-bottom: 5px; border: 1px solid #eee;">
+                        <div style="font-weight: bold;">${opt.option_name}</div>
+                        ${opt.type_size ? `<div style="color: #888;">${opt.type_size}</div>` : ''}
+                        ${opt.sku ? `<div style="color: #aaa; font-size: 10px;">SKU: ${opt.sku}</div>` : ''}
+                    </div>
+                `).join('');
+
+                // تحديث المصغرات (Thumbnails) إذا وجدت صور للخيارات
+                const thumbs = document.getElementById('thumbnails');
+                if (thumbs) {
+                    thumbs.innerHTML = product.options
+                        .filter(o => o.image_path)
+                        .map(o => `<img src="${getSafeImageUrl(o.image_path)}" class="thumb-img" onclick="document.getElementById('project-image').src = this.src">`)
+                        .join('');
+                }
+            }
+
             const whatsappBtn = document.getElementById('whatsapp-btn');
             // تحديث رابط الواتساب
             if (whatsappBtn) {

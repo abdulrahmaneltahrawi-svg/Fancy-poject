@@ -33,6 +33,7 @@
       }
       .view-details-section {
         flex: 1;
+        margin-bottom: 460px;
       }
       .view-details-section h1 {
         font-size: 36px;
@@ -64,6 +65,22 @@
         margin-bottom: 40px;
         margin-top: 20px;
         white-space: pre-line;
+        border: 1px solid #eee;
+        padding: 20px 20px 0 20px;
+        border-radius: 8px;
+      }
+
+      .overview{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .description-box h4 {
+        color: #000;
+        font-size: 30px;
+    
+
       }
       .price-btn {
         display: inline-flex;
@@ -151,6 +168,30 @@
       .related-item img :hover {
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       }
+
+      .specs-section {
+        margin-top: 30px;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        border: 1px solid #eee;
+      }
+      .specs-section h4 {
+        margin-bottom: 10px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 5px;
+      }
+      .options-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+      }
+      .option-item {
+        text-align: center;
+        font-size: 12px;
+        cursor: pointer;
+      }
     </style>
   </head>
   <body>
@@ -160,18 +201,28 @@
       <div class="view-content">
         <div class="view-image-section" id="image-gallery">
           <img id="project-image" src="" alt="Project Image" />
+          <div class="description-box">
+            <h4 class="overview">Overview</h4>
+            <p id="project-desc"></p>
+          </div>
         </div>
 
         <div class="view-details-section">
           <span id="project-category" class="category-tag"></span>
           <h1 id="project-name"></h1>
-          <div class="description-box">
-            <p id="project-desc"></p>
+          
+
+          <div id="variants-container" class="hidden" style="margin-top: 30px;">
+            <h4>Available Variants</h4>
+            <div id="options-grid" class="options-grid"></div>
           </div>
 
-          <div class="view-image-section">
-            <div id="thumbnails" class="thumbnails-container"></div>
+          <div id="specs-container" class="specs-section hidden">
+            <h4>Technical Specifications</h4>
+            <p id="project-specs" style="font-size: 14px; color: #555;"></p>
           </div>
+
+          
 
           <a
             id="whatsapp-btn"

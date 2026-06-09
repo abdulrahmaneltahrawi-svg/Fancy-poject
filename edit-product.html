@@ -39,6 +39,27 @@
         width: 100%;
         font-weight: bold;
       }
+      .options-container {
+        margin-top: 20px;
+        border-top: 2px solid #eee;
+        padding-top: 20px;
+      }
+      .option-row {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 15px;
+        position: relative;
+        border: 1px solid #eee;
+      }
+      .remove-option {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        color: red;
+        cursor: pointer;
+        font-weight: bold;
+      }
     </style>
   </head>
   <body>
@@ -77,6 +98,21 @@
           <label>Full Description:</label>
           <textarea name="description" rows="5"></textarea>
         </div>
+        <div class="form-group">
+          <label>Technical Data:</label>
+          <textarea name="technical_data" rows="3" placeholder="e.g. Material: Oak Wood, Weight: 20kg..."></textarea>
+        </div>
+
+        <div class="options-container">
+          <h3>Product Options (Variants)</h3>
+          <div id="options-list">
+            <!-- Options will be added here -->
+          </div>
+          <button type="button" id="add-option-btn" style="background:#eee; color:#333; border:1px solid #ccc; padding:10px; border-radius:4px; cursor:pointer; margin-bottom:20px;">
+            + Add another option
+          </button>
+        </div>
+
         <button type="submit" class="submit-btn">Save Changes</button>
       </form>
     </div>
@@ -85,6 +121,44 @@
     <script src="js/products.js"></script>
     <script src="js/auth.js"></script>
     <script>
+      const optionsList = document.getElementById("options-list");
+      const addOptionBtn = document.getElementById("add-option-btn");
+
+      // Function to create a new option row
+      function createOptionRow(data = {}) {
+        const row = document.createElement("div");
+        row.className = "option-row";
+        row.innerHTML = `
+          <span class="remove-option" onclick="this.parentElement.remove()">X</span>
+          <div class="form-group">
+            <label>Option Name (e.g. Color/Size):</label>
+            <input type="text" class="opt-name" required placeholder="e.g. Red Small" value="${data.option_name || ''}" />
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <div class="form-group" style="flex: 1;">
+              <label>Type/Size:</label>
+              <input type="text" class="opt-size" placeholder="e.g. 120x60" value="${data.type_size || ''}" />
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>SKU:</label>
+              <input type="text" class="opt-sku" placeholder="Unique code" value="${data.sku || ''}" />
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>CBM:</label>
+              <input type="text" class="opt-cbm" placeholder="Volume" value="${data.cbm || ''}" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Option Image (Optional):</label>
+            <input type="file" name="option_images[]" accept="image/*" />
+            ${data.image ? `<p style="font-size:12px; color:gray;">Current: ${data.image}</p>` : ''}
+          </div>
+        `;
+        optionsList.appendChild(row);
+      }
+
+      addOptionBtn.addEventListener("click", () => createOptionRow());
+
       document.addEventListener("DOMContentLoaded", async () => {
         const params = new URLSearchParams(window.location.search);
         const productId = params.get("id");
@@ -112,7 +186,15 @@
             form.elements["short_description"].value =
               product.short_description || "";
             form.elements["description"].value = product.description || "";
+            form.elements["technical_data"].value = product.technical_data || "";
             form.elements["brand_id"].value = product.brand_id || "";
+
+            // Load variants
+            if (product.options && product.options.length > 0) {
+              product.options.forEach(opt => createOptionRow(opt));
+            } else {
+              createOptionRow(); 
+            }
 
             // تحميل الأقسام الفرعية واختيار القسم الحالي
             if (product.category_id) {
@@ -177,6 +259,24 @@
           const params = new URLSearchParams(window.location.search);
           const productId = params.get("id");
           formData.append("product_id", productId);
+
+          // Collect options text data into a JSON array
+          const optionsData = [];
+          document.querySelectorAll(".option-row").forEach((row) => {
+            optionsData.push({
+              option_name: row.querySelector(".opt-name").value,
+              type_size: row.querySelector(".opt-size").value,
+              sku: row.querySelector(".opt-sku").value,
+              cbm: row.querySelector(".opt-cbm").value,
+            });
+          });
+
+          if (optionsData.length === 0) {
+            alert("Please add at least one product option.");
+            return;
+          }
+
+          formData.append("options", JSON.stringify(optionsData));
 
           submitProductUpdate(formData);
         });

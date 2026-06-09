@@ -15,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     jsonResponse(false, "Method not allowed", [], 405);
 }
 
+// حماية الـ API والتأكد من تسجيل الدخول
 $auth = requireAuth();
 
 function imageUrl($path)
@@ -22,7 +23,6 @@ function imageUrl($path)
     if (!$path) {
         return null;
     }
-
     return rtrim(APP_URL, '/') . '/' . ltrim($path, '/');
 }
 
@@ -31,9 +31,7 @@ function deleteOldProductImage($path)
     if (!$path) {
         return;
     }
-
     $fullPath = __DIR__ . "/../../" . ltrim($path, '/');
-
     if (file_exists($fullPath) && is_file($fullPath)) {
         unlink($fullPath);
     }
@@ -81,7 +79,6 @@ function uploadProductImage($fileInputName)
     }
 
     $extension = $allowedMimeTypes[$mimeType];
-
     $uploadDir = __DIR__ . "/../../uploads/products/";
 
     if (!is_dir($uploadDir)) {
@@ -89,7 +86,6 @@ function uploadProductImage($fileInputName)
     }
 
     $fileName = $fileInputName . "_" . time() . "_" . bin2hex(random_bytes(8)) . "." . $extension;
-
     $destination = $uploadDir . $fileName;
 
     if (!move_uploaded_file($file['tmp_name'], $destination)) {
@@ -104,7 +100,7 @@ function uploadProductImage($fileInputName)
 
 /*
 |--------------------------------------------------------------------------
-| Get form-data input
+| استقبال البيانات الأساسية (Form-Data)
 |--------------------------------------------------------------------------
 */
 $productId = (int)($_POST['product_id'] ?? 0);
@@ -124,156 +120,99 @@ $requestedSubCategoryName = cleanInput($_POST['requested_sub_category_name'] ?? 
 $productName = cleanInput($_POST['product_name'] ?? '');
 $shortDescription = cleanInput($_POST['short_description'] ?? '');
 $description = cleanInput($_POST['description'] ?? '');
+$technicalData = $_POST['technical_data'] ?? null; // استقبال البيانات التقنية الجديدة
 
 if ($productId <= 0) {
-    jsonResponse(false, "Product ID is required", [
-        "code" => "PRODUCT_ID_REQUIRED"
-    ], 422);
+    jsonResponse(false, "Product ID is required", ["code" => "PRODUCT_ID_REQUIRED"], 422);
 }
 
 if ($brandId <= 0) {
-    jsonResponse(false, "Brand ID is required", [
-        "code" => "BRAND_ID_REQUIRED"
-    ], 422);
+    jsonResponse(false, "Brand ID is required", ["code" => "BRAND_ID_REQUIRED"], 422);
 }
 
 if ($productName === '') {
-    jsonResponse(false, "Product name is required", [
-        "code" => "PRODUCT_NAME_REQUIRED"
-    ], 422);
+    jsonResponse(false, "Product name is required", ["code" => "PRODUCT_NAME_REQUIRED"], 422);
 }
 
 if ($categoryId === null && $requestedCategoryName === '') {
-    jsonResponse(false, "Please select a category or enter requested category name", [
-        "code" => "CATEGORY_REQUIRED"
-    ], 422);
+    jsonResponse(false, "Please select a category or enter requested category name", ["code" => "CATEGORY_REQUIRED"], 422);
 }
 
 if ($categoryId !== null && $subCategoryId === null && $requestedSubCategoryName === '') {
-    jsonResponse(false, "Please select a sub category or enter requested sub category name", [
-        "code" => "SUB_CATEGORY_REQUIRED"
-    ], 422);
+    jsonResponse(false, "Please select a sub category or enter requested sub category name", ["code" => "SUB_CATEGORY_REQUIRED"], 422);
 }
 
 try {
+    // بدء الـ Transaction لتأمين العمليات المشتركة
+    $pdo->beginTransaction();
+
     /*
     |--------------------------------------------------------------------------
-    | 1. Check product ownership
+    | 1. التحقق من وجود المنتج، ملكيته وحالته الحالية
     |--------------------------------------------------------------------------
     */
     $stmt = $pdo->prepare("
-        SELECT 
-            id,
-            user_id,
-            status,
-            main_image
-        FROM products
-        WHERE id = ?
-          AND user_id = ?
-          AND status != 'deleted'
+        SELECT id, user_id, status, main_image 
+        FROM products 
+        WHERE id = ? AND user_id = ? AND status != 'deleted' 
         LIMIT 1
     ");
-
     $stmt->execute([$productId, $auth['user_id']]);
     $product = $stmt->fetch();
 
     if (!$product) {
-        jsonResponse(false, "Product not found or you do not have permission", [
-            "code" => "PRODUCT_NOT_FOUND"
-        ], 404);
+        $pdo->rollBack();
+        jsonResponse(false, "Product not found or you do not have permission", ["code" => "PRODUCT_NOT_FOUND"], 404);
     }
 
     if ($product['status'] === 'suspended') {
-        jsonResponse(false, "Suspended product cannot be updated", [
-            "code" => "PRODUCT_SUSPENDED"
-        ], 403);
+        $pdo->rollBack();
+        jsonResponse(false, "Suspended product cannot be updated", ["code" => "PRODUCT_SUSPENDED"], 403);
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 2. Check brand ownership and active status
+    | 2. التحقق من البراند والأقسام
     |--------------------------------------------------------------------------
     */
-    $stmt = $pdo->prepare("
-        SELECT id, status
-        FROM brands
-        WHERE id = ?
-          AND user_id = ?
-        LIMIT 1
-    ");
-
+    $stmt = $pdo->prepare("SELECT id, status FROM brands WHERE id = ? AND user_id = ? LIMIT 1");
     $stmt->execute([$brandId, $auth['user_id']]);
     $brand = $stmt->fetch();
 
     if (!$brand) {
-        jsonResponse(false, "Brand not found or you do not have permission", [
-            "code" => "BRAND_NOT_FOUND"
-        ], 404);
+        $pdo->rollBack();
+        jsonResponse(false, "Brand not found or you do not have permission", ["code" => "BRAND_NOT_FOUND"], 404);
     }
 
     if ($brand['status'] !== 'active') {
-        jsonResponse(false, "Brand must be active before assigning products to it", [
-            "code" => "BRAND_NOT_ACTIVE",
-            "status" => $brand['status']
-        ], 403);
+        $pdo->rollBack();
+        jsonResponse(false, "Brand must be active before assigning products to it", ["code" => "BRAND_NOT_ACTIVE"], 403);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | 3. Check category if selected
-    |--------------------------------------------------------------------------
-    */
     if ($categoryId !== null) {
-        $stmt = $pdo->prepare("
-            SELECT id
-            FROM categories
-            WHERE id = ?
-              AND status = 'active'
-            LIMIT 1
-        ");
-
+        $stmt = $pdo->prepare("SELECT id FROM categories WHERE id = ? AND status = 'active' LIMIT 1");
         $stmt->execute([$categoryId]);
-        $category = $stmt->fetch();
-
-        if (!$category) {
-            jsonResponse(false, "Category not found", [
-                "code" => "CATEGORY_NOT_FOUND"
-            ], 404);
+        if (!$stmt->fetch()) {
+            $pdo->rollBack();
+            jsonResponse(false, "Category not found", ["code" => "CATEGORY_NOT_FOUND"], 404);
         }
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | 4. Check sub category if selected
-    |--------------------------------------------------------------------------
-    */
     if ($categoryId !== null && $subCategoryId !== null) {
-        $stmt = $pdo->prepare("
-            SELECT id
-            FROM sub_categories
-            WHERE id = ?
-              AND category_id = ?
-              AND status = 'active'
-            LIMIT 1
-        ");
-
+        $stmt = $pdo->prepare("SELECT id FROM sub_categories WHERE id = ? AND category_id = ? AND status = 'active' LIMIT 1");
         $stmt->execute([$subCategoryId, $categoryId]);
-        $subCategory = $stmt->fetch();
-
-        if (!$subCategory) {
-            jsonResponse(false, "Sub category not found or does not belong to this category", [
-                "code" => "INVALID_SUB_CATEGORY"
-            ], 404);
+        if (!$stmt->fetch()) {
+            $pdo->rollBack();
+            jsonResponse(false, "Sub category not found or invalid", ["code" => "INVALID_SUB_CATEGORY"], 404);
         }
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 5. Upload new image if sent
+    | 3. رفع الصورة الرئيسية الجديدة (إن وجدت)
     |--------------------------------------------------------------------------
     */
     $newMainImagePath = uploadProductImage('main_image');
-
     $finalMainImagePath = $newMainImagePath ?: $product['main_image'];
 
     if ($newMainImagePath && $product['main_image']) {
@@ -282,46 +221,28 @@ try {
 
     /*
     |--------------------------------------------------------------------------
-    | 6. Generate unique slug
+    | 4. توليد الـ Slug الفريد للمنتج
     |--------------------------------------------------------------------------
     */
     $baseSlug = createSlug($productName);
     $slug = $baseSlug;
     $counter = 1;
-
     while (true) {
-        $stmt = $pdo->prepare("
-            SELECT id
-            FROM products
-            WHERE slug = ?
-              AND id != ?
-            LIMIT 1
-        ");
-
+        $stmt = $pdo->prepare("SELECT id FROM products WHERE slug = ? AND id != ? LIMIT 1");
         $stmt->execute([$slug, $productId]);
-
         if (!$stmt->fetch()) {
             break;
         }
-
         $slug = $baseSlug . "-" . $counter;
         $counter++;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | 7. Status after update
-    |--------------------------------------------------------------------------
-    | لو المنتج كان active ورجع المستخدم عدله، نخليه pending_admin_approval
-    | عشان الأدمن يراجع التعديل.
-    */
-    $newStatus = $product['status'] === 'active'
-        ? 'pending_admin_approval'
-        : $product['status'];
+    // تحديد حالة المنتج بعد التعديل
+    $newStatus = $product['status'] === 'active' ? 'pending_admin_approval' : $product['status'];
 
     /*
     |--------------------------------------------------------------------------
-    | 8. Update product
+    | 5. تحديث جدول المنتجات الرئيسي `products`
     |--------------------------------------------------------------------------
     */
     $stmt = $pdo->prepare("
@@ -336,10 +257,10 @@ try {
             slug = :slug,
             short_description = :short_description,
             description = :description,
+            technical_data = :technical_data,
             main_image = :main_image,
             status = :status
-        WHERE id = :id
-          AND user_id = :user_id
+        WHERE id = :id AND user_id = :user_id
     ");
 
     $stmt->execute([
@@ -352,22 +273,99 @@ try {
         ":slug" => $slug,
         ":short_description" => $shortDescription ?: null,
         ":description" => $description ?: null,
+        ":technical_data" => $technicalData ?: null,
         ":main_image" => $finalMainImagePath,
         ":status" => $newStatus,
         ":id" => $productId,
         ":user_id" => $auth['user_id']
     ]);
 
-    jsonResponse(true, "Product updated successfully", [
+    /*
+    |--------------------------------------------------------------------------
+    | 6. نظام مزامنة وتحديث الأوبشنز (Options Synchronization)
+    |--------------------------------------------------------------------------
+    */
+    // جلب الأوبشنز الحالية المخزنة لهذا المنتج في قاعدة البيانات وفهرستها بالـ ID
+    $stmtOldOptions = $pdo->prepare("SELECT id, image_path FROM product_options WHERE product_id = ?");
+    $stmtOldOptions->execute([$productId]);
+    $existingOptions = $stmtOldOptions->fetchAll(PDO::FETCH_ASSOC);
+    $existingOptionsIndexed = array_column($existingOptions, null, 'id');
+
+    // استقبال مصفوفة الأوبشنز القادمة من الفرونت إند (ممررة كـ JSON string أو مصفوفة عادية)
+    $optionsRaw = $_POST['options'] ?? '[]';
+    $options = is_string($optionsRaw) ? json_decode($optionsRaw, true) : $optionsRaw;
+    if (!is_array($options)) {
+        $options = [];
+    }
+
+    $processedOptionIds = [];
+
+    foreach ($options as $index => $opt) {
+        $optionId = isset($opt['id']) ? (int)$opt['id'] : 0;
+        $optionName = cleanInput($opt['option_name'] ?? '');
+        $typeSize = cleanInput($opt['type_size'] ?? '');
+        $sku = cleanInput($opt['sku'] ?? '');
+        $cbm = cleanInput($opt['cbm'] ?? '');
+
+        // استقبال ورفع ملف الصورة الخاص بهذا الأوبشن بالتحديد (التسمية: option_image_0, option_image_1...)
+        $optionFileKey = "option_image_" . $index;
+        $newOptionImagePath = uploadProductImage($optionFileKey);
+
+        if ($optionId > 0 && isset($existingOptionsIndexed[$optionId])) {
+            // [أ] الأوبشن موجود مسبقاً -> نقوم بتحديث بياناته الحاليّة
+            $processedOptionIds[] = $optionId;
+            $oldOptionImagePath = $existingOptionsIndexed[$optionId]['image_path'];
+            $finalOptionImagePath = $newOptionImagePath ?: $oldOptionImagePath;
+
+            $stmtUpdateOpt = $pdo->prepare("
+                UPDATE product_options 
+                SET option_name = ?, type_size = ?, sku = ?, cbm = ?, image_path = ?
+                WHERE id = ? AND product_id = ?
+            ");
+            $stmtUpdateOpt->execute([$optionName, $typeSize, $sku, $cbm, $finalOptionImagePath, $optionId, $productId]);
+
+            // لو تم رفع صورة جديدة للأوبشن الحالي، نمسح القديمة فوراً لتوفير مساحة السيرفر
+            if ($newOptionImagePath && $oldOptionImagePath) {
+                deleteOldProductImage($oldOptionImagePath);
+            }
+        } else {
+            // [ب] الأوبشن غير موجود (جديد) -> نقوم بإدراجه كسطر جديد
+            $stmtInsertOpt = $pdo->prepare("
+                INSERT INTO product_options (product_id, option_name, type_size, sku, cbm, image_path)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ");
+            $stmtInsertOpt->execute([$productId, $optionName, $typeSize, $sku, $cbm, $newOptionImagePath]);
+        }
+    }
+
+    // [ج] حذف الأوبشنز المستبعدة: أي أوبشن مسجل مسبقاً لم يرسله الفرونت إند يتم حذفه تلقائياً
+    foreach ($existingOptionsIndexed as $oldId => $oldOpt) {
+        if (!in_array($oldId, $processedOptionIds)) {
+            if ($oldOpt['image_path']) {
+                deleteOldProductImage($oldOpt['image_path']);
+            }
+            $stmtDeleteOpt = $pdo->prepare("DELETE FROM product_options WHERE id = ?");
+            $stmtDeleteOpt->execute([$oldId]);
+        }
+    }
+
+    // تأكيد حفظ كافة العمليات في قاعدة البيانات بنجاح
+    $pdo->commit();
+
+    jsonResponse(true, "Product and options updated successfully", [
         "product_id" => $productId,
         "slug" => $slug,
         "main_image" => $finalMainImagePath,
         "main_image_url" => imageUrl($finalMainImagePath),
         "status" => $newStatus
-    ]);
+    ], 200);
 
 } catch (Exception $e) {
-    jsonResponse(false, "Something went wrong", [
+    // في حالة حدوث أي خطأ، يتم التراجع عن كافة العمليات فوراً لحماية البيانات
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    jsonResponse(false, "Something went wrong during update", [
         "code" => "SERVER_ERROR",
         "error" => $e->getMessage()
     ], 500);

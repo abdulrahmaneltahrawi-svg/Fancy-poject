@@ -14,10 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     jsonResponse(false, "Method not allowed", [], 405);
 }
 
+// حماية الـ API والتأكد من تسجيل الدخول
 $auth = requireAuth();
 
+// استقبال البيانات كـ JSON
 $input = getJsonInput();
-
 $productId = (int)($input['product_id'] ?? 0);
 
 if ($productId <= 0) {
@@ -27,50 +28,58 @@ if ($productId <= 0) {
 }
 
 try {
+    /*
+    |--------------------------------------------------------------------------
+    | 1. التحقق من وجود المنتج، ملكيته للمستخدم، وحالته الحالية
+    |--------------------------------------------------------------------------
+    */
     $stmt = $pdo->prepare("
-        SELECT
-            id,
-            user_id,
-            status
-        FROM products
-        WHERE id = ?
-          AND user_id = ?
+        SELECT id, status 
+        FROM products 
+        WHERE id = ? AND user_id = ? 
         LIMIT 1
     ");
 
     $stmt->execute([$productId, $auth['user_id']]);
     $product = $stmt->fetch();
 
+    // إذا لم يعثر على المنتج أو كان تابع لمستخدم آخر
     if (!$product) {
         jsonResponse(false, "Product not found or you do not have permission", [
             "code" => "PRODUCT_NOT_FOUND"
         ], 404);
     }
 
+    // إذا كان المنتج ممسوح سوفت بالفعل من قبل
     if ($product['status'] === 'deleted') {
         jsonResponse(false, "Product is already deleted", [
             "code" => "PRODUCT_ALREADY_DELETED"
         ], 409);
     }
 
-    $stmt = $pdo->prepare("
-        UPDATE products
-        SET
-            status = 'deleted',
-            deleted_at = NOW()
-        WHERE id = ?
-          AND user_id = ?
+    /*
+    |--------------------------------------------------------------------------
+    | 2. تنفيذ الـ Soft Delete (تحديث الحالة وتوقيت الحذف)
+    |--------------------------------------------------------------------------
+    */
+    $updateStmt = $pdo->prepare("
+        UPDATE products 
+        SET 
+            status = 'deleted', 
+            deleted_at = NOW() 
+        WHERE id = ? AND user_id = ?
     ");
 
-    $stmt->execute([$productId, $auth['user_id']]);
+    $updateStmt->execute([$productId, $auth['user_id']]);
 
-    jsonResponse(true, "Product deleted successfully", [
+    // رد بالنجاح مع الحفاظ على البيانات في السيرفر وقاعدة البيانات
+    jsonResponse(true, "Product soft-deleted successfully", [
         "product_id" => $productId,
         "status" => "deleted"
-    ]);
+    ], 200);
 
 } catch (Exception $e) {
-    jsonResponse(false, "Something went wrong", [
+    jsonResponse(false, "Something went wrong during deletion", [
         "code" => "SERVER_ERROR",
         "error" => $e->getMessage()
     ], 500);
