@@ -1,7 +1,7 @@
 body {
   margin: 0;
   padding: 0;
-  padding-top: 120px; /* تعويض مساحة الهيدر الثابت لكي لا يختفي المحتوى تحته */
+  padding-top: 100px; /* تعويض مساحة الهيدر الثابت لكي لا يختفي المحتوى تحته */
   box-sizing: border-box;
 }
 :root {
@@ -12,7 +12,6 @@ body {
 
 .main-header {
   width: 100%;
-  padding: 10px 0;
   border-bottom: 1px solid var(--border-color);
   background: #fff;
   font-family: Lato, "Helvetica Neue", Arial, Helvetica, sans-serif;
@@ -33,15 +32,15 @@ body {
 }
 
 .logo img {
-  width:130px;
+  width:125px;
   margin-left: 60px;
 }
 
 /* شريط البحث */
 .search-container {
   flex: 1;
-  margin: 0 40px;
   max-width: 900px;
+  margin-right: 40px;
 }
 
 .header-bottom-part {
