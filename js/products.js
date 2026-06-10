@@ -133,7 +133,7 @@ async function loadSingleProductDetails(productId) {
             document.getElementById('project-image').src = typeof getSafeImageUrl === 'function' ? getSafeImageUrl(product.main_image) : (product.main_image || 'imges/placeholder.png');
             document.getElementById('project-name').innerText = product.product_name || 'منتج غير معروف';
             document.getElementById('project-desc').innerText = product.description || 'لا يوجد وصف لهذا المنتج.';
-            document.getElementById('project-category').innerText = product.category_name || "";
+            document.getElementById('project-category').innerText = product.brand_name || "BRAND";
 
             // عرض البيانات التقنية والـ SKU
             const specsContainer = document.getElementById('specs-container');

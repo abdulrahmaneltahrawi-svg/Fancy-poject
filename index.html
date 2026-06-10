@@ -583,10 +583,9 @@ offers both privacy and comfort.</p>
                     <h3 class="card-title">${data.title}</h3>
                 </a>
                 
-                <p class="card-description"  style="font-size: 14px; color: #666; margin: 10px 0;">
-                    ${categoryText}
-                </p>
-                ${badgeText ? `<span class="category" style=" color: gray; text-transform: uppercase; font-size: 12px;">${badgeText}</span>` : ""}
+                <div class="card-meta" style="margin-top: 10px;">
+                    <span class="category" style="color: #000; font-weight: bold; text-transform: uppercase; font-size: 12px;">${badgeText || categoryText}</span>
+                </div>
             </div>
         </div>
     `;
