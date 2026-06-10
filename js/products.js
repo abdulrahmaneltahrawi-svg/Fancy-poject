@@ -135,18 +135,17 @@ async function loadSingleProductDetails(productId) {
             document.getElementById('project-desc').innerText = product.description || 'لا يوجد وصف لهذا المنتج.';
             document.getElementById('project-category').innerText = product.brand_name || "BRAND";
 
+            const locationElem = document.getElementById('project-location');
+            if (locationElem && product.city) {
+                locationElem.innerText = `Made in ${product.city}`;
+                locationElem.style.display = 'block';
+            }
+
             // عرض البيانات التقنية والـ SKU
             const specsContainer = document.getElementById('specs-container');
             const specsDisplay = document.getElementById('project-specs');
             if (specsContainer && specsDisplay) {
                 let specsContent = product.technical_data || '';
-                
-                // جلب الـ SKU من أول خيار متاح كقيمة افتراضية
-                const defaultSku = (product.options && product.options.length > 0) ? product.options[0].sku : '';
-                if (defaultSku) {
-                    specsContent += `<div style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #eee; font-weight: bold;">SKU: <span id="active-sku" style="font-weight: normal; color: #666;">${defaultSku}</span></div>`;
-                }
-
                 if (specsContent) {
                     specsDisplay.innerHTML = specsContent;
                     specsContainer.classList.remove('hidden');
@@ -159,27 +158,51 @@ async function loadSingleProductDetails(productId) {
             if (product.options && product.options.length > 0 && optionsGrid) {
                 variantsContainer.classList.remove('hidden');
                 optionsGrid.innerHTML = product.options.map(opt => `
-                    <div class="option-item" onclick="
+                    <div class="option-item" onclick="                        
+                        // تمييز العنصر المختار
+                        document.querySelectorAll('.option-item').forEach(el => el.classList.remove('active'));
+                        this.classList.add('active');
+
+                        // تحديث الصورة
                         document.getElementById('project-image').src = '${getSafeImageUrl(opt.image_path || product.main_image)}';
+                        
+                        // تحديث الـ SKU تحت Technical Specifications
                         const skuElem = document.getElementById('active-sku');
-                        if(skuElem) skuElem.innerText = '${opt.sku || ''}';
+                        const skuContainer = document.getElementById('sku-container');
+                        if(skuElem && skuContainer) {
+                            skuElem.innerText = '${opt.sku || 'N/A'}';
+                            skuContainer.classList.remove('hidden');
+                        }
+
+                        // تحديث الـ Type المربع المنفصل
+                        const typeWrapper = document.getElementById('type-display-wrapper');
+                        const typeValue = document.getElementById('active-option-type');
+                        if(typeValue && typeWrapper) {
+                            typeValue.innerText = '${opt.type_size || "Standard"}';
+                            typeWrapper.classList.remove('hidden');
+                        }
                     ">
-                        <img src="${getSafeImageUrl(opt.image_path || product.main_image)}" 
-                             style="width: 100%; height: 100px; object-fit: cover; border-radius: 4px; margin-bottom: 5px; border: 1px solid #eee;">
-                        <div style="font-weight: bold;">${opt.option_name}</div>
-                        ${opt.type_size ? `<div style="color: #888;">${opt.type_size}</div>` : ''}
-                        ${opt.sku ? `<div style="color: #aaa; font-size: 10px;">SKU: ${opt.sku}</div>` : ''}
+                        <div class="opt-name-box">${opt.option_name}</div>
                     </div>
                 `).join('');
+            }
 
-                // تحديث المصغرات (Thumbnails) إذا وجدت صور للخيارات
-                const thumbs = document.getElementById('thumbnails');
-                if (thumbs) {
-                    thumbs.innerHTML = product.options
-                        .filter(o => o.image_path)
-                        .map(o => `<img src="${getSafeImageUrl(o.image_path)}" class="thumb-img" onclick="document.getElementById('project-image').src = this.src">`)
-                        .join('');
+            // تحديث معرض الصور (Gallery) في التبويب المخصص
+            const thumbsGrid = document.getElementById('thumbnails');
+            if (thumbsGrid) {
+                const allImages = [];
+                // إظهار صور الفئات فقط كما طلبت (تجاهل الصورة الرئيسية العامة)
+                if (product.options) {
+                    product.options.forEach(o => {
+                        if (o.image_path && !allImages.includes(o.image_path)) {
+                            allImages.push(o.image_path);
+                        }
+                    });
                 }
+
+                thumbsGrid.innerHTML = allImages
+                    .map(img => `<img src="${getSafeImageUrl(img)}" class="thumb-img" onclick="document.getElementById('project-image').src = this.src">`)
+                    .join('');
             }
 
             const whatsappBtn = document.getElementById('whatsapp-btn');
