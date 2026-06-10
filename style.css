@@ -9,6 +9,9 @@ body {
   --text-main: #333;
   --border-color: #ddd;
 }
+html{
+  scroll-behavior: smooth;
+}
 
 .main-header {
   width: 100%;
