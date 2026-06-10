@@ -13,12 +13,13 @@
         margin-left: auto;
         margin-right: auto;
         padding: 0 20px;
-
+        margin-top: 20px; /* مسافة إضافية بسيطة تحت الهيدر */
       }
       .view-content {
         display: flex;
-        align-items: center;
+        align-items: flex-start; /* يجعل المحتوى يبدأ من الأعلى ويمتد لأسفل */
         gap: 25px;
+
       }
       .view-image-section {
         flex: 1.5;
@@ -37,10 +38,10 @@
       }
       .view-details-section {
         flex: 1;
-        margin-bottom: 100px;
+        margin-top: 90px;
       }
       .view-details-section h1 {
-        font-size: 36px;
+        font-size: 30px;
         margin-bottom: 20px;
         position: relative;      
         min-height: 40px;
