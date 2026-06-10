@@ -130,6 +130,7 @@
         row.className = "option-row";
         row.innerHTML = `
           <span class="remove-option" onclick="this.parentElement.remove()">X</span>
+          <input type="hidden" class="opt-id" value="${data.id || ''}" />
           <div class="form-group">
             <label>Option Name (e.g. Color/Size):</label>
             <input type="text" class="opt-name" required placeholder="e.g. Red Small" value="${data.option_name || ''}" />
@@ -253,22 +254,38 @@
         .addEventListener("submit", function (e) {
           e.preventDefault();
 
-          const formData = new FormData(this);
-
-          // تأكد من إضافة الـ ID يدوياً لضمان وجوده
+          const formData = new FormData();
           const params = new URLSearchParams(window.location.search);
-          const productId = params.get("id");
-          formData.append("product_id", productId);
+          formData.append("product_id", params.get("id"));
+          formData.append("brand_id", this.elements["brand_id"].value);
+          formData.append("product_name", this.elements["product_name"].value);
+          formData.append("category_id", this.elements["category_id"].value);
+          formData.append("sub_category_id", this.elements["sub_category_id"].value);
+          formData.append("short_description", this.elements["short_description"].value);
+          formData.append("description", this.elements["description"].value);
+          formData.append("technical_data", this.elements["technical_data"].value);
+          
+          if (this.elements["main_image"].files[0]) {
+              formData.append("main_image", this.elements["main_image"].files[0]);
+          }
 
           // Collect options text data into a JSON array
           const optionsData = [];
-          document.querySelectorAll(".option-row").forEach((row) => {
+          document.querySelectorAll(".option-row").forEach((row, index) => {
+            const optId = row.querySelector(".opt-id").value;
             optionsData.push({
+              id: optId,
               option_name: row.querySelector(".opt-name").value,
               type_size: row.querySelector(".opt-size").value,
               sku: row.querySelector(".opt-sku").value,
               cbm: row.querySelector(".opt-cbm").value,
             });
+            
+            // هام جداً: update.php يتوقع الاسم بهذا التنسيق (option_image_0)
+            const optFile = row.querySelector('input[type="file"]').files[0];
+            if (optFile) {
+                formData.append("option_image_" + index, optFile);
+            }
           });
 
           if (optionsData.length === 0) {

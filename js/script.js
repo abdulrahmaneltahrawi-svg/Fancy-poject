@@ -92,7 +92,8 @@ function getSafeImageUrl(imagePath) {
     // استخدام مسار نسبي لضمان العمل على GitHub Pages
     // إزالة السلاش البادئة لضمان صحة المسار النسبي
     const cleanPath = imagePath.replace(/^\//, '');
-    return cleanPath.startsWith('fancy/') ? cleanPath : `fancy/${cleanPath.startsWith('uploads/') ? '' : 'uploads/'}${cleanPath}`;
+    // تصحيح المسار ليكون مباشرة من المجلد الرئيسي للمشروع
+    return cleanPath.startsWith('uploads/') ? cleanPath : `uploads/${cleanPath}`;
 }
 window.getSafeImageUrl = getSafeImageUrl;
 

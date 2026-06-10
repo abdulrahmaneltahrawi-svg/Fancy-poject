@@ -241,7 +241,16 @@
         .getElementById("productForm")
         .addEventListener("submit", function (e) {
           e.preventDefault();
-          const formData = new FormData(this);
+          // بناء FormData يدوياً لضمان الدقة
+          const formData = new FormData();
+          formData.append("brand_id", document.getElementById("form_brand_id").value);
+          formData.append("product_name", this.elements["product_name"].value);
+          formData.append("category_id", this.elements["category_id"].value);
+          formData.append("sub_category_id", this.elements["sub_category_id"].value);
+          formData.append("short_description", this.elements["short_description"].value);
+          formData.append("description", this.elements["description"].value);
+          formData.append("technical_data", this.elements["technical_data"].value);
+          formData.append("main_image", this.elements["main_image"].files[0]);
 
           // Client-side validation for image sizes (3MB limit)
           const mainImage = formData.get("main_image");
@@ -261,13 +270,18 @@
 
           // Collect options text data into a JSON array
           const optionsData = [];
-          document.querySelectorAll(".option-row").forEach((row) => {
+          document.querySelectorAll(".option-row").forEach((row, index) => {
             optionsData.push({
               option_name: row.querySelector(".opt-name").value,
               type_size: row.querySelector(".opt-size").value,
               sku: row.querySelector(".opt-sku").value,
               cbm: row.querySelector(".opt-cbm").value,
             });
+            // إرسال صور الخيارات كمصفوفة لتوافق create.php
+            const optFile = row.querySelector('input[type="file"]').files[0];
+            if (optFile) {
+                formData.append("option_images[]", optFile);
+            }
           });
 
           if (optionsData.length === 0) {
