@@ -89,11 +89,15 @@ function getSafeImageUrl(imagePath) {
     // إذا كان الرابط خارجياً بالفعل
     if (imagePath.startsWith('data:') || imagePath.startsWith('http')) return imagePath;
 
-    // استخدام مسار نسبي لضمان العمل على GitHub Pages
-    // إزالة السلاش البادئة لضمان صحة المسار النسبي
+    // تنظيف المسار لضمان عدم وجود سلاش بادئة
     const cleanPath = imagePath.replace(/^\//, '');
-    // تصحيح المسار ليكون مباشرة من المجلد الرئيسي للمشروع
-    return cleanPath.startsWith('uploads/') ? cleanPath : `uploads/${cleanPath}`;
+    const finalPath = cleanPath.startsWith('uploads/') ? cleanPath : `uploads/${cleanPath}`;
+
+    // بما أن الصور تُرفع برمجياً داخل مجلد fancy/uploads (حسب كود PHP)
+    // سنقوم باستخراج المجلد الأب من رابط الـ API لضمان الوصول للمسار الصحيح
+    const apiBase = FancyAPI.baseUrl.replace(/\/api\/?$/, ''); // يحذف /api من النهاية ليبقى /fancy
+    
+    return `${apiBase}/${finalPath}`;
 }
 window.getSafeImageUrl = getSafeImageUrl;
 

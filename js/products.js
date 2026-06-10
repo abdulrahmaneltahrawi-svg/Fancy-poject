@@ -135,11 +135,22 @@ async function loadSingleProductDetails(productId) {
             document.getElementById('project-desc').innerText = product.description || 'لا يوجد وصف لهذا المنتج.';
             document.getElementById('project-category').innerText = product.category_name || "";
 
-            // عرض البيانات التقنية إذا وجدت
+            // عرض البيانات التقنية والـ SKU
             const specsContainer = document.getElementById('specs-container');
-            if (product.technical_data && specsContainer) {
-                document.getElementById('project-specs').innerText = product.technical_data;
-                specsContainer.classList.remove('hidden');
+            const specsDisplay = document.getElementById('project-specs');
+            if (specsContainer && specsDisplay) {
+                let specsContent = product.technical_data || '';
+                
+                // جلب الـ SKU من أول خيار متاح كقيمة افتراضية
+                const defaultSku = (product.options && product.options.length > 0) ? product.options[0].sku : '';
+                if (defaultSku) {
+                    specsContent += `<div style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #eee; font-weight: bold;">SKU: <span id="active-sku" style="font-weight: normal; color: #666;">${defaultSku}</span></div>`;
+                }
+
+                if (specsContent) {
+                    specsDisplay.innerHTML = specsContent;
+                    specsContainer.classList.remove('hidden');
+                }
             }
 
             // عرض خيارات المنتج (Variants)
@@ -148,7 +159,11 @@ async function loadSingleProductDetails(productId) {
             if (product.options && product.options.length > 0 && optionsGrid) {
                 variantsContainer.classList.remove('hidden');
                 optionsGrid.innerHTML = product.options.map(opt => `
-                    <div class="option-item" onclick="document.getElementById('project-image').src = '${getSafeImageUrl(opt.image_path || product.main_image)}'">
+                    <div class="option-item" onclick="
+                        document.getElementById('project-image').src = '${getSafeImageUrl(opt.image_path || product.main_image)}';
+                        const skuElem = document.getElementById('active-sku');
+                        if(skuElem) skuElem.innerText = '${opt.sku || ''}';
+                    ">
                         <img src="${getSafeImageUrl(opt.image_path || product.main_image)}" 
                              style="width: 100%; height: 100px; object-fit: cover; border-radius: 4px; margin-bottom: 5px; border: 1px solid #eee;">
                         <div style="font-weight: bold;">${opt.option_name}</div>
