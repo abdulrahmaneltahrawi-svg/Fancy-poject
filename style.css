@@ -228,14 +228,16 @@ body {
 
 .grid-columns {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 20px;
 }
 
 .footer-col h4 {
-  font-size: 16px;
-  margin-bottom: 20px;
+  font-size: 20px;
   color: #fff;
+  margin-bottom: 25px;
+  font-weight: 500;
+  position: relative;
 }
 
 .footer-col ul {
@@ -245,6 +247,8 @@ body {
 
 .footer-col ul li {
   margin-bottom: 12px;
+  font-size: 14px;
+  color: #aaa;
 }
 
 .footer-col ul li a {
@@ -258,14 +262,7 @@ body {
   color: #ffb400;
 }
 
-.footer-col h4 {
-  font-size: 20px;
-  color: #fff;
-  text-transform: uppercase;
-  margin-bottom: 25px;
-  font-weight: 500;
-  position: relative;
-}
+
 
 /* الحاوية الأساسية */
 .contact-links {
