@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" href="imges/img/fancy1.jfif" />
-    <title>Add New Product - Fancy Design</title>
+    <title>Add New Designer - Fancy Design</title>
     <link rel="stylesheet" href="style.css" />
     <style>
       .form-container {
@@ -43,60 +43,59 @@
   <body>
     <div id="header-placeholder"></div>
     <div class="form-container">
-      <h2>Add new product</h2>
-      <form id="productForm">
-        <input type="hidden" name="brand_id" id="form_brand_id" />
+      <h2>Add new designer</h2>
+      <form id="designerForm">
         <div class="form-group">
-          <label>designer name:</label>
+          <label>Designer name</label>
           <input
             type="text"
             placeholder="Your designer name here..."
-            name="product_name"
+            name="designer_name"
             required
           />
 
         </div>
         <div class="form-group">
-          <label>designer type :</label>
+          <label>Designer type</label>
           <input
             type="text"
             placeholder="Your design type here..."
-            name="product_name"
+            name="designer_type"
             required
           />
         </div>
                  <div class="form-group" style="flex: 1">
-            <label>City:</label>
-            <input type="text" name="country" required />
+            <label>City</label>
+            <input type="text" name="city" required />
           </div>
           <div class="form-group" style="flex: 1">
-            <label>State:</label>
-            <input type="text" name="city" />
+            <label>Country</label>
+            <input type="text" name="country" />
           </div>
           <div class="form-group" style="flex: 1">
             <label>Services</label>
-            <input type="text" name="service" />
+            <input type="text" name="services" />
           </div>
           
         <div class="form-group">
-          <label>designer logo:</label>
-          <input type="file" name="main_image" accept="image/*" required />
+          <label>Designer logo</label>
+          <input type="file" name="designer_logo" accept="image/*" required />
         </div>
         <div class="form-group">
-          <label>Instagram:</label>
-          <input type="email" name="email" placeholder="brand@example.com" />
+          <label>Instagram</label>
+          <input type="text" name="instagram" placeholder="Instagram username" />
         </div>
         <div class="form-group">
-          <label>Linedin:</label>
-          <input type="email" name="email" placeholder="brand@example.com" />
+          <label>LinkedIn</label>
+          <input type="text" name="linkedin" placeholder="LinkedIn profile link" />
         </div>
         <div class="form-group">
-          <label>WhatsApp:</label>
-          <input type="email" name="email" placeholder="brand@example.com" />
+          <label>WhatsApp</label>
+          <input type="tel" name="whatsapp" placeholder="WhatsApp number" />
         </div>
         <div class="form-group">
           <label>Email:</label>
-          <input type="email" name="email" placeholder="brand@example.com" />
+          <input type="email" name="email" placeholder="designer@example.com" />
         </div>
         <div class="form-group">
           <label>Short description:</label>
@@ -107,14 +106,44 @@
           <textarea name="description" rows="5"></textarea>
         </div>
         <button type="submit" class="submit-btn">
-          Send product for review
+          Send designer for review
         </button>
       </form>
     </div>
     <script src="js/script.js"></script>
-    <script src="js/categories.js"></script>
-    <script src="js/products.js"></script>
+    <script src="js/designers.js"></script>
     <script src="js/auth.js"></script>
+    <script>
+      document.getElementById('designerForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const submitBtn = this.querySelector('.submit-btn');
+        const originalText = submitBtn.innerText;
+        
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Sending...';
+        
+        try {
+          // ربط الفورم بملف create_designer.php (تم تصحيح المسار إلى 'designer' بالمفرد)
+          const result = await FancyAPI.post('/designer/create_designer.php', formData);
+          
+          if (result.success) {
+            alert('Designer profile created successfully! It will be reviewed.');
+            window.location.href = 'profile.html';
+          } else {
+            alert('Error: ' + (result.message || 'Failed to create profile.'));
+          }
+        } catch (error) {
+          console.error('Submission error:', error);
+          alert('An error occurred while connecting to the server.');
+        } finally {
+        await submitNewDesigner(formData);
 
+          submitBtn.disabled = false;
+          submitBtn.innerText = originalText;
+        }
+      });
+    </script>
   </body>
 </html>
