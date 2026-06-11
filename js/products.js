@@ -208,7 +208,7 @@ async function loadSingleProductDetails(productId) {
             const whatsappBtn = document.getElementById('whatsapp-btn');
             // تحديث رابط الواتساب
             if (whatsappBtn) {
-                const message = encodeURIComponent(`السلام عليكم، أود الاستفسار عن تفاصيل وسعر: ${product.product_name}`);
+                const message = encodeURIComponent(`Hello, I would like to inquire about the details and price of: ${product.product_name}`);
                 // يمكنك استبدال 'YOUR_DEFAULT_WHATSAPP_NUMBER' برقم واتساب افتراضي إذا لم يكن متوفراً في بيانات المنتج
                 whatsappBtn.href = `https://wa.me/${product.whatsapp || '966500000000'}?text=${message}`; 
             }

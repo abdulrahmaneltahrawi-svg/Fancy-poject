@@ -294,6 +294,7 @@ html{
 .contact-item .details {
   display: flex;
   flex-direction: column;
+  white-space: nowrap;
 }
 
 .contact-item a,
