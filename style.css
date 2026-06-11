@@ -795,7 +795,7 @@ html{
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 40px;
   padding: 40px 40px 80px 40px;
-  background-color: #fff;
+  background-color: #ffffff;
 }
 
 .brand-card {
@@ -809,15 +809,15 @@ html{
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 2px;
-  height: 420px;
-  background-color: #f9f9f9;
+  height: 200px;
+  background-color: #ffffff;
   overflow: hidden;
 }
 
 .brand-images-grid img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   background-color: #f9f9f9;
 }
 
