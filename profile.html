@@ -95,7 +95,7 @@
         >
         <a href="javascript:void(0)" id="tab-brands">Brands</a>
 
-        <a href="javascript:void(0)" id="tab-designers">Designers</a>
+        <a href="javascript:void(0)" id="tab-designers"> My Designer page</a>
       </nav>
 
       <!-- حاوية نظرة عامة -->
@@ -170,6 +170,34 @@
       if (typeof loadUserProfile === "function") {
         loadUserProfile();
       }
+
+      // منطق التبديل بين التبويبات
+      const tabs = {
+        'tab-overview': 'overview-tab-content',
+        'tab-brands': 'brands-tab-content',
+        'tab-designers': 'designers-tab-content'
+      };
+
+      Object.keys(tabs).forEach(tabId => {
+        document.getElementById(tabId).addEventListener('click', function() {
+          // إزالة الحالة النشطة من جميع الروابط وإخفاء المحتويات
+          Object.keys(tabs).forEach(id => {
+            document.getElementById(id).classList.remove('active');
+            document.getElementById(tabs[id]).classList.add('hidden');
+          });
+
+          // تفعيل التبويب المختار
+          this.classList.add('active');
+          document.getElementById(tabs[tabId]).classList.remove('hidden');
+
+          // تحميل البيانات بناءً على التبويب
+          if (tabId === 'tab-brands') {
+            displayUserBrands();
+          } else if (tabId === 'tab-designers') {
+            displayUserDesignerProfile();
+          }
+        });
+      });
     });
   </script>
 </html>

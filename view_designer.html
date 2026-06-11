@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="imges/img/fancy1.jfif" />
+    <title>Brand View</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: sans-serif;
+        background-color: #f9f9f9;
+      }
+      .brand-header {
+        background: #fff;
+        padding-bottom: 20px;
+      }
+      .cover-photo {
+        height: 500px;
+        width: 100%;
+        overflow: hidden;
+      }
+      .cover-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .brand-profile-bar {
+        padding: 0 5%;
+        position: relative;
+      }
+      .brand-logo-container {
+        width: 200px;
+        height: 200px;
+        background: #fff;
+        border-radius: 50%;
+        padding: 5px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin-right: 20px;
+        margin-top: -75px;
+      }
+      .brand-logo-container img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: contain;
+      }
+      .brand-main-info {
+        padding: 20px;
+        flex-grow: 1;
+      }
+      .brand-actions {
+        padding-bottom: 30px;
+        display: flex;
+        gap: 10px;
+      }
+      .btn {
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      .btn-black {
+        background: #000;
+        color: #fff;
+      }
+      .btn-edit {
+        background: #eee;
+        color: #000;
+        border: 1px solid #ccc;
+      }
+      .hidden {
+        display: none !important;
+      }
+      .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      }
+      .container-p {
+        margin-top: 100px;
+        padding: 30px;
+      }
+
+      @media (max-width: 768px) {
+        .container-flex {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+
+      .projects-grid{
+
+        margin-left: 100px;
+        padding: 90px;
+      }
+
+      .title{
+        margin-left: 90px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="header-placeholder"></div>
+
+    <section class="brand-header">
+      <div class="cover-photo">
+        <img id="brandCover" src="" alt="Cover" />
+      </div>
+      <div class="brand-profile-bar">
+        <div class="container-flex">
+          <div class="brand-logo-container">
+            <img id="brandLogo" src="" alt="Logo" />
+          </div>
+          <div class="brand-main-info">
+            <h1 id="brandName">...</h1>
+            <p id="brandLocation"></p>
+          </div>
+          <div class="brand-actions">
+            <a href="#" id="edit-brand-btn" class="btn btn-edit hidden"
+              >Edit Brand</a
+            >
+            <a href="#" id="add-product-btn" class="btn btn-black hidden"
+              >Add new product +</a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main class="brand-content">
+      <section style="padding: 40px;">
+        <p class="title">About</p>
+        <p
+          id="brandAbout"
+          style="
+            max-width: 1500px;
+            line-height: 2.0;
+            margin-top: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-left: 90px;
+          "
+        ></p>
+      </section>
+
+      <section class="products-section">
+        <div class="container-p">
+            <p class="title">Product</p>
+          <div class="projects-grid" id="productsGrid">
+            <!-- سيتم تحميل المنتجات هنا تلقائياً -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/script.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/brands.js"></script>
+    <script>
+      async function loadBrandPage() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const brandId = urlParams.get("brand") || urlParams.get("id");
+
+        if (!brandId) return;
+
+        try {
+          // استخدام FancyAPI الموحد بدلاً من fetch المباشر لتجنب أخطاء المسارات (404)
+          const result = await FancyAPI.get(
+            `/brands/get.php?brand_id=${brandId}`,
+          );
+
+          if (result.success && result.data && result.data.brand) {
+            const brand = result.data.brand;
+            document.getElementById("brandName").innerText =
+              brand.brand_name || "Brand";
+            document.getElementById("brandAbout").innerText =
+              brand.description || "No description is available.";
+            // استبدل السطور القديمة بـ:
+            document.getElementById("brandCover").src = getSafeImageUrl(
+              brand.cover_image || "imges/img/fancy3.jfif",
+            );
+            document.getElementById("brandLogo").src = getSafeImageUrl(
+              brand.logo || "imges/img/fancy1.jfif",
+            );
+
+            // التحقق من الصلاحيات لإظهار الأزرار
+            const userData = JSON.parse(localStorage.getItem("userData"));
+            let showProductControls = false;
+            if (userData && userData.id == brand.user_id) {
+              // إظهار زر إضافة منتج
+              const addBtn = document.getElementById("add-product-btn");
+              addBtn.classList.remove("hidden");
+              addBtn.href = `add-product.html?brand_id=${brand.id}`;
+
+              // إظهار زر تعديل العلامة التجارية
+              const editBtn = document.getElementById("edit-brand-btn");
+              editBtn.classList.remove("hidden");
+              editBtn.href = `edit-brand.html?brand_id=${brand.id}`; // الرابط لصفحة التعديل
+
+              showProductControls = true;
+            }
+
+            // إذا كان المستخدم هو صاحب البراند، نستخدم API "منتجاتي" (my-products.php) لعرض القائمة الكاملة
+            if (showProductControls) {
+              loadMyProducts("productsGrid", brand.id);
+            } else {
+              // للزوار العاديين، نستخدم القائمة العامة المفلترة بمعرف البراند
+              loadProducts("productsGrid", null, brand.id, false);
+            }
+          } else {
+            console.error("Brand not found or API error:", result.message);
+            alert("Sorry, brand data not found.");
+            window.location.href = "page_brand.html";
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      window.addEventListener("load", loadBrandPage);
+    </script>
+  </body>
+</html>
