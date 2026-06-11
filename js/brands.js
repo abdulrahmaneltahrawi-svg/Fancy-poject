@@ -381,12 +381,15 @@ async function loadPendingBrandsForAdmin(containerId) {
 
     try {
         const result = await FancyAPI.get('/admin/pending-brands.php');
-        if (result.success && Array.isArray(result.data.brands)) {
-            container.innerHTML = result.data.brands.length ? '' : '<p style="grid-column:1/-1; text-align:center;">No brands pending</p>';
-            result.data.brands.forEach(brand => {
+        if (result.success) {
+            // استخراج المصفوفة بشكل مرن لضمان العرض في حال اختلاف رد السيرفر
+            const brands = result.data?.brands || (Array.isArray(result.data) ? result.data : []);
+            
+            container.innerHTML = brands.length ? '' : '<p style="grid-column:1/-1; text-align:center;">No brands pending</p>';
+            brands.forEach(brand => {
     container.innerHTML += `
         <div class="brand-card" style="border: 1px solid #eee; padding: 15px; border-radius: 8px;">
-            <img src="${getSafeImageUrl(brand.logo)}" style="width:50px; height:50px; border-radius:50%;">
+            <img src="${getSafeImageUrl(brand.logo)}" style="width:50px; height:50px; border-radius:50%; object-fit: contain;">
             <h3>${brand.brand_name}</h3>
             <p>${brand.brand_type} - ${brand.country}</p>
             <div style="display:flex; gap:10px; margin-top:10px;">

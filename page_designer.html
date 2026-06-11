@@ -12,12 +12,49 @@
 
     <div id="header-placeholder"></div>
 
-
+    <section class="projects-section">
+      <div class="container">
+        <p class="title">Designers</p>
+        <p class="sub-title">Explore professional designers and architects</p>
+        <div id="designers-grid" class="projects-grid">
+          <!-- سيتم تحميل المصممين هنا تلقائياً -->
+        </div>
+      </div>
+    </section>
 
     <div id="footer-placeholder"></div>
 
     <script src="js/script.js"></script>
-    <script src="js/brands.js"></script>
     <script src="js/auth.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const grid = document.getElementById('designers-grid');
+
+        // جلب البيانات وعرضها في الشبكة
+        fetch('fancy/api/admin/All_designer.php')
+          .then(response => response.json())
+          .then(result => {
+            if (result.success && result.data) {
+              const designers = result.data;
+              grid.innerHTML = designers.map(designer => `
+                <div class="project-card">
+                  <div class="card-image">
+                    <a href="view_designer.html?id=${designer.id || ''}">
+                      <img src="${designer.avatar_url || 'imges/img/fancy1.jfif'}" alt="${designer.user_name}">
+                    </a>
+                  </div>
+                  <div class="card-content">
+                    <h3 class="card-title">${designer.user_name}</h3>
+                    <p style="color: #888; font-size: 14px; margin-top: 5px;">
+                      ${Array.isArray(designer.services) ? designer.services.join(', ') : (designer.services || 'Professional Designer')}
+                    </p>
+                  </div>
+                </div>
+              `).join('');
+            }
+          })
+          .catch(err => console.error("Error loading designers:", err));
+      });
+    </script>
   </body>
 </html>

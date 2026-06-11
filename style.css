@@ -383,7 +383,7 @@ html {
   /* الحل هنا */
   display: flex;
   justify-content: flex-start;
-  margin-left: 230px;
+  padding-left: 10%;
   gap: 15px; /* مسافة بين الخط والكلمة */
 }
 
@@ -396,7 +396,7 @@ html {
 }
 
 .sub-title {
-  margin-left: 230px;
+  padding-left: 10%;
   color: #b6b5b5;
   margin-bottom: 40px;
   font-size: 22px;

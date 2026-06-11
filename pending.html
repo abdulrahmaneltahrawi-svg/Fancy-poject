@@ -16,15 +16,21 @@
         <div
           id="pending-brands-list"
           class="projects-grid"
-          style="grid-template-columns: repeat(auto-fill, minmax(250px, 1fr))"
         >
           <!-- جاري التحميل... -->
         </div>
       </div>
 
-      <p class="title">Products pending review</p>
+      <p class="title">Products pending</p>
       <div class="container">
         <div id="pending-products-container" class="projects-grid">
+          <!-- جاري التحميل... -->
+        </div>
+      </div>
+
+      <p class="title">Designers pending</p>
+      <div class="container">
+        <div id="pending-designers-list" class="projects-grid">
           <!-- جاري التحميل... -->
         </div>
       </div>
@@ -41,10 +47,49 @@
         if (typeof loadPendingProductsForAdmin === "function") {
           loadPendingProductsForAdmin("pending-products-container");
         }
-        if (typeof loadPendingBrandsForAdmin === "function") {
+        if (typeof window.loadPendingBrandsForAdmin === "function") {
           loadPendingBrandsForAdmin("pending-brands-list");
         }
+        loadPendingDesignersForAdmin("pending-designers-list");
       });
+
+      async function loadPendingDesignersForAdmin(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        try {
+          const result = await FancyAPI.get('/admin/pending_designer.php');
+          if (result.success) {
+            const designers = result.data || [];
+            container.innerHTML = designers.length ? '' : '<p style="grid-column:1/-1; text-align:center;">No designers pending</p>';
+            designers.forEach(designer => {
+              container.innerHTML += `
+                <div class="brand-card" style="border: 1px solid #eee; padding: 15px; border-radius: 8px;">
+                  <img src="${getSafeImageUrl(designer.avatar)}" style="width:50px; height:50px; border-radius:50%; object-fit: cover;">
+                  <h3>${designer.user_name}</h3>
+                  <p>${designer.company_type || 'Designer'} - ${designer.country || ''}</p>
+                  <div style="display:flex; gap:10px; margin-top:10px;">
+                    <button onclick="handleDesignerAction(${designer.id}, 'approve')" style="flex:1; background:#5cb85c; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">accept</button>
+                    <button onclick="handleDesignerAction(${designer.id}, 'reject')" style="flex:1; background:#d9534f; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">reject</button>
+                  </div>
+                </div>`;
+            });
+          }
+        } catch (error) { console.error("Error loading pending designers:", error); }
+      }
+
+      async function handleDesignerAction(id, action) {
+        if (!confirm(`Are you sure you want to ${action} this designer?`)) return;
+        const endpoint = action === 'approve' ? '/admin/Approve_designer.php' : '/admin/rejected_designer.php';
+        const fd = new FormData();
+        fd.append('designer_id', id);
+        const res = await FancyAPI.post(endpoint, fd);
+        if (res.success) {
+          alert(`Designer ${action}d successfully`);
+          loadPendingDesignersForAdmin('pending-designers-list');
+        } else {
+          alert('Error: ' + res.message);
+        }
+      }
     </script>
   </body>
 </html>

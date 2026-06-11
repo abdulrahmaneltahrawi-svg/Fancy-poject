@@ -4,9 +4,10 @@ async function displayAllDesigners(containerId = 'designers-container') {
     if (!container) return;
 
     try {
-        const result = await FancyAPI.get('/designer/public-list.php');
+        // تم تغيير المسار ليتوافق مع الملف الموجود: All_designer.php
+        const result = await FancyAPI.get('/admin/All_designer.php');
         if (result && result.success) {
-            const designers = result.data.designers || [];
+            const designers = result.data || []; // البيانات تعود مباشرة في المصفوفة حسب ملف All_designer.php
             container.innerHTML = designers.length ? '' : '<p>No designers found.</p>';
             
             designers.forEach(designer => {
@@ -14,10 +15,10 @@ async function displayAllDesigners(containerId = 'designers-container') {
                     <div class="brand-card">
                         <a href="view_designer.html?id=${designer.id}" style="text-decoration: none; color: inherit;">
                             <div class="brand-info">
-                                <img src="${getSafeImageUrl(designer.logo || designer.avatar)}" class="brand-logo" />
+                                <img src="${getSafeImageUrl(designer.avatar)}" class="brand-logo" />
                                 <div class="brand-text">
-                                    <h3>${designer.designer_name}</h3>
-                                    <p>${designer.designer_type}</p>
+                                    <h3>${designer.user_name}</h3>
+                                    <p>${designer.company_type || 'Professional Designer'}</p>
                                     <span>${designer.city}, ${designer.country}</span>
                                 </div>
                             </div>
@@ -85,17 +86,17 @@ async function loadPendingDesignersForAdmin(containerId) {
     if (!container) return;
 
     try {
-        const result = await FancyAPI.get('/admin/pending-designers.php');
-        if (result.success && Array.isArray(result.data.designers)) {
-            container.innerHTML = result.data.designers.length ? '' : '<p>No pending designers</p>';
-            result.data.designers.forEach(designer => {
+        const result = await FancyAPI.get('/admin/pending_designer.php');
+        if (result.success && Array.isArray(result.data)) {
+            container.innerHTML = result.data.length ? '' : '<p>No pending designers</p>';
+            result.data.forEach(designer => {
                 container.innerHTML += `
                     <div class="brand-card" style="border: 1px solid #eee; padding: 15px; border-radius: 8px;">
-                        <img src="${getSafeImageUrl(designer.logo || designer.avatar)}" style="width:50px; height:50px; border-radius:50%;">
-                        <h3>${designer.designer_name}</h3>
+                        <img src="${getSafeImageUrl(designer.avatar)}" style="width:50px; height:50px; border-radius:50%;">
+                        <h3>${designer.user_name}</h3>
                         <div style="display:flex; gap:10px; margin-top:10px;">
-                            <button onclick="approveDesigner(${designer.id})" style="flex:1; background:#5cb85c; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">Accept</button>
-                            <button onclick="rejectDesigner(${designer.id})" style="flex:1; background:#d9534f; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">Reject</button>
+                            <button onclick="approveDesignerAction(${designer.id})" style="flex:1; background:#5cb85c; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">Accept</button>
+                            <button onclick="rejectDesignerAction(${designer.id})" style="flex:1; background:#d9534f; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">Reject</button>
                         </div>
                     </div>`;
             });
@@ -103,16 +104,21 @@ async function loadPendingDesignersForAdmin(containerId) {
     } catch (error) { console.error(error); }
 }
 
-async function approveDesigner(id) {
+// تم تغيير أسماء الدوال لتجنب التعارض مع الأسماء المحجوزة
+async function approveDesignerAction(id) {
     if (!confirm('Approve this designer?')) return;
-    const result = await FancyAPI.post('/admin/approve-designer.php', { designer_id: id });
+    // لاحظ استخدام FormData لأن الملف يتوقع $_POST['designer_id']
+    const formData = new FormData();
+    formData.append('designer_id', id);
+    const result = await FancyAPI.post('/admin/Approve_designer.php', formData);
     if (result.success) { alert('Accepted'); location.reload(); }
 }
 
-async function rejectDesigner(id) {
-    const reason = prompt('Reason:');
-    if (reason === null) return;
-    const result = await FancyAPI.post('/admin/reject-designer.php', { designer_id: id, reason });
+async function rejectDesignerAction(id) {
+    if (!confirm('Reject this designer?')) return;
+    const formData = new FormData();
+    formData.append('designer_id', id);
+    const result = await FancyAPI.post('/admin/rejected_designer.php', formData);
     if (result.success) { alert('Rejected'); location.reload(); }
 }
 
