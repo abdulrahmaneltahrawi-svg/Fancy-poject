@@ -401,8 +401,8 @@ html{
   border: 1px solid transparent;
 }
 .project-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  transform: none; /* Remove the translateY effect */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
   border-color: #eee;
 }
 
@@ -421,7 +421,7 @@ html{
   transition: transform 0.5s ease;
 }
 .project-card:hover .card-image img {
-  transform: scale(1.05);
+  transform: none; /* Remove the scale effect */
 }
 
 .card-content {
