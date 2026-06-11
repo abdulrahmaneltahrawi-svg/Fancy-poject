@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" href="imges/img/fancy1.jfif" />
-    <title>Add New Product - Fancy Design</title>
+    <title>Edit Designer Profile - Fancy Design</title>
     <link rel="stylesheet" href="style.css" />
     <style>
       .form-container {
@@ -43,78 +43,152 @@
   <body>
     <div id="header-placeholder"></div>
     <div class="form-container">
-      <h2>Add new product</h2>
-      <form id="productForm">
-        <input type="hidden" name="brand_id" id="form_brand_id" />
+      <h2>Edit Designer Profile</h2>
+      <form id="editDesignerForm">
+        <input type="hidden" name="designer_id" id="designer_id" />
         <div class="form-group">
-          <label>designer name:</label>
+          <label>Designer name:</label>
           <input
             type="text"
             placeholder="Your designer name here..."
-            name="product_name"
+            name="designer_name" 
             required
           />
-
         </div>
         <div class="form-group">
-          <label>designer type :</label>
+          <label>Designer type:</label>
           <input
             type="text"
             placeholder="Your design type here..."
-            name="product_name"
+            name="company_type"
             required
           />
         </div>
-                 <div class="form-group" style="flex: 1">
+        <div style="display: flex; gap: 15px;">
+          <div class="form-group" style="flex: 1">
             <label>City:</label>
-            <input type="text" name="country" required />
+            <input type="text" name="city" required />
           </div>
           <div class="form-group" style="flex: 1">
-            <label>State:</label>
-            <input type="text" name="city" />
+            <label>Country:</label>
+            <input type="text" name="country" />
           </div>
-          <div class="form-group" style="flex: 1">
-            <label>Services</label>
-            <input type="text" name="service" />
-          </div>
+        </div>
+        <div class="form-group">
+          <label>Services:</label>
+          <input type="text" name="services" />
+        </div>
           
         <div class="form-group">
-          <label>designer logo:</label>
-          <input type="file" name="main_image" accept="image/*" required />
+          <label>Designer logo (Update):</label>
+          <input type="file" name="avatar" accept="image/*" />
         </div>
         <div class="form-group">
           <label>Instagram:</label>
-          <input type="email" name="email" placeholder="brand@example.com" />
+          <input type="text" name="instagram_url" placeholder="Instagram username" />
         </div>
         <div class="form-group">
-          <label>Linedin:</label>
-          <input type="email" name="email" placeholder="brand@example.com" />
+          <label>LinkedIn:</label>
+          <input type="text" name="linkedin_url" placeholder="LinkedIn profile link" />
         </div>
         <div class="form-group">
           <label>WhatsApp:</label>
-          <input type="email" name="email" placeholder="brand@example.com" />
+          <input type="tel" name="whatsapp_number" placeholder="WhatsApp number" />
         </div>
         <div class="form-group">
           <label>Email:</label>
-          <input type="email" name="email" placeholder="brand@example.com" />
+          <input type="email" name="email_contact" placeholder="designer@example.com" />
         </div>
         <div class="form-group">
           <label>Short description:</label>
           <textarea name="short_description" rows="2"></textarea>
         </div>
         <div class="form-group">
-          <label>Full description:</label>
-          <textarea name="description" rows="5"></textarea>
+          <label>Full description (About):</label>
+          <textarea name="bio" rows="5"></textarea>
         </div>
         <button type="submit" class="submit-btn">
-          Send product for review
+          Save Changes
         </button>
       </form>
     </div>
     <script src="js/script.js"></script>
-    <script src="js/categories.js"></script>
-    <script src="js/products.js"></script>
+    <script src="js/designers.js"></script>
     <script src="js/auth.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', async () => {
+        const params = new URLSearchParams(window.location.search);
+        const designerId = params.get('id') || params.get('designer_id');
+        
+        if (!designerId) {
+            alert("No designer ID found.");
+            window.location.href = 'profile.html';
+            return;
+        }
+        
+        document.getElementById('designer_id').value = designerId;
+        
+        try {
+            // استدعاء ملف get_profile.php لجلب البيانات الحالية للمصمم
+            const result = await FancyAPI.get(`/designer/get_profile.php?id=${designerId}`);
+            if (result.success && (result.data || result.data.designer)) {
+                // التأكد من جلب بيانات المصمم سواء كانت مباشرة أو داخل كائن designer
+                const designer = result.data.designer || result.data;
+                const form = document.getElementById('editDesignerForm');
+                
+                form.elements['designer_name'].value = designer.designer_name || '';
+                form.elements['company_type'].value = designer.company_type || designer.designer_type || ''; 
+                form.elements['city'].value = designer.city || '';
+                form.elements['country'].value = designer.country || '';
+                // تحويل مصفوفة الخدمات إلى نص مفصول بفاصلة
+                form.elements['services'].value = designer.services ? designer.services.map(s => s.name).join(', ') : '';
+                form.elements['instagram_url'].value = designer.instagram_url || designer.instagram || '';
+                form.elements['linkedin_url'].value = designer.linkedin_url || designer.linkedin || '';
+                form.elements['whatsapp_number'].value = designer.whatsapp_number || designer.whatsapp || '';
+                form.elements['email_contact'].value = designer.email_contact || designer.email || '';
+                form.elements['short_description'].value = designer.short_description || '';
+                form.elements['bio'].value = designer.bio || designer.description || '';
+            }
+        } catch (error) {
+            console.error('Error fetching designer data:', error);
+        }
+      });
 
+      document.getElementById('editDesignerForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const submitBtn = this.querySelector('.submit-btn');
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Saving...';
+        
+        try {
+          const designerId = document.getElementById('designer_id').value;
+          
+          // معالجة الخدمات لتحويلها من نص إلى JSON Array كما يتوقع السيرفر
+          const servicesValue = formData.get('services');
+          const servicesArray = servicesValue ? servicesValue.split(',').map(s => s.trim()).filter(s => s !== "") : [];
+          formData.set('services', JSON.stringify(servicesArray));
+
+          // التأكد من إرسال المعرف مع البيانات
+          formData.append('id', designerId); 
+
+          // إرسال البيانات المحدثة لنفس الملف edit_designer.php عبر طلب POST
+          const result = await FancyAPI.post('/designer/edit_designer.php', formData);
+          
+          if (result.success) {
+            alert('Designer profile updated successfully!');
+            window.location.href = 'profile.html';
+          } else {
+            alert('Error: ' + (result.message || 'Failed to update profile.'));
+          }
+        } catch (error) {
+          console.error('Submission error:', error);
+          alert('An error occurred while connecting to the server. Check console for details.');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerText = 'Save Changes';
+        }
+      });
+    </script>
   </body>
 </html>
