@@ -206,9 +206,9 @@ function setupProfileTabs(user) {
             else if (this.id === 'tab-designers') {
                 designersSection?.classList.remove('hidden');
                 
-                // استدعاء دالة جلب المصممين (إذا كانت متوفرة)
-                if (typeof window.displayUserDesigners === 'function') {
-                    window.displayUserDesigners('user-designers-list');
+                // استدعاء دالة جلب بيانات المصمم (إذا كانت متوفرة)
+                if (typeof window.displayUserDesignerProfile === 'function') {
+                    window.displayUserDesignerProfile('user-designers-list');
                 }
 
                 createSection?.classList.remove('hidden');

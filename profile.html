@@ -135,6 +135,11 @@
         <div id="user-brands-list" class="brands-container"></div>
       </div>
 
+      <!-- حاوية عرض المنتجات الخاصة بالمستخدم -->
+      <div id="products-tab-content" class="hidden">
+        <div id="user-products-list" class="brands-container"></div>
+      </div>
+
       <!-- حاوية عرض المصممين الخاصة بالمستخدم -->
       <div id="designers-tab-content" class="hidden">
         <div id="user-designers-list" class="brands-container"></div>
@@ -164,6 +169,7 @@
   <script src="js/script.js"></script>
   <script src="js/products.js"></script>
   <script src="js/brands.js"></script>
+  <script src="js/designers.js"></script>
   <script src="js/auth.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -175,6 +181,7 @@
       const tabs = {
         'tab-overview': 'overview-tab-content',
         'tab-brands': 'brands-tab-content',
+        'tab-products': 'products-tab-content',
         'tab-designers': 'designers-tab-content'
       };
 
@@ -193,6 +200,8 @@
           // تحميل البيانات بناءً على التبويب
           if (tabId === 'tab-brands') {
             displayUserBrands();
+          } else if (tabId === 'tab-products') {
+            loadMyProducts('user-products-list');
           } else if (tabId === 'tab-designers') {
             displayUserDesignerProfile();
           }

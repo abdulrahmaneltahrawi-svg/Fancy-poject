@@ -164,7 +164,7 @@
         try {
           const designerId = document.getElementById('designer_id').value;
           
-          // معالجة الخدمات لتحويلها من نص إلى JSON Array كما يتوقع السيرفر
+          // تأكيد تحويل الخدمات إلى مصفوفة JSON لضمان قبولها في edit_designer.php
           const servicesValue = formData.get('services');
           const servicesArray = servicesValue ? servicesValue.split(',').map(s => s.trim()).filter(s => s !== "") : [];
           formData.set('services', JSON.stringify(servicesArray));
