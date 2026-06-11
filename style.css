@@ -44,6 +44,9 @@ html{
   flex: 1;
   max-width: 900px;
   margin-right: 40px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-weight: 650;
+  color: #333;
 }
 
 .header-bottom-part {
@@ -57,8 +60,9 @@ html{
   background-color: var(--bg-light);
   border-radius: 8px;
   padding: 5px 15px;
-  font-family: "Roboto" !important;
-}
+  
+  }
+
 
 /* الحاوية الأب لضمان الالتصاق */
 .category-select {
@@ -96,18 +100,18 @@ html{
   margin: 0; /* حذفنا المارجن لضمان الالتصاق */
   border: 1px solid #eee; /* حدود خفيفة جداً لتحديدها */
   border-top: none; /* إزالة الحد العلوي لتظهر كأنها تابعة للمربع فوقها */
-  font-family: "Roboto" !important;
+
 }
 
 /* العناصر داخل القائمة */
 .dropdown-menu li {
   padding: 10px 15px;
-  font-size: 15px;
-  font-weight: 500;
-  color: #333;
+  font-size: 14px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;  font-weight: 900;
+  color: #222;
   cursor: pointer;
   transition: background 0.2s;
-  text-align: center; /* توسيط النص داخل العنصر */
+  text-align: left; /* توسيط النص داخل العنصر */
 }
 
 .dropdown-menu a {
@@ -122,7 +126,7 @@ html{
 }
 
 .dropdown-menu li:hover {
-  background-color: #f8f8f8;
+  background-color: #ebeaea;
 }
 
 /* عندما تأخذ القائمة هذا الكلاس تظهر */
