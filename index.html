@@ -48,10 +48,10 @@
 
       .hero-slider {
         position: relative;
-        width: 100%; /* يمكنك تقليل النسبة حسب الرغبة، مثلاً 80% */
-        max-width: 1400px; /* يمنع السلايدر من التمدد بشكل مفرط في الشاشات الكبيرة جداً */
-        height: 90vh; /* يمكنك أيضاً تقليل الارتفاع ليناسب العرض الجديد */
-        margin: 0 auto; /* auto تقوم بتوسيط السلايدر في المنتصف أفقياً */
+        width: 95%; /* تحديد العرض بـ 95% من الشاشة لترك مسافة */
+        max-width: 1400px; /* منع التمدد المفرط في الشاشات الكبيرة جداً */
+        margin: 20px auto; /* إضافة مسافة عمودية وتوسيط السلايدر أفقياً */
+        height: 80vh; /* يمكنك أيضاً تقليل الارتفاع ليناسب العرض الجديد */
         overflow: hidden;
       }
 
@@ -63,7 +63,7 @@
       .slider-container img {
     width: 100%;
     height: 100%;
-    object-fit: contain;      /* هذا هو الحل الأساسي لمشكلة القص */
+    object-fit: cover;      /* هذا هو الحل الأساسي لمشكلة القص */
     object-position: center; /* لضمان تركيز الصورة في المنتصف دائماً */
     flex-shrink: 0;         /* لمنع انضغاط الصور */
 }
@@ -96,7 +96,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-size: contain;
+        background-size: cover;
         background-repeat: no-repeat;
         background-position: center;
         z-index: -1;
@@ -123,11 +123,13 @@
         font-size: 4rem;
         margin-bottom: 10px;
         letter-spacing: 2px;
+        margin: 0;
       }
 
       .slide-content p {
-        font-size: 1.2rem;
+        font-size: 1.9rem;
         font-weight: 300;
+        margin: 0;
       }
 
       /* أزرار التحكم */
@@ -340,10 +342,73 @@
     </div>
 
     <section class="hero-slider">
-      <div class="slider-container" id="dynamic-slider"></div>
+      <div class="slider-container" id="dynamic-slider">
+        <!-- صور ثابتة للسلايدر -->
+         <a href="view.html?id=62">
+        <div class="slide active">
+          <div class="slide-bg" style="background-image: url('imges/hero-img/topslider01.webp');"></div>
+          <div class="slide-content">
+            <h1>Cookie Modular Sofa</h1>
+            <p>A playful and inviting seating solurtion that offers endless possibilities for comfort and style.</p>
+          </div>
+        </div>
+        </a>
+        <a href="view.html?id=57">
+        <div class="slide">
+          <div class="slide-bg" style="background-image: url('imges/hero-img/topslider04 (1).webp');"></div>
+          <div class="slide-content">
+            <h1>The RAIN FLOWER</h1>
+            <p>A modern masterpiece that seamlessly blends comfort and style.</p>
+          </div>
+        </div>
+        </a>
+        <a href="view.html?id=58">
+        <div class="slide">
+          <div class="slide-bg" style="background-image: url('imges/hero-img/Artboard1.webp');"></div>
+          <div class="slide-content">
+            <h1>SYS Lounge Chair</h1>
+            <p>A striking blend of industrial strength and plush comfort.</p>
+          </div>
+        </div>
+        </a>
+        <a href="view.html?id=59">
+        <div class="slide">
+          <div class="slide-bg" style="background-image: url('imges/hero-img/topslider05.webp');"></div>
+          <div class="slide-content">
+            <h1>The Koji Sofa</h1>
+            <p>A sculptural seating experience that redefines modern minimalism.</p>
+          </div>
+        </div>
+        </a>
+        <a href="view.html?id=61">
+        <div class="slide">
+          <div class="slide-bg" style="background-image: url('imges/hero-img/Artboard2.webp');"></div>
+          <div class="slide-content">
+            <h1>One-Corner Sofa</h1>
+            <p>A sleek and modern seating solution that combines style and comfort for contemporary living.</p>
+          </div>
+        </div>
+        </a>
+        <a href="view.html?id=60">
+        <div class="slide">
+          <div class="slide-bg" style="background-image: url('imges/hero-img/topslider03.webp');"></div>
+          <div class="slide-content">
+            <h1>Flower Sofa</h1>
+            <p>A versatile and inviting seating solution that blooms into endless configurations.</p>
+          </div>
+        </div>
+        </a>
+      </div>
       <button class="prev-btn">&#10094;</button>
       <button class="next-btn">&#10095;</button>
-      <div class="dots-container" id="dots-container"></div>
+      <div class="dots-container" id="dots-container">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
     </section>
 
 
@@ -410,7 +475,7 @@ offers both privacy and comfort.</p>
           </div>
           <div class="gallery-item" style="grid-row: span 2; height: 400px;">
             <a href="view.html?id=50">
-              <img src="imges/hero-img/6.webp" style="object-fit: cover;" alt="منتج 6"></a>
+              <img src="imges/hero-img/6.png" style="object-fit: cover;" alt="منتج 6"></a>
               <div class="gallery-overlay">
                   <h4>Lake</h4>
                   <p>a combination of high and low tea table, Design comes from the natural of lake.</p>
@@ -418,7 +483,7 @@ offers both privacy and comfort.</p>
           </div>
           <div class="gallery-item" style="grid-row: span 2; height: 400px;">
             <a href="view.html?id=56">
-              <img src="imges/hero-img/7.webp" style="object-fit: cover;" alt="منتج 7">
+              <img src="imges/hero-img/7.png" style="object-fit: cover;" alt="منتج 7">
               </a>
               <div class="gallery-overlay">
                   <h4></h4>
@@ -536,10 +601,8 @@ offers both privacy and comfort.</p>
       const brandContainer = document.getElementById("brand-container");
 
       document.addEventListener("DOMContentLoaded", async () => {
-        // 0. جلب وتشغيل السلايدر الديناميكي
-        if (typeof loadSliderProducts === "function") {
-          await loadSliderProducts();
-        }
+        // تشغيل السلايدر مباشرة باستخدام الصور الثابتة الموجودة في HTML
+        initSlider();
 
         // 1. جلب وعرض الأقسام من الـ API
         if (typeof loadMainCategories === "function") {
