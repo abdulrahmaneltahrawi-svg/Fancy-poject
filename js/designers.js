@@ -12,14 +12,16 @@ async function displayAllDesigners(containerId = 'designers-container') {
             designers.forEach(designer => {
                 container.innerHTML += `
                     <div class="brand-card">
-                        <div class="brand-info">
-                            <img src="${getSafeImageUrl(designer.logo || designer.avatar)}" class="brand-logo" />
-                            <div class="brand-text">
-                                <h3>${designer.designer_name}</h3>
-                                <p>${designer.designer_type}</p>
-                                <span>${designer.city}, ${designer.country}</span>
+                        <a href="view_designer.html?id=${designer.id}" style="text-decoration: none; color: inherit;">
+                            <div class="brand-info">
+                                <img src="${getSafeImageUrl(designer.logo || designer.avatar)}" class="brand-logo" />
+                                <div class="brand-text">
+                                    <h3>${designer.designer_name}</h3>
+                                    <p>${designer.designer_type}</p>
+                                    <span>${designer.city}, ${designer.country}</span>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </div>`;
             });
         }

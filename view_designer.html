@@ -173,53 +173,36 @@
         if (!brandId) return;
 
         try {
-          // استخدام FancyAPI الموحد بدلاً من fetch المباشر لتجنب أخطاء المسارات (404)
-          const result = await FancyAPI.get(
-            `/brands/get.php?brand_id=${brandId}`,
-          );
+          // استدعاء بيانات المصمم بدلاً من البراند
+          const result = await FancyAPI.get(`/designer/get_profile.php?id=${brandId}`);
 
-          if (result.success && result.data && result.data.brand) {
-            const brand = result.data.brand;
-            document.getElementById("brandName").innerText =
-              brand.brand_name || "Brand";
-            document.getElementById("brandAbout").innerText =
-              brand.description || "No description is available.";
-            // استبدل السطور القديمة بـ:
-            document.getElementById("brandCover").src = getSafeImageUrl(
-              brand.cover_image || "imges/img/fancy3.jfif",
-            );
-            document.getElementById("brandLogo").src = getSafeImageUrl(
-              brand.logo || "imges/img/fancy1.jfif",
-            );
+          if (result.success && result.data) {
+            const designer = result.data.designer || result.data;
+            
+            document.getElementById("brandName").innerText = designer.designer_name || designer.company_type || "Designer";
+            document.getElementById("brandAbout").innerText = designer.bio || designer.description || "No description available.";
+            document.getElementById("brandLocation").innerText = `${designer.city || ''}, ${designer.country || ''}`;
+            
+            // تحديث الصور
+            document.getElementById("brandCover").src = getSafeImageUrl(designer.cover_image || "imges/img/fancy3.jfif");
+            document.getElementById("brandLogo").src = getSafeImageUrl(designer.avatar || designer.logo || "imges/img/fancy1.jfif");
 
-            // التحقق من الصلاحيات لإظهار الأزرار
-            const userData = JSON.parse(localStorage.getItem("userData"));
-            let showProductControls = false;
-            if (userData && userData.id == brand.user_id) {
-              // إظهار زر إضافة منتج
-              const addBtn = document.getElementById("add-product-btn");
-              addBtn.classList.remove("hidden");
-              addBtn.href = `add-product.html?brand_id=${brand.id}`;
-
-              // إظهار زر تعديل العلامة التجارية
-              const editBtn = document.getElementById("edit-brand-btn");
-              editBtn.classList.remove("hidden");
-              editBtn.href = `edit-brand.html?brand_id=${brand.id}`; // الرابط لصفحة التعديل
-
-              showProductControls = true;
+            // التحقق من الملكية لإظهار أزرار التعديل
+            const userData = JSON.parse(localStorage.getItem("userData") || "{}");
+            if (userData && userData.id == designer.user_id) {
+                const editBtn = document.getElementById("edit-brand-btn");
+                editBtn.classList.remove("hidden");
+                editBtn.innerText = "Edit Designer Profile";
+                editBtn.href = `edit-designer.html?id=${designer.id}`;
             }
 
-            // إذا كان المستخدم هو صاحب البراند، نستخدم API "منتجاتي" (my-products.php) لعرض القائمة الكاملة
-            if (showProductControls) {
-              loadMyProducts("productsGrid", brand.id);
-            } else {
-              // للزوار العاديين، نستخدم القائمة العامة المفلترة بمعرف البراند
-              loadProducts("productsGrid", null, brand.id, false);
-            }
+            // إخفاء شبكة المنتجات إذا كان المصمم لا يملك منتجات (أو تخصيصها لاحقاً)
+            const productsGrid = document.getElementById("productsGrid");
+            productsGrid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #999;'>Designer portfolio items will appear here.</p>";
+
           } else {
-            console.error("Brand not found or API error:", result.message);
-            alert("Sorry, brand data not found.");
-            window.location.href = "page_brand.html";
+            alert("Designer profile not found.");
+            window.location.href = "index.html";
           }
         } catch (error) {
           console.error(error);
