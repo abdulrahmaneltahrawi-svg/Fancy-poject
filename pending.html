@@ -34,6 +34,13 @@
           <!-- جاري التحميل... -->
         </div>
       </div>
+
+      <p class="title">Magazine Projects pending</p>
+      <div class="container">
+        <div id="pending-projects-list" class="projects-grid">
+          <!-- جاري التحميل... -->
+        </div>
+      </div>
     </section>
 
     <div id="footer-placeholder"></div>
@@ -51,6 +58,7 @@
           loadPendingBrandsForAdmin("pending-brands-list");
         }
         loadPendingDesignersForAdmin("pending-designers-list");
+        loadPendingProjectsForAdmin("pending-projects-list");
       });
 
       async function loadPendingDesignersForAdmin(containerId) {
@@ -75,6 +83,52 @@
             });
           }
         } catch (error) { console.error("Error loading pending designers:", error); }
+      }
+
+      async function loadPendingProjectsForAdmin(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        try {
+          const result = await FancyAPI.get('/admin/pending_projects.php');
+          if (result.success) {
+            const projects = result.data.projects || result.data || [];
+            container.innerHTML = projects.length ? '' : '<p style="grid-column:1/-1; text-align:center;">No magazine projects pending</p>';
+            projects.forEach(project => {
+              container.innerHTML += `
+                <div class="project-card" style="border: 1px solid #eee; padding: 15px; border-radius: 8px; background:#fff;">
+                  <div class="card-image" style="height: 180px; overflow:hidden;">
+                    <img src="${getSafeImageUrl(project.cover_image)}" style="width:100%; height:100%; object-fit: cover; border-radius: 4px;">
+                  </div>
+                  <div class="card-content">
+                    <h3 style="margin-top:10px; font-size:16px;">${project.title}</h3>
+                    <p style="font-size:12px; color:#666; margin: 5px 0;">Designer: <b>${project.designer_name || 'N/A'}</b></p>
+                    <p style="font-size:11px; color:#888;">Type: ${project.type} | Cat: ${project.category}</p>
+                    <div style="display:flex; gap:10px; margin-top:15px;">
+                      <button onclick="handleProjectAction(${project.id}, 'approve')" style="flex:1; background:#5cb85c; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer; font-weight:bold;">Accept</button>
+                      <button onclick="handleProjectAction(${project.id}, 'reject')" style="flex:1; background:#d9534f; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer; font-weight:bold;">Reject</button>
+                    </div>
+                  </div>
+                </div>`;
+            });
+          }
+        } catch (error) { console.error("Error loading pending projects:", error); }
+      }
+
+      async function handleProjectAction(id, action) {
+        if (!confirm(`Are you sure you want to ${action} this project?`)) return;
+        const endpoint = '/admin/update_project_status.php';
+        const fd = new FormData();
+        fd.append('project_id', id);
+        const status = action === 'approve' ? 'approved' : 'rejected';
+        fd.append('status', status);
+
+        const res = await FancyAPI.post(endpoint, fd);
+        if (res.success) {
+          alert(`Project ${status} successfully`);
+          loadPendingProjectsForAdmin('pending-projects-list');
+        } else {
+          alert('Error: ' + res.message);
+        }
       }
 
       async function handleDesignerAction(id, action) {

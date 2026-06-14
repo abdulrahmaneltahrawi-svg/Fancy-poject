@@ -193,6 +193,24 @@
         }
       }
 
+      /* جعل كروت قسم المجلة أعرض وتحسين شكلها */
+      #interior-container {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 40px;
+      }
+
+      #interior-container .project-card {
+        border: none;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border-radius: 15px;
+        overflow: hidden;
+        padding: 0; /* إزالة الحواف الداخلية للمظهر المودرن */
+        background: #fff;
+      }
+
+      #interior-container .card-content {
+        padding: 25px;
+      }
 
       .descrition {
         display: flex;
@@ -531,7 +549,6 @@ productivity in any workspace.</p>
     </a>
 </section>
 
-
     <section class="projects-section">
       <p class="title">products</p>
       <p class="sub-title">Explore products, get CAD / 3D files</p>
@@ -629,12 +646,40 @@ productivity in any workspace.</p>
         }
       });
 
+      async function loadMagazines(containerId, limit = 3) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        try {
+          // استدعاء الـ API الخاص بالمشاريع العامة (المقبولة فقط)
+          const result = await FancyAPI.get('/project/public_projects.php');
+          if (result.success && result.data && result.data.projects) {
+            let projects = result.data.projects;
+            if (limit) projects = projects.slice(0, limit);
+            
+            if (projects.length === 0) {
+              container.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">No magazine entries yet.</p>';
+              return;
+            }
+
+            container.innerHTML = projects.map(p => createGenericCardHTML({
+              id: p.id,
+              title: p.title,
+              image: getSafeImageUrl(p.cover_image), // استخدام صورة الغلاف
+              category: p.category,
+              type: p.type
+            }, 'magazine')).join('');
+          }
+        } catch (error) {
+          console.error("Error loading magazines:", error);
+        }
+      }
+
       // دالة التصميم الموحدة للعناصر غير المنتجات (Magazine, Brand)
       function createGenericCardHTML(data, type) {
-        let targetPage = "view.html"; // الصفحة الافتراضية للمنتجات
+        let targetPage = "view.html";
 
         if (type === "magazine") {
-          targetPage = "view_interior.html";
+          targetPage = "view_magazine.html";
         } else if (type === "brand") {
           // توجيه العلامات التجارية لصفحتها الصحيحة
           targetPage = "view_brands.html";
@@ -642,23 +687,25 @@ productivity in any workspace.</p>
 
         // توحيد الأولوية لـ product_id لضمان عدم تكرار المعرفات كما في slider.js و products.js
         const itemId = data.product_id || data.id || "";
-        const categoryText = data.category || "";
-        const badgeText = data.type || data.tag || data.brand || "";
 
         return `
         <div class="project-card">
-            <div class="card-image">
+            <div class="card-image" style="height: 350px; margin-bottom: 0;">
                 <a href="${targetPage}?id=${itemId}">
-                    <img src="${data.image}" alt="${data.title}">
+                    <img src="${data.image}" alt="${data.title}" style="object-fit: cover;">
                 </a>
             </div>
             <div class="card-content">
                 <a href="${targetPage}?id=${itemId}" style="text-decoration: none; color: inherit;">
-                    <h3 class="card-title">${data.title}</h3>
+                    <h3 class="card-title" style="font-size: 24px; font-weight: 700; margin-bottom: 15px;">${data.title}</h3>
                 </a>
-                
-                <div class="card-meta" style="margin-top: 10px;">
-                    <span class="category" style="color: #000; font-weight: bold; text-transform: uppercase; font-size: 12px;">${badgeText || categoryText}</span>
+                <div class="card-meta" style="display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #eee; pt: 15px; margin-top: 10px; padding-top: 15px;">
+                    <p style="font-size: 13px; color: #888; margin: 0; text-transform: uppercase; letter-spacing: 1px;">
+                        <strong style="color: #000;">Category:</strong> ${data.category || 'N/A'}
+                    </p>
+                    <p style="font-size: 13px; color: #888; margin: 0; text-transform: uppercase; letter-spacing: 1px;">
+                        <strong style="color: #000;">Type:</strong> ${data.type || 'N/A'}
+                    </p>
                 </div>
             </div>
         </div>

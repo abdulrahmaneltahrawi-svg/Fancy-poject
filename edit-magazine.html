@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="imges/img/fancy1.jfif" />
+    <title>Edit Magazine Entry - Fancy Design</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .form-container { max-width: 700px; margin: 50px auto; padding: 40px; border: 1px solid #ddd; border-radius: 12px; background: #fff; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); }
+      .form-group { margin-bottom: 20px; }
+      .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; }
+      .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; }
+      .submit-btn { background: #000; color: white; padding: 15px 25px; border: none; border-radius: 6px; cursor: pointer; width: 100%; font-size: 17px; font-weight: bold; transition: background 0.3s; }
+      .submit-btn:hover { background: #383838; }
+    </style>
+  </head>
+  <body>
+    <div id="header-placeholder"></div>
+    <div class="form-container">
+      <h2>Edit Magazine Entry</h2>
+      <form id="editMagazineForm">
+        <input type="hidden" name="project_id" id="project_id" />
+        <div class="form-group">
+          <label>Title:</label>
+          <input type="text" name="title" id="title" required />
+        </div>
+        <div class="form-group">
+          <label>Category:</label>
+          <select name="category" id="category" required>
+            <option value="Interior Design">Interior Design</option>
+            <option value="Architecture">Architecture</option>
+            <option value="Trends">Trends & News</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Type:</label>
+          <input type="text" name="type" id="type" required />
+        </div>
+        <div style="display: flex; gap: 20px;">
+          <div class="form-group" style="flex: 1;">
+            <label>City:</label>
+            <input type="text" name="city" id="city" required />
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label>State:</label>
+            <input type="text" name="state" id="state" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Cover Image (Keep empty to keep current):</label>
+          <input type="file" name="image" accept="image/*" />
+        </div>
+        <div class="form-group">
+          <label>Header Description:</label>
+          <textarea name="header_description" id="header_description" rows="2" required></textarea>
+        </div>
+        <div class="form-group">
+          <label>Full Description:</label>
+          <textarea name="description" id="description" rows="10" required></textarea>
+        </div>
+        <button type="submit" class="submit-btn" id="saveBtn">Save Changes</button>
+      </form>
+    </div>
+    <div id="footer-placeholder"></div>
+    <script src="js/script.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', async () => {
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+        if (!id) return;
+        document.getElementById('project_id').value = id;
+
+        // جلب البيانات الحالية
+        try {
+          const result = await FancyAPI.get(`/project/get_project.php?id=${id}`);
+          if (result.success) {
+            const p = result.data;
+            document.getElementById('title').value = p.title || '';
+            document.getElementById('category').value = p.category || '';
+            document.getElementById('type').value = p.type || '';
+            document.getElementById('city').value = p.city || '';
+            document.getElementById('state').value = p.state || '';
+            document.getElementById('header_description').value = p.header_description || '';
+            document.getElementById('description').value = p.description || '';
+          }
+        } catch (e) { console.error(e); }
+      });
+
+      document.getElementById('editMagazineForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('saveBtn');
+        const formData = new FormData(this);
+        btn.disabled = true;
+        btn.innerText = 'Saving...';
+
+        const result = await FancyAPI.post('/project/edit_project.php', formData);
+        if (result.success) {
+          alert('Magazine entry updated successfully!');
+          window.location.href = 'profile.html';
+        } else {
+          alert('Error: ' + result.message);
+          btn.disabled = false;
+          btn.innerText = 'Save Changes';
+        }
+      });
+    </script>
+  </body>
+</html>

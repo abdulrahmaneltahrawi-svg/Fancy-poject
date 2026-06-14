@@ -178,7 +178,8 @@
 
             // التحقق من الملكية لإظهار أزرار التعديل
             const userData = JSON.parse(localStorage.getItem("userData") || "{}");
-            if (userData && userData.id == designer.user_id) {
+            const isOwner = userData && userData.id == designer.user_id;
+            if (isOwner) {
                 // زر التعديل
                 const editBtn = document.getElementById("edit-brand-btn");
                 editBtn.classList.remove("hidden");
@@ -192,7 +193,7 @@
             }
 
             // جلب المشاريع/المقالات الخاصة بهذا المصمم (Magazine Entries)
-            loadDesignerProjects(designer.user_id);
+            loadDesignerProjects(designer.user_id, isOwner);
 
           } else {
             alert("Designer profile not found.");
@@ -202,8 +203,7 @@
           console.error(error);
         }
       }
-
-      async function loadDesignerProjects(userId) {
+      async function loadDesignerProjects(userId, isOwner = false) {
         const grid = document.getElementById("productsGrid");
         try {
             // استدعاء الـ API الذي حددته لجلب المشاريع
@@ -226,8 +226,13 @@
                             <a href="view_magazine.html?id=${project.id}" style="text-decoration: none; color: inherit;">
                                 <h3 class="card-title">${project.title}</h3>
                             </a>
-                            <p class="card-category" style="font-size: 14px; color: #999; margin: 5px 0 2px  overflow: hidden; text-overflow: ellipsis;">${project.category || 'N/A'}</p>
-                            <p class="card-type" style="font-size: 14px; color: #999; margin: 0 0 5px 0;">${project.type || 'N/A'}</p>
+                            <p class="card-category" style="font-size: 14px; color: #999; margin: 5px 0 2px 0; overflow: hidden; text-overflow: ellipsis;">Category: ${project.category || 'N/A'}</p>
+                            <p class="card-type" style="font-size: 14px; color: #999; margin: 0 0 5px 0;">Type: ${project.type || 'N/A'}</p>
+                            ${isOwner ? `
+                            <div class="card-actions" style="margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px;">
+                                <a href="edit-magazine.html?id=${project.id}" class="btn btn-edit" style="display: block; text-align: center; width: 100%; padding: 5px 0; background: #f0f0f0; color: #000; font-size: 12px; font-weight: bold; border-radius: 4px;">Edit Project</a>
+                            </div>
+                            ` : ''}
                         </div>
                     </div>
                 `).join('');

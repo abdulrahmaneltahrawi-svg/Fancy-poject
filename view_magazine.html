@@ -343,7 +343,7 @@
     <script src="js/products.js"></script>
     <script src="js/auth.js"></script>
     <script>
-      function switchTab(tabName) {
+      function switchTab(tabName, event) {
         // إخفاء كل التبويبات وإزالة الحالة النشطة من الأزرار
         document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -356,13 +356,84 @@
       // 1. جلب المعرف من الرابط
       const params = new URLSearchParams(window.location.search);
       // البحث عن المعرف سواء كان باسم id أو product_id لضمان التوافق
-      const projectId = params.get("id") || params.get("product_id");
+      const projectId = params.get("id");
 
       document.addEventListener("DOMContentLoaded", () => {
         if (projectId) {
-          loadSingleProductDetails(projectId);
+          loadSingleMagazineDetails(projectId);
+        } else {
+          alert("Magazine ID is missing.");
+          window.location.href = "index.html"; // أو أي صفحة أخرى مناسبة
         }
       });
+
+      async function loadSingleMagazineDetails(id) {
+        try {
+          const result = await FancyAPI.get(`/project/get_project.php?id=${id}`);
+
+          if (result.success && result.data) {
+            const project = result.data;
+
+            // تحديث الصورة الرئيسية
+            document.getElementById('project-image').src = getSafeImageUrl(project.cover_image_url);
+
+            // تحديث الفئة والنوع
+            document.getElementById('project-category').innerText = `${project.category || 'N/A'} / ${project.type || 'N/A'}`;
+
+            // تحديث العنوان
+            document.getElementById('project-name').innerText = project.title;
+
+            // تحديث الموقع واسم المصمم
+            const locationElem = document.getElementById('project-location');
+            if (locationElem) {
+              const locationParts = [];
+              if (project.city) locationParts.push(project.city);
+              if (project.state) locationParts.push(project.state);
+              if (project.designer_name) locationParts.push(project.designer_name);
+              
+              if (locationParts.length > 0) {
+                locationElem.innerText = locationParts.join(', ');
+                locationElem.style.display = 'block';
+              } else {
+                locationElem.style.display = 'none';
+              }
+            }
+
+            // تحديث الوصف الكامل
+            document.getElementById('project-desc').innerText = project.description || project.header_description || 'No description available.';
+
+            // إخفاء أقسام المنتجات غير ذات الصلة بالمجلة
+            document.getElementById('variants-container').classList.add('hidden');
+            document.getElementById('specs-container').classList.add('hidden');
+
+            // تحديث معرض الصور (Gallery)
+            const thumbnailsGrid = document.getElementById('thumbnails');
+            if (thumbnailsGrid && project.gallery_images && project.gallery_images.length > 0) {
+              thumbnailsGrid.innerHTML = project.gallery_images.map(imgUrl => `
+                <img src="${getSafeImageUrl(imgUrl)}" class="thumb-img" onclick="document.getElementById('project-image').src = this.src" alt="Gallery Image">
+              `).join('');
+            } else if (thumbnailsGrid) {
+              thumbnailsGrid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No additional gallery images.</p>';
+            }
+
+            // تحديث رابط الواتساب (إذا كان المصمم لديه رقم واتساب)
+            const whatsappBtn = document.getElementById('whatsapp-btn');
+            if (whatsappBtn && project.whatsapp_number) { // نفترض أن رقم الواتساب قد يأتي مع بيانات المصمم
+              const message = encodeURIComponent(`Hello, I'm interested in the magazine entry "${project.title}" by ${project.designer_name}.`);
+              whatsappBtn.href = `https://wa.me/${project.whatsapp_number}?text=${message}`;
+            } else if (whatsappBtn) {
+              whatsappBtn.style.display = 'none'; // إخفاء الزر إذا لم يتوفر رقم واتساب
+            }
+          } else {
+            alert('Magazine entry not found: ' + (result.message || 'Unknown error'));
+            window.location.href = 'index.html';
+          }
+        } catch (error) {
+          console.error('Error loading magazine details:', error);
+          alert('An error occurred while loading magazine details.');
+          window.location.href = 'index.html';
+        }
+      }
     </script>
   </body>
 </html>
