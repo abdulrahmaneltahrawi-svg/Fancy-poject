@@ -421,7 +421,7 @@ html {
   transition:
     transform 0.3s ease,
     box-shadow 0.3s ease;
-  border: 1px solid transparent;
+  border: 1px solid rgba(128, 128, 128, 0.112);
 }
 .project-card:hover {
   transform: none; /* Remove the translateY effect */
@@ -834,6 +834,7 @@ html {
   height: 200px;
   background-color: #ffffff;
   overflow: hidden;
+  border: 1px solid rgba(128, 128, 128, 0.112);
 }
 
 .brand-images-grid img {
