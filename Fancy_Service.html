@@ -320,8 +320,8 @@ button:hover { background: #464545; }
         <ul class="nav-links">
             <li><a href="#overview-id">Overview</a></li>
             <li><a href="#catalogues-id">Products catalogues</a></li>
-            <li><a href="#">Service Features</a></li>
-            <li><a href="#">Cases Overview</a></li>
+            <li><a href="#Team-id">Team of designer</a></li>
+            <li><a href="#brand-id">Authorized seller</a></li>
             <li><a href="#timeline-id">Work Timeline</a></li>
         </ul>
         <a href="#new-project-id" class="start-btn">Start new project</a>
@@ -361,7 +361,7 @@ button:hover { background: #464545; }
 
 
 <section class="services-section">
-    <div class="section-header">
+    <div class="section-header" id="Team-id">
         <h2>Fancy backed with a team of designers, logistics and experts in the industry, and we are ready to deliver different level of creative and procurement services for designers and end client between them and you can choose where you need our support</h2>
     </div>
 
@@ -424,7 +424,7 @@ button:hover { background: #464545; }
 
 
     <section class="projects-section">
-      <p class="title">Authorized seller
+      <p id="brand-id" class="title">Authorized seller 
 
 </p>
       <p class="sub-title">Fancy is authorized seller and legal representative of over 300 high quality architecture products manufacturers and brands in china from furniture decoration and construction materials.</p>
@@ -593,18 +593,11 @@ button:hover { background: #464545; }
 
     <div id="footer-placeholder"></div>
 
-    <!-- تحميل مكتبة EmailJS -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="js/script.js"></script>
     <script src="js/brands.js"></script>
     <script src="js/auth.js"></script>
 
     <script>
-      (function() {
-          // استبدل YOUR_PUBLIC_KEY بالـ Public Key الحقيقي من حسابك في EmailJS
-          emailjs.init("YOUR_PUBLIC_KEY"); 
-      })();
-
       document.getElementById('contact-form').addEventListener('submit', function(event) {
           event.preventDefault();
           
@@ -612,12 +605,24 @@ button:hover { background: #464545; }
           const originalBtnText = btn.innerText;
           btn.innerText = 'Sending...';
 
-          emailjs.sendForm('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', this)
-              .then(() => {
+          const formData = new FormData(this);
+          const data = Object.fromEntries(formData.entries());
+
+          fetch("https://formsubmit.co/ajax/info@fancydesign.com.sa", {
+              method: "POST",
+              headers: { 
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json'
+              },
+              body: JSON.stringify(data)
+          })
+          .then(response => response.json())
+          .then(result => {
                   btn.innerText = originalBtnText;
                   alert('Your message has been sent successfully!');
                   this.reset(); // تفريغ النموذج بعد الإرسال
-              }, (error) => {
+              })
+          .catch(error => {
                   btn.innerText = 'Send';
                   alert('Failed to send message. Please try again later.');
                   console.log('FAILED...', error);
