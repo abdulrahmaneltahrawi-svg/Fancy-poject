@@ -123,7 +123,7 @@ async function displayUserDesignerProfile(containerId = 'user-designers-list') {
             container.innerHTML = `
                 <div class="designer-profile-card" style="grid-column: 1/-1; max-width: 800px; margin: 0 auto; background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 25px; text-align: left;">
                     <div style="display: flex; align-items: center; gap: 20px; border-bottom: 1px solid #f5f5f5; padding-bottom: 20px; margin-bottom: 20px;">
-                        <img src="${getSafeImageUrl(designer.avatar_url || designer.avatar)}" alt="Avatar" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #f0f0f0;">
+                        <img src="${getSafeImageUrl(designer.avatar || designer.avatar_url)}" alt="Avatar" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #f0f0f0;">
                         <div>
                             <h2 style="margin: 0; font-size: 24px;">${designer.company_type || 'Designer'}</h2>
                             <p style="margin: 5px 0; color: #666;">${designer.city}, ${designer.country}</p>

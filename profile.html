@@ -94,6 +94,7 @@
           >Overview</a
         >
         <a href="javascript:void(0)" id="tab-brands">Brands</a>
+        <a href="javascript:void(0)" id="tab-products">Products</a>
 
         <a href="javascript:void(0)" id="tab-designers"> My Designer page</a>
       </nav>
@@ -186,24 +187,27 @@
       };
 
       Object.keys(tabs).forEach(tabId => {
-        document.getElementById(tabId).addEventListener('click', function() {
+        const tabLink = document.getElementById(tabId);
+        if (!tabLink) return; // تخطي العنصر إذا لم يكن موجوداً لتجنب الأخطاء
+
+        tabLink.addEventListener('click', function() {
           // إزالة الحالة النشطة من جميع الروابط وإخفاء المحتويات
           Object.keys(tabs).forEach(id => {
-            document.getElementById(id).classList.remove('active');
-            document.getElementById(tabs[id]).classList.add('hidden');
+            document.getElementById(id)?.classList.remove('active');
+            document.getElementById(tabs[id])?.classList.add('hidden');
           });
 
           // تفعيل التبويب المختار
           this.classList.add('active');
-          document.getElementById(tabs[tabId]).classList.remove('hidden');
+          document.getElementById(tabs[tabId])?.classList.remove('hidden');
 
           // تحميل البيانات بناءً على التبويب
           if (tabId === 'tab-brands') {
             displayUserBrands();
           } else if (tabId === 'tab-products') {
-            loadMyProducts('user-products-list');
+            if (typeof loadMyProducts === 'function') loadMyProducts('user-products-list');
           } else if (tabId === 'tab-designers') {
-            displayUserDesignerProfile();
+            if (typeof displayUserDesignerProfile === 'function') displayUserDesignerProfile();
           }
         });
       });

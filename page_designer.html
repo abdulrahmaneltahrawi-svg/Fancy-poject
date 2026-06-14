@@ -31,8 +31,7 @@
         const grid = document.getElementById('designers-grid');
 
         // جلب البيانات وعرضها في الشبكة
-        fetch('fancy/api/admin/All_designer.php')
-          .then(response => response.json())
+        FancyAPI.get('/admin/All_designer.php')
           .then(result => {
             if (result.success && result.data) {
               const designers = result.data;
@@ -40,7 +39,7 @@
                 <div class="project-card">
                   <div class="card-image">
                     <a href="view_designer.html?id=${designer.id || ''}">
-                      <img src="${designer.avatar_url || 'imges/img/fancy1.jfif'}" alt="${designer.user_name}">
+                      <img src="${getSafeImageUrl(designer.avatar || designer.avatar_url)}" alt="${designer.user_name}">
                     </a>
                   </div>
                   <div class="card-content">
