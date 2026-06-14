@@ -57,9 +57,8 @@
                       <h3 class="card-title">${displayName}</h3>
                     </a>
                     <div class="card-meta" style="margin-top: 10px;">
-                      <span class="category" style="color: #000; font-weight: bold; text-transform: uppercase; font-size: 12px;">${designer.company_type || 'Designer'} ${location ? ' • ' + location : ''}</span>
+                      <span class="category" style="color: #999; font-weight: 460; text-transform: uppercase; font-size: 12px;">${designer.company_type || 'Designer'} ${location ? ' | ' + location : ''}</span>
                     </div>
-                    ${services ? `<p style="color: #888; font-size: 13px; margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${services}">${services}</p>` : ''}
                   </div>
                 </div>
               `;}).join('');
