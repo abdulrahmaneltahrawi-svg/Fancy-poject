@@ -89,6 +89,9 @@
         if (typeof loadMainCategories === "function") {
           loadMainCategories("main-category-nav");
         }
+        
+        // استدعاء دالة تعبئة قائمة الأقسام المنسدلة
+        loadMainCategoryFilters("main-category-filter-content");
 
         if (!catId) {
           document.getElementById("category-title").innerText = "Section not found";
@@ -101,7 +104,17 @@
           );
 
           if (result.success && result.data) {
-            const categoryName = result.data.category_name || "Products";
+            // محاولة جلب اسم القسم من القائمة الرئيسية لأن PHP لا يرسله حالياً
+            let categoryName = result.data.category_name;
+            
+            if (!categoryName || categoryName === "Products") {
+                const categoriesRes = await FancyAPI.get("/categories/list.php");
+                if (categoriesRes.success && categoriesRes.data.categories) {
+                    const currentCat = categoriesRes.data.categories.find(c => c.id == catId);
+                    categoryName = currentCat ? currentCat.name : "Products";
+                }
+            }
+            
             document.getElementById("category-title").innerText = categoryName;
             updateFilterUI(categoryName);
             // No need to call loadMainCategoryFilters() here, it's already called above to populate the main category dropdown.
@@ -144,7 +157,45 @@
               .forEach((i) => (i.value = ""));
           });
         }
+
+        // تفعيل البحث داخل القوائم المنسدلة (الأقسام الرئيسية والفرعية) لضمان الوصول لكل العناصر
+        document.querySelectorAll(".dropdown-content .search-input").forEach(input => {
+          input.addEventListener("input", function() {
+            const filter = this.value.toLowerCase();
+            const dropdownContent = this.closest(".dropdown-content");
+            const links = dropdownContent.querySelectorAll("a");
+            
+            links.forEach(link => {
+              const text = link.textContent.toLowerCase();
+              if (text.includes(filter)) {
+                link.style.display = "";
+              } else {
+                link.style.display = "none";
+              }
+            });
+          });
+        });
       });
+
+      // دالة لجلب الأقسام الرئيسية وتعبئة القائمة المنسدلة للفلترة
+      async function loadMainCategoryFilters(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        try {
+          const result = await FancyAPI.get("/categories/list.php");
+          if (result.success && result.data && result.data.categories) {
+            // إضافة الأقسام للقائمة المنسدلة
+            result.data.categories.forEach(cat => {
+              const a = document.createElement("a");
+              a.href = `product.category.html?id=${cat.id}`;
+              a.textContent = cat.name;
+              container.appendChild(a);
+            });
+          }
+        } catch (error) {
+          console.error("Error loading category filters:", error);
+        }
+      }
 
       function updateFilterUI(categoryName) {
         const btn = document.getElementById("sub-category-btn");
@@ -174,13 +225,14 @@
           ) {
             const subCategories = result.data.sub_categories;
 
-            // Clear existing sub-category options except the "All" option
-            subCategoryDropdownContent.querySelectorAll('a:not(.all-option)').forEach(el => el.remove());
+            // تفريغ القائمة بالكامل (بما في ذلك خيار "الكل" القديم) لتجنب التكرار وضمان ترتيب العناصر
+            subCategoryDropdownContent.querySelectorAll('a').forEach(el => el.remove());
 
+            const categoryTitle = document.getElementById("category-title").innerText;
             const allOption = document.createElement("a");
             allOption.href = "#";
             allOption.className = "all-option";
-            allOption.textContent = `All ${document.getElementById("category-title").innerText}`;
+            allOption.textContent = `All ${categoryTitle}`;
             allOption.onclick = (e) => {
               e.preventDefault();
               document.getElementById("sub-category-btn").innerHTML =

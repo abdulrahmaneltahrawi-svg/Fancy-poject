@@ -110,6 +110,8 @@ html {
   margin: 0; /* حذفنا المارجن لضمان الالتصاق */
   border: 1px solid #eee; /* حدود خفيفة جداً لتحديدها */
   border-top: none; /* إزالة الحد العلوي لتظهر كأنها تابعة للمربع فوقها */
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 /* العناصر داخل القائمة */
@@ -582,6 +584,8 @@ html {
   border-radius: 8px;
   z-index: 1;
   padding: 10px;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 /* إظهار القائمة عند التحويم (Hover) أو الضغط */
