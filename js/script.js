@@ -171,3 +171,22 @@ document.addEventListener('click', function (e) {
         toggle.classList.remove('active');
     }
 });
+
+// تفعيل خاصية البحث داخل القوائم المنسدلة (الفئات والماركات)
+document.addEventListener('input', function (e) {
+    if (e.target.classList.contains('search-input')) {
+        const filter = e.target.value.toLowerCase();
+        const dropdown = e.target.closest('.dropdown-content');
+        if (!dropdown) return;
+
+        const links = dropdown.querySelectorAll('a');
+        links.forEach(link => {
+            const text = link.textContent || link.innerText;
+            if (text.toLowerCase().indexOf(filter) > -1) {
+                link.style.display = "";
+            } else {
+                link.style.display = "none";
+            }
+        });
+    }
+});
