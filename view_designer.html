@@ -89,10 +89,8 @@
         }
       }
 
-      .projects-grid{
-
-        margin-left: 100px;
-        padding: 90px;
+      .projects-grid {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); /* جعل الكروت أعرض */
       }
 
       .title{
@@ -117,7 +115,7 @@
             <a href="#" id="edit-brand-btn" class="btn btn-edit hidden"
               >Edit Brand</a
             >
-            <a href="#" id="add-product-btn" class="btn btn-black hidden"
+            <a href="add-magazine.html" id="add-product-btn" class="btn btn-black hidden"
               >Add new Magazine +</a
             >
           </div>
@@ -190,12 +188,11 @@
                 // زر إضافة منتج
                 const addProductBtn = document.getElementById("add-product-btn");
                 addProductBtn.classList.remove("hidden");
-                addProductBtn.href = `add-product.html`;
+                addProductBtn.href = `add-magazine.html`;
             }
 
-            // إخفاء شبكة المنتجات إذا كان المصمم لا يملك منتجات (أو تخصيصها لاحقاً)
-            const productsGrid = document.getElementById("productsGrid");
-            productsGrid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #999;'>Designer portfolio items will appear here.</p>";
+            // جلب المشاريع/المقالات الخاصة بهذا المصمم (Magazine Entries)
+            loadDesignerProjects(designer.user_id);
 
           } else {
             alert("Designer profile not found.");
@@ -205,6 +202,42 @@
           console.error(error);
         }
       }
+
+      async function loadDesignerProjects(userId) {
+        const grid = document.getElementById("productsGrid");
+        try {
+            // استدعاء الـ API الذي حددته لجلب المشاريع
+            const result = await FancyAPI.get(`/project/my_projects.php?user_id=${userId}`);
+            if (result.success && result.data) {
+                const projects = result.data.projects || result.data;
+                if (projects.length === 0) {
+                    grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #999;'>No magazine entries published yet.</p>";
+                    return;
+                }
+
+                grid.innerHTML = projects.map(project => `
+                    <div class="project-card">
+                        <div class="card-image">
+                            <a href="view_magazine.html?id=${project.id}">
+                                <img src="${getSafeImageUrl(project.cover_image)}" alt="${project.title}">
+                            </a>
+                        </div>
+                        <div class="card-content">
+                            <a href="view_magazine.html?id=${project.id}" style="text-decoration: none; color: inherit;">
+                                <h3 class="card-title">${project.title}</h3>
+                            </a>
+                            <p class="card-category" style="font-size: 14px; color: #999; margin: 5px 0 2px  overflow: hidden; text-overflow: ellipsis;">${project.category || 'N/A'}</p>
+                            <p class="card-type" style="font-size: 14px; color: #999; margin: 0 0 5px 0;">${project.type || 'N/A'}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        } catch (error) {
+            console.error("Error loading projects:", error);
+            grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: red;'>Failed to load magazine entries.</p>";
+        }
+      }
+
       window.addEventListener("load", loadBrandPage);
     </script>
   </body>
