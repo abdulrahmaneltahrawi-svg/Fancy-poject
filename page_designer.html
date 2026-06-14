@@ -13,9 +13,8 @@
     <div id="header-placeholder"></div>
 
     <section class="projects-section">
-      <div class="container">
-        <p class="title">Designers</p>
-        <p class="sub-title">Explore professional designers and architects</p>
+      <div class="container" style="display: flex; align-items: center; justify-content: center; flex-direction: column;">
+        <p class="title" style="margin-right: 1380px;">Designers</p>
         <div id="designers-grid" class="projects-grid">
           <!-- سيتم تحميل المصممين هنا تلقائياً -->
         </div>
@@ -34,22 +33,36 @@
         FancyAPI.get('/admin/All_designer.php')
           .then(result => {
             if (result.success && result.data) {
-              const designers = result.data;
-              grid.innerHTML = designers.map(designer => `
+              const designers = result.data || [];
+              if (designers.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 50px; color: #999;">No designers found at the moment.</p>';
+                return;
+              }
+              grid.innerHTML = designers.map(designer => {
+                const displayName = designer.user_name || designer.company_type || "Designer";
+                const location = [designer.city, designer.country].filter(Boolean).join(', ');
+                const services = Array.isArray(designer.services) 
+                  ? designer.services.join(', ') 
+                  : (designer.services || '');
+
+                return `
                 <div class="project-card">
                   <div class="card-image">
                     <a href="view_designer.html?id=${designer.id || ''}">
-                      <img src="${getSafeImageUrl(designer.avatar || designer.avatar_url)}" alt="${designer.user_name}">
+                      <img src="${getSafeImageUrl(designer.avatar || designer.avatar_url)}" alt="${displayName}">
                     </a>
                   </div>
                   <div class="card-content">
-                    <h3 class="card-title">${designer.user_name}</h3>
-                    <p style="color: #888; font-size: 14px; margin-top: 5px;">
-                      ${Array.isArray(designer.services) ? designer.services.join(', ') : (designer.services || 'Professional Designer')}
-                    </p>
+                    <a href="view_designer.html?id=${designer.id || ''}" style="text-decoration: none; color: inherit;">
+                      <h3 class="card-title">${displayName}</h3>
+                    </a>
+                    <div class="card-meta" style="margin-top: 10px;">
+                      <span class="category" style="color: #000; font-weight: bold; text-transform: uppercase; font-size: 12px;">${designer.company_type || 'Designer'} ${location ? ' • ' + location : ''}</span>
+                    </div>
+                    ${services ? `<p style="color: #888; font-size: 13px; margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${services}">${services}</p>` : ''}
                   </div>
                 </div>
-              `).join('');
+              `;}).join('');
             }
           })
           .catch(err => console.error("Error loading designers:", err));
