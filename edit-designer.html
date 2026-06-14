@@ -47,15 +47,6 @@
       <form id="editDesignerForm">
         <input type="hidden" name="designer_id" id="designer_id" />
         <div class="form-group">
-          <label>Designer name:</label>
-          <input
-            type="text"
-            placeholder="Your designer name here..."
-            name="designer_name" 
-            required
-          />
-        </div>
-        <div class="form-group">
           <label>Designer type:</label>
           <input
             type="text"
@@ -101,8 +92,8 @@
           <input type="email" name="email_contact" placeholder="designer@example.com" />
         </div>
         <div class="form-group">
-          <label>Short description:</label>
-          <textarea name="short_description" rows="2"></textarea>
+          <label>Website link (if available):</label>
+          <input type="url" name="website_url" placeholder="https://example.com" />
         </div>
         <div class="form-group">
           <label>Full description (About):</label>
@@ -154,17 +145,23 @@
                 const designer = result.data.designer || result.data;
                 const form = document.getElementById('editDesignerForm');
                 
-                form.elements['designer_name'].value = designer.designer_name || '';
                 form.elements['company_type'].value = designer.company_type || designer.designer_type || ''; 
                 form.elements['city'].value = designer.city || '';
                 form.elements['country'].value = designer.country || '';
-                // تحويل مصفوفة الخدمات إلى نص مفصول بفاصلة
-                form.elements['services'].value = designer.services ? designer.services.map(s => s.name).join(', ') : '';
+                
+                // تفريغ الحاوية وإضافة الخدمات المسجلة كحقول منفصلة
+                servicesContainer.innerHTML = '';
+                if (designer.services && designer.services.length > 0) {
+                    designer.services.forEach(s => createServiceInput(s.name || s));
+                } else {
+                    createServiceInput(); // إضافة حقل فارغ في حال لم يكن هناك خدمات
+                }
+
                 form.elements['instagram_url'].value = designer.instagram_url || designer.instagram || '';
                 form.elements['linkedin_url'].value = designer.linkedin_url || designer.linkedin || '';
                 form.elements['whatsapp_number'].value = designer.whatsapp_number || designer.whatsapp || '';
                 form.elements['email_contact'].value = designer.email_contact || designer.email || '';
-                form.elements['short_description'].value = designer.short_description || '';
+                form.elements['website_url'].value = designer.website_url || designer.website || '';
                 form.elements['bio'].value = designer.bio || designer.description || '';
             }
         } catch (error) {
