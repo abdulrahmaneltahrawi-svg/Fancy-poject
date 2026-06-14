@@ -840,7 +840,7 @@ html {
   flex-direction: column;
   padding-bottom: 20px;
   margin-bottom: 10px;
-  border: 1px solid rgba(128, 128, 128, 0.112);
+  border: 1px solid rgba(128, 128, 128, 0.068);
   
 }
 .brand-card:hover {

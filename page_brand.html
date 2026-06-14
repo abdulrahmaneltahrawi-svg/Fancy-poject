@@ -61,6 +61,32 @@
     </style>
     <div id="header-placeholder"></div>
 
+    <div class="filter-container">
+      <!-- فلتر الدولة -->
+      <div class="dropdown">
+        <button class="dropbtn" id="country-filter-btn" data-original-text="Country">
+          Country <i class="arrow down"></i>
+        </button>
+        <div class="dropdown-content" id="country-filter-content">
+          <input type="text" placeholder="Search Country" class="search-input" />
+          <a href="#" class="all-option">All Countries</a>
+        </div>
+      </div>
+
+      <!-- فلتر الأقسام (list.php العادي) -->
+      <div class="dropdown">
+        <button class="dropbtn" id="category-filter-btn" data-original-text="Category">
+          Category <i class="arrow down"></i>
+        </button>
+        <div class="dropdown-content" id="category-filter-content">
+          <input type="text" placeholder="Search Category" class="search-input" />
+          <a href="#" class="all-option">All Categories</a>
+        </div>
+      </div>
+
+      <button class="clear-filters-btn" id="clear-all">Clear All</button>
+    </div>
+
     <div id="brands-container" class="brands-container">
       <!-- سيتم تحميل البراندات هنا تلقائياً -->
     </div>
@@ -71,11 +97,102 @@
     <script src="js/brands.js"></script>
     <script src="js/auth.js"></script>
     <script>
-      document.addEventListener("DOMContentLoaded", () => {
+      let currentFilters = {
+        country: null,
+        category_id: null
+      };
+
+      function applyFilters() {
         if (typeof displayAllBrands === "function") {
-          displayAllBrands();
+          displayAllBrands('brands-container', null, currentFilters);
         }
+      }
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        // التحميل الأولي للبراندات
+        applyFilters();
+
+        // جلب الأقسام من list.php لتعبئة الفلتر
+        await loadCategoryFilters();
+
+        // قائمة دول أكثر شمولاً
+        const countries = [
+          "Saudi Arabia", "United Arab Emirates", "China", "Italy", "Turkey", 
+          "USA", "United Kingdom", "France", "Germany", "Spain", "Egypt", 
+          "Jordan", "Kuwait", "Oman", "Qatar", "Bahrain", "Lebanon"
+        ];
+        const countryContent = document.getElementById("country-filter-content");
+        countries.forEach(country => {
+          const a = document.createElement("a");
+          a.href = "#";
+          a.textContent = country;
+          a.onclick = (e) => {
+            e.preventDefault();
+            document.getElementById("country-filter-btn").innerHTML = `${country} <i class="arrow down"></i>`;
+            currentFilters.country = country;
+            applyFilters();
+          };
+          countryContent.appendChild(a);
+        });
+
+        // منطق مسح الفلاتر
+        document.getElementById("clear-all").onclick = () => {
+          currentFilters = { country: null, category_id: null };
+          document.getElementById("country-filter-btn").innerHTML = `Country <i class="arrow down"></i>`;
+          document.getElementById("category-filter-btn").innerHTML = `Category <i class="arrow down"></i>`;
+          applyFilters();
+        };
+
+        // تفعيل البحث داخل القوائم المنسدلة
+        document.querySelectorAll(".dropdown-content .search-input").forEach(input => {
+          input.oninput = function() {
+            const val = this.value.toLowerCase();
+            const links = this.parentElement.querySelectorAll("a");
+            links.forEach(link => {
+              if (link.classList.contains('all-option')) return;
+              link.style.display = link.textContent.toLowerCase().includes(val) ? "" : "none";
+            });
+          };
+        });
+
+        // تفعيل خيار "الكل" (All Options)
+        document.querySelectorAll(".all-option").forEach(opt => {
+          opt.onclick = (e) => {
+            e.preventDefault();
+            const btn = opt.closest(".dropdown").querySelector(".dropbtn");
+            btn.innerHTML = `${btn.getAttribute("data-original-text")} <i class="arrow down"></i>`;
+            const filterType = btn.id === "country-filter-btn" ? "country" : "category_id";
+            currentFilters[filterType] = null;
+            applyFilters();
+          };
+        });
       });
+
+      async function loadCategoryFilters() {
+        const container = document.getElementById("category-filter-content");
+        if (!container) return;
+        try {
+          // استخدام list.php لجلب التصنيفات المتاحة
+          const result = await FancyAPI.get("/categories/list.php");
+          if (result.success && result.data && result.data.categories) {
+            result.data.categories.forEach(cat => {
+              const a = document.createElement("a");
+              a.href = "#";
+              a.textContent = cat.name;
+              a.onclick = (e) => {
+                e.preventDefault();
+                document.getElementById("category-filter-btn").innerHTML = `${cat.name} <i class="arrow down"></i>`;
+                // نستخدم الاسم بدلاً من الـ ID لأن PHP يبحث بالـ Like في حقل brand_type
+                currentFilters.category_id = cat.name; 
+                applyFilters();
+              };
+              container.appendChild(a);
+            });
+          }
+        } catch (error) {
+          console.error("Error loading category filters:", error);
+        }
+      }
     </script>
   </body>
 </html>

@@ -1,12 +1,19 @@
 // دالة getSafeImageUrl معرفة عالمياً في script.js
 // دالة لجلب وعرض جميع البراندات في الصفحة
-async function displayAllBrands(containerId = 'brands-container', limit = null) {
+async function displayAllBrands(containerId = 'brands-container', limit = null, filters = {}) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
     try {
-        // جلب قائمة العلامات التجارية العامة من السيرفر
-        const result = await FancyAPI.get('/brands/public-list.php');
+        let url = '/brands/public-list.php';
+        const params = new URLSearchParams();
+        if (limit) params.append('limit', limit);
+        if (filters.country) params.append('country', filters.country);
+        if (filters.category_id) params.append('category_id', filters.category_id);
+
+        if (params.toString()) url += '?' + params.toString();
+
+        const result = await FancyAPI.get(url);
 
         // التعامل مع حالة عدم المصادقة (خطأ 401)
         if (result.status === 401) {
