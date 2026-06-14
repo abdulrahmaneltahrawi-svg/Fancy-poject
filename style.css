@@ -430,12 +430,27 @@ html {
 }
 
 .card-image {
+  position: relative; /* مهم جداً */
   width: 100%;
   height: 320px;
   overflow: hidden;
   margin-bottom: 15px;
 }
 
+.card-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(108, 108, 108, 0.091);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+
+.project-card:hover .card-image::after {
+  opacity: 1;
+}
 .card-image img {
   width: 100%;
   height: 100%;
@@ -825,6 +840,13 @@ html {
   flex-direction: column;
   padding-bottom: 20px;
   margin-bottom: 10px;
+  border: 1px solid rgba(128, 128, 128, 0.112);
+  
+}
+.brand-card:hover {
+  transform: none; /* Remove the translateY effect */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  border-color: #eee;
 }
 
 .brand-images-grid {
