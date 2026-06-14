@@ -45,16 +45,7 @@
     <div class="form-container">
       <h2>Add new designer</h2>
       <form id="designerForm">
-        <div class="form-group">
-          <label>Designer name</label>
-          <input
-            type="text"
-            placeholder="Your designer name here..."
-            name="designer_name"
-            required
-          />
-
-        </div>
+    
         <div class="form-group">
           <label>Designer type</label>
           <input
@@ -72,9 +63,10 @@
             <label>Country</label>
             <input type="text" name="country" />
           </div>
-          <div class="form-group" style="flex: 1">
-            <label>Services</label>
-            <input type="text" name="services" />
+          <div class="form-group" style="flex: 1;">
+            <label>Services (e.g. Interior Design)</label>
+            <div id="services-container"></div>
+            <button type="button" id="add-service-btn" style="margin-top: 5px; background: #eee; border: 1px solid #ccc; padding: 5px 10px; border-radius: 4px; cursor: pointer;">+ Add Service</button>
           </div>
           
         <div class="form-group">
@@ -110,15 +102,35 @@
     <script src="js/designers.js"></script>
     <script src="js/auth.js"></script>
     <script>
+      const servicesContainer = document.getElementById('services-container');
+      const addServiceBtn = document.getElementById('add-service-btn');
+
+      function createServiceInput(value = '') {
+        const div = document.createElement('div');
+        div.style.display = 'flex';
+        div.style.gap = '5px';
+        div.style.marginBottom = '5px';
+        div.innerHTML = `
+          <input type="text" class="service-item-input" value="${value}" placeholder="Add service..." required />
+          <button type="button" onclick="this.parentElement.remove()" style="background:none; border:none; color:red; cursor:pointer; font-weight:bold;">X</button>
+        `;
+        servicesContainer.appendChild(div);
+      }
+
+      addServiceBtn.addEventListener('click', () => createServiceInput());
+
+      // إضافة حقل فارغ واحد عند التحميل
+      document.addEventListener('DOMContentLoaded', () => createServiceInput());
+
       document.getElementById('designerForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-
         const formData = new FormData(this);
         
-        // تحويل نص الخدمات إلى مصفوفة JSON كما يتوقع ملف PHP
-        const servicesValue = formData.get('services');
-        const servicesArray = servicesValue ? servicesValue.split(',').map(s => s.trim()).filter(s => s !== "") : [];
-        formData.set('services', JSON.stringify(servicesArray));
+        // جمع الخدمات من جميع الحقول الديناميكية
+        const services = Array.from(document.querySelectorAll('.service-item-input'))
+                              .map(inp => inp.value.trim())
+                              .filter(v => v !== "");
+        formData.set('services', JSON.stringify(services));
 
         const submitBtn = this.querySelector('.submit-btn');
         const originalText = submitBtn.innerText;

@@ -76,7 +76,8 @@
         </div>
         <div class="form-group">
           <label>Services:</label>
-          <input type="text" name="services" />
+          <div id="services-container"></div>
+          <button type="button" id="add-service-btn" style="margin-top: 5px; background: #eee; border: 1px solid #ccc; padding: 5px 10px; border-radius: 4px; cursor: pointer;">+ Add Service</button>
         </div>
           
         <div class="form-group">
@@ -116,6 +117,23 @@
     <script src="js/designers.js"></script>
     <script src="js/auth.js"></script>
     <script>
+      const servicesContainer = document.getElementById('services-container');
+      const addServiceBtn = document.getElementById('add-service-btn');
+
+      function createServiceInput(value = '') {
+        const div = document.createElement('div');
+        div.style.display = 'flex';
+        div.style.gap = '5px';
+        div.style.marginBottom = '5px';
+        div.innerHTML = `
+          <input type="text" class="service-item-input" value="${value}" placeholder="Add service..." required />
+          <button type="button" onclick="this.parentElement.remove()" style="background:none; border:none; color:red; cursor:pointer; font-weight:bold;">X</button>
+        `;
+        servicesContainer.appendChild(div);
+      }
+
+      addServiceBtn.addEventListener('click', () => createServiceInput());
+
       document.addEventListener('DOMContentLoaded', async () => {
         const params = new URLSearchParams(window.location.search);
         const designerId = params.get('id') || params.get('designer_id');
@@ -163,10 +181,11 @@
         
         try {
           const designerId = document.getElementById('designer_id').value;
-          
-          // تأكيد تحويل الخدمات إلى مصفوفة JSON لضمان قبولها في edit_designer.php
-          const servicesValue = formData.get('services');
-          const servicesArray = servicesValue ? servicesValue.split(',').map(s => s.trim()).filter(s => s !== "") : [];
+
+          // جمع الخدمات المحدثة من الحقول
+          const servicesArray = Array.from(document.querySelectorAll('.service-item-input'))
+                                     .map(inp => inp.value.trim())
+                                     .filter(v => v !== "");
           formData.set('services', JSON.stringify(servicesArray));
 
           // التأكد من إرسال المعرف مع البيانات

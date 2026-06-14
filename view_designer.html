@@ -42,7 +42,7 @@
         padding: 5px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         margin-right: 20px;
-        margin-top: -75px;
+        margin-top: 20px;
       }
       .brand-logo-container img {
         width: 100%;
@@ -109,9 +109,6 @@
     <div id="header-placeholder"></div>
 
     <section class="brand-header">
-      <div class="cover-photo">
-        <img id="brandCover" src="" alt="Cover" />
-      </div>
       <div class="brand-profile-bar">
         <div class="container-flex">
           <div class="brand-logo-container">
@@ -153,7 +150,7 @@
 
       <section class="products-section">
         <div class="container-p">
-            <p class="title">Product</p>
+            <p class="title">Magazine</p>
           <div class="projects-grid" id="productsGrid">
             <!-- سيتم تحميل المنتجات هنا تلقائياً -->
           </div>
@@ -183,17 +180,22 @@
             document.getElementById("brandAbout").innerText = designer.bio || designer.description || "No description available.";
             document.getElementById("brandLocation").innerText = `${designer.city || ''}, ${designer.country || ''}`;
             
-            // تحديث الصور
-            document.getElementById("brandCover").src = getSafeImageUrl(designer.cover_image || "imges/img/fancy3.jfif");
+            // تحديث الصورة
             document.getElementById("brandLogo").src = getSafeImageUrl(designer.avatar || designer.logo || "imges/img/fancy1.jfif");
 
             // التحقق من الملكية لإظهار أزرار التعديل
             const userData = JSON.parse(localStorage.getItem("userData") || "{}");
             if (userData && userData.id == designer.user_id) {
+                // زر التعديل
                 const editBtn = document.getElementById("edit-brand-btn");
                 editBtn.classList.remove("hidden");
                 editBtn.innerText = "Edit Designer Profile";
                 editBtn.href = `edit-designer.html?id=${designer.id}`;
+
+                // زر إضافة منتج
+                const addProductBtn = document.getElementById("add-product-btn");
+                addProductBtn.classList.remove("hidden");
+                addProductBtn.href = `add-product.html`;
             }
 
             // إخفاء شبكة المنتجات إذا كان المصمم لا يملك منتجات (أو تخصيصها لاحقاً)
