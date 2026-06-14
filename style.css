@@ -306,9 +306,8 @@ html {
 }
 
 .contact-item img {
-  width: 30px; /* توحيد حجم الأيقونات */
+  width: 40px; /* توحيد حجم الأيقونات */
   height: auto;
-  margin-top: 4px;
   filter: brightness(0) invert(1);
 }
 
@@ -326,6 +325,7 @@ html {
   font-size: 14px;
   line-height: 1.6;
   transition: 0.3s;
+  margin-top: 6px;
 }
 
 .contact-item a:hover {
