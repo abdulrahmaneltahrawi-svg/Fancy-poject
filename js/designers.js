@@ -107,8 +107,6 @@ async function displayUserDesignerProfile(containerId = 'user-designers-list') {
         if (result.status === 404) {
             container.innerHTML = `
                 <div style="text-align: center; padding: 40px; grid-column: 1/-1;">
-                    <p style="color: #666; margin-bottom: 20px;">You haven't created a designer profile yet.</p>
-                    <a href="add-designer.html" class="header-action-btn" style="display: inline-block; text-decoration: none;">Create Designer Profile</a>
                 </div>`;
             return;
         }
