@@ -9,11 +9,11 @@
     <style>
       body {
         font-family: sans-serif;
-        background-color: #f9f9f9;
+        background-color: white;
       }
       .brand-header {
         background: #fff;
-        padding: 20px;
+        padding-left: 200px;
       }
       .cover-photo {
         height: 500px;
@@ -73,14 +73,7 @@
       .hidden {
         display: none !important;
       }
-      .projects-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      }
-      .container-p {
-        margin-top: 100px;
-        padding: 30px;
-      }
+    
 
       @media (max-width: 768px) {
         .container-flex {
@@ -93,9 +86,7 @@
         grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); /* جعل الكروت أعرض */
       }
 
-      .title{
-        margin-left: 90px;
-      }
+      
     </style>
   </head>
   <body>
@@ -124,19 +115,19 @@
     </section>
 
     <main class="brand-content">
-      <section style="padding: 40px;">
+      <section>
         <p class="title">About</p>
         <p
           id="brandAbout"
           style="
-            max-width: 1500px;
+            max-width: 1360px;
             line-height: 2.0;
             margin-top: 20px;
             background: white;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            margin-left: 90px;
+            margin-left: 260px;
           "
         ></p>
       </section>
@@ -216,7 +207,7 @@
                 }
 
                 grid.innerHTML = projects.map(project => `
-                    <div class="project-card">
+                    <div class="magazine-card">
                         <div class="card-image">
                             <a href="view_magazine.html?id=${project.id}">
                                 <img src="${getSafeImageUrl(project.cover_image)}" alt="${project.title}">
