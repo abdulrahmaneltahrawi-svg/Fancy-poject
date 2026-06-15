@@ -420,6 +420,13 @@ html {
     transform 0.3s ease,
     box-shadow 0.3s ease;
 }
+.magazine-card:hover{
+  transform: none; /* Remove the translateY effect */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  border-color: #eee;
+}
+
+
 
 
 /* الحاوية التي تحتوي على الكروت */
