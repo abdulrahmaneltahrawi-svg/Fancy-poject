@@ -10,21 +10,17 @@
       /* التنسيقات الخاصة بالصفحة */
       .view-container {
         max-width: 2000px;
-        margin-left: auto;
-        margin-right: auto;
+        margin: 20px auto;
         padding: 0 20px;
-        margin-top: 20px; /* مسافة إضافية بسيطة تحت الهيدر */
       }
       .view-content {
         display: flex;
-        align-items: flex-start; /* يجعل المحتوى يبدأ من الأعلى ويمتد لأسفل */
-        gap: 25px;
-
+        flex-direction: row-reverse; /* لجعل التفاصيل على اليسار والصور على اليمين */
+        gap: 40px;
+        align-items: flex-start;
       }
       .view-image-section {
-        flex: 1.5;
-      }
-      .view-image-section {
+        flex: 2;
         display: flex;
         flex-direction: column;
         gap: 10px;
@@ -32,23 +28,53 @@
       .view-image-section img {
         width: 100%;
         border-radius: 8px;
-        margin-right: 10px;
-        border-right: 1px solid #eee;
-        padding-right: 5px;
         max-height: 700px;
         object-fit: contain;
         background-color: #fdfdfd;
+        border: 1px solid #eee;
       }
       .view-details-section {
         flex: 1;
+        max-width: 450px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
       }
-      .view-details-section h1 {
-        font-size: 30px;
-        margin-bottom: 20px;
-        position: relative;      
-        min-height: 40px;
+      
+      /* تنسيق بوكس المصمم الجديد */
+      .designer-info-box {
+        background: #fff;
+        border: 1px solid #eee;
+        padding: 20px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      }
+      .designer-info-box img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #eee;
+      }
+      .designer-info-box h3 {
         margin: 0;
-        color: #4d4c4c;
+        font-size: 18px;
+        color: #333;
+      }
+      .designer-info-box p {
+        margin: 0;
+        font-size: 13px;
+        color: #888;
+      }
+
+      .view-details-section h1 {
+        font-size: 28px;
+        margin: 0;
+        color: #222;
+        line-height: 1.2;
       }
 
       .category-tag {
@@ -59,50 +85,7 @@
         display: block;
         margin-bottom: 10px;
       }
-      .description-box {
-        color: #666;
-        line-height: 1.8;
-        margin-top: 20px;
-        white-space: pre-line;
-        border: 1px solid #eee;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        overflow: hidden;
-        background: #fff;
-      }
-
-      .tabs-header {
-        display: flex;
-        border-bottom: 1px solid #eee;
-        background: #fcfcfc;
-      }
-
-      .tab-btn {
-        flex: 1;
-        padding: 15px;
-        border: none;
-        background: none;
-        cursor: pointer;
-        font-size: 18px;
-        font-weight: bold;
-        color: #888;
-        transition: 0.3s;
-      }
-
-      .tab-btn.active {
-        color: #000;
-        background: #fff;
-        border-bottom: 2px solid #000;
-      }
-
-      .tab-pane {
-        padding: 20px;
-        display: none;
-      }
-
-      .tab-pane.active {
-        display: block;
-      }
+      .description-box { color: #555; line-height: 1.8; white-space: pre-line; }
 
       .overview {
         color: #000;
@@ -113,12 +96,6 @@
         font-weight: bold;
       }
 
-      .description-box h4 {
-        color: #000;
-        font-size: 30px;
-    
-
-      }
       .price-btn {
         display: inline-flex;
         align-items: center;
@@ -151,14 +128,14 @@
       /* تنسيق معرض الصور المصغر */
       .thumbnails-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
         gap: 10px;
-        margin-top: 15px;
+        margin-top: 10px;
       }
 
       .thumb-img {
         width: 100%;
-        height: 100px;
+        height: 140px;
         object-fit: cover;
         cursor: pointer;
         border: 1px solid #eee;
@@ -276,35 +253,32 @@
 
     <div class="view-container">
       <div class="view-content">
+        <!-- جهة الصور (اليمين) -->
         <div class="view-image-section" id="image-gallery">
           <img id="project-image" src="" alt="Project Image" />
-          <div class="description-box">
-            <div class="tabs-header">
-              <button class="tab-btn active" onclick="switchTab('overview', event)">Overview</button>
-              <button class="tab-btn" onclick="switchTab('gallery', event)">Gallery</button>
-            </div>
-            <div id="tab-overview" class="tab-pane active">
-              <p id="project-desc"></p>
-            </div>
-            <div id="tab-gallery" class="tab-pane">
-              <div id="thumbnails" class="thumbnails-grid"></div>
-            </div>
-          </div>
+          <h4 style="margin: 20px 0 10px 0; font-size: 18px;">Project Gallery</h4>
+          <div id="thumbnails" class="thumbnails-grid"></div>
         </div>
 
+        <!-- جهة المعلومات (اليسار) -->
         <div class="view-details-section">
+          <!-- بوكس معلومات المصمم -->
+          <div class="designer-info-box">
+            <img id="designer-avatar-sidebar" src="imges/img/fancy1.jfif" alt="Designer">
+            <div>
+              <p>Post by</p>
+              <h3 id="designer-name-sidebar">...</h3>
+              <a id="designer-profile-link" href="#" style="color: #000; font-size: 12px; font-weight: bold;">View Profile</a>
+            </div>
+          </div>
+
           <span id="project-category" class="category-tag"></span>
           <h1 id="project-name"></h1>
-          <p id="project-location" style="font-size: 18px; color: #888; margin-top: 5px; margin-bottom: 20px; font-weight: 300; display: none;"></p>
-          
+          <p id="project-location" style="font-size: 16px; color: #888; margin: 0; display: none;"></p>
 
-          <div id="variants-container" class="hidden" style="margin-top: 30px;">
-            <h4 style="font-size: 15px; color: #555;">Options</h4>
-            <div id="options-grid" class="options-grid"></div>
-            <div id="type-display-wrapper" class="hidden" style="margin-top: 20px;">
-              <p style="font-size: 15px; color: #555; margin-bottom: 5px;">Type, Shape, Size mm</p>
-              <div id="active-option-type" class="opt-type-box"></div>
-            </div>
+          <div class="description-box">
+            <h4 class="overview" style="border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px;">Description</h4>
+            <p id="project-desc"></p>
           </div>
 
           <div id="specs-container" class="specs-section hidden">
@@ -325,9 +299,9 @@
 
           <a
             id="whatsapp-btn"
-            href="#"
+            href="https://wa.me/966530559095"
             class="price-btn"
-            style="margin-top: 30px"
+            style="margin-top: 10px; justify-content: center;"
           >
             <span>REQUEST PRICE INFO/DATA</span>
             <img
@@ -352,16 +326,6 @@
     <script src="js/products.js"></script>
     <script src="js/auth.js"></script>
     <script>
-      function switchTab(tabName, event) {
-        // إخفاء كل التبويبات وإزالة الحالة النشطة من الأزرار
-        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        
-        // إظهار التبويب المطلوب وتفعيل الزر
-        document.getElementById('tab-' + tabName).classList.add('active');
-        event.currentTarget.classList.add('active');
-      }
-
       // 1. جلب المعرف من الرابط
       const params = new URLSearchParams(window.location.search);
       // البحث عن المعرف سواء كان باسم id أو product_id لضمان التوافق
@@ -381,16 +345,33 @@
           const result = await FancyAPI.get(`/project/get_project.php?id=${id}`);
 
           if (result.success && result.data) {
-            const project = result.data;
+            // التحقق مما إذا كانت البيانات مغلفة داخل كائن project أو تأتي مباشرة
+            const project = result.data.project || result.data;
+            
+            console.log('Full Project data:', JSON.stringify(project, null, 2)); // Debugging line to see the full object
+            console.log('Raw project.gallery_images:', project.gallery_images); // New debugging line
 
-            // تحديث الصورة الرئيسية
-            document.getElementById('project-image').src = getSafeImageUrl(project.cover_image_url);
+            // دالة داخلية لتنظيف الروابط وضمان عملها حتى لو كان الـ APP_URL في PHP خاطئاً
+            const resolveImage = (pathOrUrl) => {
+                if (!pathOrUrl) return getSafeImageUrl("");
+                // إذا كان الرابط كاملاً، نستخرج الجزء الذي يبدأ بـ uploads لضمان دقة المسار
+                if (typeof pathOrUrl === 'string' && pathOrUrl.includes('uploads/')) {
+                    const relativePath = 'uploads/' + pathOrUrl.split('uploads/')[1];
+                    return getSafeImageUrl(relativePath);
+                }
+                return getSafeImageUrl(pathOrUrl);
+            };
 
+            // تحديث الصورة الرئيسية باستخدام المحلل الذكي
+            document.getElementById('project-image').src = resolveImage(project.cover_image_url || project.cover_image || project.image_url);
             // تحديث الفئة والنوع
             document.getElementById('project-category').innerText = `${project.category || 'N/A'} / ${project.type || 'N/A'}`;
-
             // تحديث العنوان
             document.getElementById('project-name').innerText = project.title;
+
+            // تحديث معلومات المصمم في البوكس الجانبي
+            document.getElementById('designer-name-sidebar').innerText = project.designer_name || "Designer";
+            document.getElementById('designer-profile-link').href = `view_designer.html?id=${project.designer_id}`;
 
             // تحديث الموقع واسم المصمم
             const locationElem = document.getElementById('project-location');
@@ -398,7 +379,6 @@
               const locationParts = [];
               if (project.city) locationParts.push(project.city);
               if (project.state) locationParts.push(project.state);
-              if (project.designer_name) locationParts.push(project.designer_name);
               
               if (locationParts.length > 0) {
                 locationElem.innerText = locationParts.join(', ');
@@ -410,10 +390,6 @@
 
             // تحديث الوصف الكامل
             document.getElementById('project-desc').innerText = project.description || project.header_description || 'No description available.';
-
-            // إخفاء قسم الخيارات (Variants) لأنه غير مخصص للمجلة
-            const variantsContainer = document.getElementById('variants-container');
-            if (variantsContainer) variantsContainer.classList.add('hidden');
 
             // تحديث CBM و SKU للمجلة إذا كانت متوفرة في بيانات المشروع
             if (project.cbm || project.sku) {
@@ -430,12 +406,26 @@
 
             // تحديث معرض الصور (Gallery)
             const thumbnailsGrid = document.getElementById('thumbnails');
-            if (thumbnailsGrid && project.gallery_images && project.gallery_images.length > 0) {
-              thumbnailsGrid.innerHTML = project.gallery_images.map(imgUrl => `
-                <img src="${getSafeImageUrl(imgUrl)}" class="thumb-img" onclick="document.getElementById('project-image').src = this.src" alt="Gallery Image">
+            
+            // دالة ذكية للبحث عن أول مصفوفة تحتوي على بيانات فعلياً
+            const extractGallery = () => {
+                const keys = ['gallery_images', 'project_images', 'images', 'gallery'];
+                // البحث داخل كائن المشروع
+                for (const k of keys) if (Array.isArray(project[k]) && project[k].length > 0) return project[k];
+                // البحث في جذر الرد (result.data) في حال كانت الصور منفصلة
+                for (const k of keys) if (Array.isArray(result.data[k]) && result.data[k].length > 0) return result.data[k];
+                return [];
+            };
+
+            const galleryData = extractGallery();
+            console.log('Final resolved gallery data:', galleryData);
+            
+            if (thumbnailsGrid && Array.isArray(galleryData) && galleryData.length > 0) {
+              thumbnailsGrid.innerHTML = galleryData.map(imgUrl => `
+                <img src="${resolveImage(imgUrl)}" class="thumb-img" onclick="document.getElementById('project-image').src = this.src" alt="Gallery Image">
               `).join('');
             } else if (thumbnailsGrid) {
-              thumbnailsGrid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No additional gallery images.</p>';
+              thumbnailsGrid.innerHTML = '<p style="font-size: 13px; color: #999;">No additional gallery images available.</p>';
             }
 
             // تحديث رابط الواتساب (إذا كان المصمم لديه رقم واتساب)
