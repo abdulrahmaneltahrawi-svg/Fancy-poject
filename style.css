@@ -403,11 +403,49 @@ html {
   margin-bottom: 40px;
   font-size: 22px;
 }
-
-.projects-grid {
+.magazine-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); /* توزيع أفقي: كرتين أو ثلاثة في السطر حسب عرض الشاشة */
-  gap: 30px; /* المسافة بين البطاقات */
+    grid-template-columns: repeat(3, 1fr); /* 3 أعمدة */
+    gap: 30px;
+    justify-content: center; /* توسيط محتويات الشبكة */
+}
+
+.magazine-card{
+  background: #fff;
+  cursor: pointer;
+  width: 100%;
+  max-width: 400px; /* زيادة العرض الأقصى للكرت ليظهر بشكل أعرض */
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+
+/* الحاوية التي تحتوي على الكروت */
+.projects-grid {
+    display: grid;
+    /* هذا السطر سيجبر المتصفح على عرض 3 كروت بجانب بعضها */
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 30px; /* مسافة مريحة بين الكروت */
+    width: 95%;
+    max-width: 1400px;
+    margin: 0 auto; /* لتوسيط الشبكة في الصفحة */
+}
+
+/* حل مشكلة ظهور الكروت كعمود واحد */
+@media (max-width: 900px) {
+    .projects-grid {
+        grid-template-columns: repeat(2, 1fr); /* كرتين في الشاشات المتوسطة */
+    }
+}
+
+@media (max-width: 600px) {
+    .projects-grid {
+        grid-template-columns: 1fr; /* كرت واحد للموبايل */
+    }
 }
 
 .project-card {
@@ -853,7 +891,7 @@ html {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 2px;
-  height: 200px;
+  height: 230px;
   background-color: #ffffff;
   overflow: hidden;
   border: 1px solid rgba(128, 128, 128, 0.112);
@@ -879,7 +917,7 @@ html {
 .brand-info {
   display: flex;
   align-items: center;
-  margin-top: 15px;
+  margin-top: 10px;
   gap: 12px;
   padding: 10px;
 }
