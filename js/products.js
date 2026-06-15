@@ -171,7 +171,7 @@ async function loadSingleProductDetails(productId) {
                         const skuContainer = document.getElementById('sku-container');
                         const specsContainer = document.getElementById('specs-container');
                         if(skuElem && skuContainer) {
-                            skuElem.innerText = '${opt.sku || 'N/A'}';
+                            skuElem.innerText = '${opt.sku || 'None'}';
                             skuContainer.classList.remove('hidden');
                             if(specsContainer) specsContainer.classList.remove('hidden');
                         }
@@ -180,7 +180,7 @@ async function loadSingleProductDetails(productId) {
                         const cbmElem = document.getElementById('active-cbm');
                         const cbmContainer = document.getElementById('cbm-container');
                         if(cbmElem && cbmContainer) {
-                            cbmElem.innerText = '${opt.cbm || 'N/A'}';
+                            cbmElem.innerText = '${opt.cbm || 'none'}';
                             cbmContainer.classList.remove('hidden');
                             if(specsContainer) specsContainer.classList.remove('hidden');
                         }
