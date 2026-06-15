@@ -295,19 +295,18 @@ html {
 .contact-links {
   display: flex;
   flex-direction: column;
-  gap: 15px; /* مسافة بين كل وسيلة اتصال وأخرى */
+  gap: 10px; /* مسافة بين كل وسيلة اتصال وأخرى */
 }
 
 /* تنسيق الصف الواحد */
 .contact-item {
   display: flex;
   align-items: flex-start; /* محاذاة الأيقونة مع أعلى النص */
-  gap: 12px;
+  gap: 10px;
 }
 
 .contact-item img {
-  width: 40px; /* توحيد حجم الأيقونات */
-  height: auto;
+  width: 36px; /* توحيد حجم الأيقونات */
   filter: brightness(0) invert(1);
 }
 
@@ -323,9 +322,8 @@ html {
   color: #aaa;
   text-decoration: none;
   font-size: 14px;
-  line-height: 1.6;
   transition: 0.3s;
-  margin-top: 6px;
+  margin-top: 8px;
 }
 
 .contact-item a:hover {
