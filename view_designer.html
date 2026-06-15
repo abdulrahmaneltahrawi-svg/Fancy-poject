@@ -35,7 +35,7 @@
         background: #fff;
         border-radius: 50%;
         padding: 5px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border:  1px solid #d3d2d2;
         margin-right: 20px;
         margin-top: 20px;
       }
@@ -83,7 +83,7 @@
       }
 
       .projects-grid {
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); /* جعل الكروت أعرض */
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Adjust card width for better fit */
       }
 
       
@@ -94,7 +94,7 @@
 
     <section class="brand-header">
       <div class="brand-profile-bar">
-        <div class="container-flex">
+        <!-- Removed container-flex wrapper here, brand-profile-bar is now the flex container -->
           <div class="brand-logo-container">
             <img id="brandLogo" src="" alt="Logo" />
           </div>
@@ -109,8 +109,7 @@
             <a href="add-magazine.html" id="add-product-btn" class="btn btn-black hidden"
               >Add new Magazine +</a
             >
-          </div>
-        </div>
+          </div> <!-- End of brand-actions -->
       </div>
     </section>
 
@@ -119,7 +118,7 @@
         <p class="title">About</p>
         <p
           id="brandAbout"
-          style="
+          style=" /* Adjust margin-left to align with the new centered layout */
             max-width: 1360px;
             line-height: 2.0;
             margin-top: 20px;
@@ -127,7 +126,118 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            margin-left: 260px;
+            margin-left: auto; /* Center the about section */
+            margin-right: auto;
+          "
+        ></p>
+      </section>
+
+      <section class="products-section">
+        <div class="container-p">
+            <p class="title">Magazine</p>
+          <div class="projects-grid" id="productsGrid">
+            <!-- سيتم تحميل المنتجات هنا تلقائياً -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/script.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/brands.js"></script>
+    <script>
+      async function loadBrandPage() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const brandId = urlParams.get("brand") || urlParams.get("id");
+
+        if (!brandId) return;
+
+        try {
+          // استدعاء بيانات المصمم بدلاً من البراند
+          const result = await FancyAPI.get(`/designer/get_profile.php?id=${brandId}`);
+
+          if (result.success && result.data) {
+            const designer = result.data.designer || result.data;
+            
+            document.getElementById("brandName").innerText = designer.designer_name || designer.company_type || "Designer";
+            document.getElementById("brandAbout").innerText = designer.bio || designer.description || "No description available.";
+            document.getElementById("brandLocation").innerText = `${designer.city || ''}, ${designer.country || ''}`;
+            
+            // تحديث الصورة
+            document.getElementById("brandLogo").src = getSafeImageUrl(designer.avatar || designer.logo || "imges/img/fancy1.jfif");
+
+            // التحقق من الملكية لإظهار الأزرار
+            const userData = JSON.parse(localStorage.getItem("userData") || "{}");
+            const isOwner = userData && userData.id == designer.user_id;
+            if (isOwner) {
+                // زر التعديل
+                const editBtn = document.getElementById("edit-brand-btn");
+                editBtn.classList.remove("hidden");
+                editBtn.innerText = "Edit Designer Profile";
+                editBtn.href = `edit-designer.html?id=${designer.id}`;
+
+                // زر إضافة منتج
+                const addProductBtn = document.getElementById("add-product-btn");
+                addProductBtn.classList.remove("hidden");
+                addProductBtn.href = `add-magazine.html`;
+            }
+
+            // جلب المشاريع/المقالات الخاصة بهذا المصمم (Magazine Entries)
+            loadDesignerProjects(designer.user_id, isOwner);
+
+          } else {
+            alert("Designer profile not found.");
+            window.location.href = "index.html";
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      async function loadDesignerProjects(userId, isOwner = false) {
+        const grid = document.getElementById("productsGrid");
+        try {
+            // استدعاء الـ API الذي حددته لجلب المشاريع
+            const result = await FancyAPI.get(`/project/my_projects.php?user_id=${userId}`);
+            if (result.success && result.data) {
+                const projects = result.data.projects || result.data;
+                if (projects.length === 0) {
+                    grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #999;'>No magazine entries published yet.</p>";
+                    return;
+                }
+
+                grid.innerHTML = projects.map(project => `
+                    <div class="magazine-card">
+                        <div class="card-image">
+                            <a href="view_magazine.html?id=${project.id}">
+                                <img src="${getSafeImageUrl(project.cover_image)}" alt="${project.title}">
+                            </a>
+                        </div>
+                        <div class="card-content">
+                            <a href="view_magazine.html?id=${project.id}" style="text-decoration: none; color: inherit;">
+                                <h3 class="card-title">${project.title}</h3>
+                            </a>
+                            <p class="card-category" style="font-size: 14px; color: #999; margin: 5px 0 2px 0; overflow: hidden; text-overflow: ellipsis;">Category: ${project.category || 'N/A'}</p>
+                            <p class="card-type" style="font-size: 14px; color: #999; margin: 0 0 5px 0;">Type: ${project.type || 'N/A'}</p>
+                            ${isOwner ? `
+                            <div class="card-actions" style="margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px;">
+                                <a href="edit-magazine.html?id=${project.id}" class="btn btn-edit" style="display: block; text-align: center; width: 100%; padding: 5px 0; background: #f0f0f0; color: #000; font-size: 12px; font-weight: bold; border-radius: 4px;">Edit Project</a>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
+        } catch (error) {
+            console.error("Error loading projects:", error);
+            grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: red;'>Failed to load magazine entries.</p>";
+        }
+      }
+
+      window.addEventListener("load", loadBrandPage);
+    </script>
+  </body>
+</html>
           "
         ></p>
       </section>
