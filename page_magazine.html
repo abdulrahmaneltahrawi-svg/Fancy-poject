@@ -8,16 +8,86 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <style>
+      /* تحسين المسافات لتطابق ستايل المجلة في الصفحة الرئيسية */
+      #magazine-grid {
+        gap: 40px;
+        margin-top: 20px;
+      }
+    </style>
     
-
     <div id="header-placeholder"></div>
 
-
+    <section class="projects-section">
+      <div class="container" style="display: flex; flex-direction: column; align-items: center;">
+        <p class="title">Magazine</p>
+        <div id="magazine-grid" class="projects-grid"></div>
+      </div>
+    </section>
 
     <div id="footer-placeholder"></div>
 
     <script src="js/script.js"></script>
     <script src="js/brands.js"></script>
     <script src="js/auth.js"></script>
+    <script>
+      async function loadAllMagazines() {
+        const container = document.getElementById("magazine-grid");
+        if (!container) return;
+        try {
+          // جلب المشاريع العامة من الـ API
+          const result = await FancyAPI.get('/project/public_projects.php');
+          if (result.success && result.data && result.data.projects) {
+            const projects = result.data.projects;
+            
+            if (projects.length === 0) {
+              container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 50px;">No magazine entries published yet.</p>';
+              return;
+            }
+
+            // عرض الكروت باستخدام نفس دالة التصميم الموجودة في الصفحة الرئيسية
+            container.innerHTML = projects.map(p => createGenericCardHTML({
+              id: p.id,
+              title: p.title,
+              image: getSafeImageUrl(p.cover_image),
+              category: p.category,
+              type: p.type
+            }, 'magazine')).join('');
+          }
+        } catch (error) {
+          console.error("Error loading magazines:", error);
+        }
+      }
+
+      // دالة إنشاء الكروت بنفس مقاسات الصفحة الرئيسية (عريضة وفخمة)
+      function createGenericCardHTML(data, type) {
+        let targetPage = "view_magazine.html";
+        const itemId = data.product_id || data.id || "";
+
+        return `
+        <div class="project-card">
+            <div class="card-image">
+                <a href="${targetPage}?id=${itemId}">
+                    <img src="${data.image}" alt="${data.title}">
+                </a>
+            </div>
+            <div class="card-content">
+                <a href="${targetPage}?id=${itemId}" style="text-decoration: none; color: inherit;">
+                    <h3 class="card-title" style="font-size: 24px; font-weight: 700; margin-bottom: 15px;">${data.title}</h3>
+                </a>
+                <div class="card-meta" style="display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #eee; margin-top: 10px; padding-top: 15px;">
+                    <p style="font-size: 13px; color: #888; margin: 0; text-transform: uppercase; letter-spacing: 1px;">
+                        <strong style="color: #000;">Category:</strong> ${data.category || 'N/A'}
+                    </p>
+                    <p style="font-size: 13px; color: #888; margin: 0; text-transform: uppercase; letter-spacing: 1px;">
+                        <strong style="color: #000;">Type:</strong> ${data.type || 'N/A'}
+                    </p>
+                </div>
+            </div>
+        </div>`;
+      }
+
+      window.addEventListener("load", loadAllMagazines);
+    </script>
   </body>
 </html>
