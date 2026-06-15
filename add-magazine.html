@@ -92,8 +92,17 @@
           </div>
         </div>
         <div class="form-group">
-          <label>Cover Image:</label>
+          <label>Cover Image (Main):</label>
           <input type="file" name="image" accept="image/*" required />
+        </div>
+        <div class="form-group">
+          <label>Additional Gallery Images:</label>
+          <div id="gallery-inputs">
+            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+              <input type="file" name="images[]" accept="image/*" />
+            </div>
+          </div>
+          <button type="button" id="add-more-img" style="background: #eee; border: 1px solid #ccc; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 13px;">+ Add another image</button>
         </div>
         <div class="form-group">
           <label>Header Description:</label>
@@ -112,6 +121,18 @@
     <script src="js/script.js"></script>
     <script src="js/auth.js"></script>
     <script>
+      // وظيفة إضافة حقول صور إضافية ديناميكياً
+      document.getElementById('add-more-img').addEventListener('click', function() {
+        const container = document.getElementById('gallery-inputs');
+        const div = document.createElement('div');
+        div.style.display = 'flex';
+        div.style.gap = '10px';
+        div.style.marginBottom = '10px';
+        div.innerHTML = `<input type="file" name="images[]" accept="image/*" />
+                         <button type="button" onclick="this.parentElement.remove()" style="background:none; border:none; color:red; cursor:pointer; font-weight:bold;">X</button>`;
+        container.appendChild(div);
+      });
+
       document.getElementById('magazineForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const btn = document.getElementById('publishBtn');
