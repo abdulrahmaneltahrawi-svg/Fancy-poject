@@ -406,7 +406,7 @@ html {
 
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 3 أعمدة متساوية */
+  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); /* توزيع أفقي: كرتين أو ثلاثة في السطر حسب عرض الشاشة */
   gap: 30px; /* المسافة بين البطاقات */
 }
 
@@ -414,7 +414,7 @@ html {
   background: #fff;
   cursor: pointer;
   width: 100%;
-  max-width: 900px;
+  max-width: 1200px; /* زيادة العرض الأقصى للكرت ليظهر بشكل أعرض */
   display: flex;
   flex-direction: column;
   padding: 10px;
@@ -432,7 +432,7 @@ html {
 .card-image {
   position: relative; /* مهم جداً */
   width: 100%;
-  height: 320px;
+  height: 350px; /* تعديل الارتفاع ليتناسب مع التوزيع الأفقي */
   overflow: hidden;
   margin-bottom: 15px;
 }
@@ -503,7 +503,7 @@ html {
 /* استجابة الموبايل */
 @media (max-width: 992px) {
   .projects-grid {
-    grid-template-columns: repeat(2, 1fr); /* عمودين في الأجهزة المتوسطة */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* تصغير الحد الأدنى في الشاشات المتوسطة */
   }
 }
 
@@ -829,7 +829,7 @@ html {
 /* --- تنسيقات عرض البراندات (تستخدم في صفحة البروفايل وصفحة البراندات العامة) --- */
 .brands-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); /* توحيد العرض ليكون أفقي وعريض */
   gap: 40px;
   padding: 40px 40px 80px 40px;
   background-color: #ffffff;

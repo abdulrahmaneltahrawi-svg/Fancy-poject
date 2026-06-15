@@ -193,25 +193,6 @@
         }
       }
 
-      /* جعل كروت قسم المجلة أعرض وتحسين شكلها */
-      #interior-container {
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 40px;
-      }
-
-      #interior-container .project-card {
-        border: none;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        border-radius: 15px;
-        overflow: hidden;
-        padding: 0; /* إزالة الحواف الداخلية للمظهر المودرن */
-        background: #fff;
-      }
-
-      #interior-container .card-content {
-        padding: 25px;
-      }
-
       .descrition {
         display: flex;
         justify-content: center;
@@ -694,9 +675,9 @@ productivity in any workspace.</p>
 
         return `
         <div class="project-card">
-            <div class="card-image" style="height: 350px; margin-bottom: 0;">
+            <div class="card-image" style="height: 250px; margin-bottom: 0;">
                 <a href="${targetPage}?id=${itemId}">
-                    <img src="${data.image}" alt="${data.title}" style="object-fit: cover;">
+                    <img src="${data.image}" alt="${data.title}" style="object-fit: contain;">
                 </a>
             </div>
             <div class="card-content">
