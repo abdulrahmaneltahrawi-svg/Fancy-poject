@@ -280,8 +280,8 @@
           <img id="project-image" src="" alt="Project Image" />
           <div class="description-box">
             <div class="tabs-header">
-              <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
-              <button class="tab-btn" onclick="switchTab('gallery')">Gallery</button>
+              <button class="tab-btn active" onclick="switchTab('overview', event)">Overview</button>
+              <button class="tab-btn" onclick="switchTab('gallery', event)">Gallery</button>
             </div>
             <div id="tab-overview" class="tab-pane active">
               <p id="project-desc"></p>
@@ -310,10 +310,14 @@
           <div id="specs-container" class="specs-section hidden">
             <h4>Technical Data</h4>
              <div id="sku-container" class="hidden">
-              <span style="font-size: 18px; font-weight: bold; color: #555;"></span>
+              <span style="font-size: 16px; font-weight: bold; color: #555;">SKU: </span>
               <span id="active-sku" style="font-size: 16px; font-weight: bold; color: #555;"></span>
             </div>
             <p id="project-specs" style="font-size: 18px; color: #555;"></p>
+            <div id="cbm-container" class="hidden" style="margin-top: 5px;">
+              <span style="font-size: 16px; font-weight: bold; color: #555;">CBM: </span>
+              <span id="active-cbm" style="font-size: 16px; color: #555;"></span>
+            </div>
 
           </div>
 
@@ -407,9 +411,22 @@
             // تحديث الوصف الكامل
             document.getElementById('project-desc').innerText = project.description || project.header_description || 'No description available.';
 
-            // إخفاء أقسام المنتجات غير ذات الصلة بالمجلة
-            document.getElementById('variants-container').classList.add('hidden');
-            document.getElementById('specs-container').classList.add('hidden');
+            // إخفاء قسم الخيارات (Variants) لأنه غير مخصص للمجلة
+            const variantsContainer = document.getElementById('variants-container');
+            if (variantsContainer) variantsContainer.classList.add('hidden');
+
+            // تحديث CBM و SKU للمجلة إذا كانت متوفرة في بيانات المشروع
+            if (project.cbm || project.sku) {
+                if (project.cbm) {
+                    document.getElementById('active-cbm').innerText = project.cbm;
+                    document.getElementById('cbm-container').classList.remove('hidden');
+                }
+                if (project.sku) {
+                    document.getElementById('active-sku').innerText = project.sku;
+                    document.getElementById('sku-container').classList.remove('hidden');
+                }
+                document.getElementById('specs-container').classList.remove('hidden');
+            }
 
             // تحديث معرض الصور (Gallery)
             const thumbnailsGrid = document.getElementById('thumbnails');

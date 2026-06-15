@@ -169,9 +169,20 @@ async function loadSingleProductDetails(productId) {
                         // تحديث الـ SKU تحت Technical Specifications
                         const skuElem = document.getElementById('active-sku');
                         const skuContainer = document.getElementById('sku-container');
+                        const specsContainer = document.getElementById('specs-container');
                         if(skuElem && skuContainer) {
                             skuElem.innerText = '${opt.sku || 'N/A'}';
                             skuContainer.classList.remove('hidden');
+                            if(specsContainer) specsContainer.classList.remove('hidden');
+                        }
+
+                        // تحديث CBM
+                        const cbmElem = document.getElementById('active-cbm');
+                        const cbmContainer = document.getElementById('cbm-container');
+                        if(cbmElem && cbmContainer) {
+                            cbmElem.innerText = '${opt.cbm || 'N/A'}';
+                            cbmContainer.classList.remove('hidden');
+                            if(specsContainer) specsContainer.classList.remove('hidden');
                         }
 
                         // تحديث الـ Type المربع المنفصل
@@ -185,6 +196,10 @@ async function loadSingleProductDetails(productId) {
                         <div class="opt-name-box">${opt.option_name}</div>
                     </div>
                 `).join('');
+
+                // اختيار أول خيار تلقائياً لإظهار بياناته (SKU, CBM, Image) عند تحميل الصفحة
+                const firstOption = optionsGrid.querySelector('.option-item');
+                if (firstOption) firstOption.click();
             }
 
             // تحديث معرض الصور (Gallery) في التبويب المخصص
