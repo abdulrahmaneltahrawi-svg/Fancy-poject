@@ -191,7 +191,7 @@
           justify-content: flex-start; /* محاذاة العناصر إلى البداية عند الالتفاف */
           font-size: 5px;
         }
-      }
+      } 
 
       .descrition {
         display: flex;
@@ -527,7 +527,7 @@ productivity in any workspace.</p>
       <p class="des2">Explore Design Projects, News & trends</p>
     </div>
     <div class="container">
-        <div id="interior-container" class="projects-grid"></div>
+        <div id="interior-container" class="magazine-grid"></div>
     </div>
     <a href="page_interior.html">
     <div class="read-more"><button>GO TO MAGAZINE</button></div>
@@ -674,22 +674,29 @@ productivity in any workspace.</p>
         const itemId = data.product_id || data.id || "";
 
         return `
+<<<<<<< HEAD
         <div class="project-card">
             <div class="card-image">
                 <a href="${targetPage}?id=${itemId}">
                     <img src="${data.image}" alt="${data.title}">
+=======
+        <div class="magazine-card">
+            <div class="card-image" style="height: 250px;">
+                <a href="${targetPage}?id=${itemId}">
+                    <img src="${data.image}" alt="${data.title}" style="width: 100%; height: 100%; object-fit: cover;">
+>>>>>>> temp-branch
                 </a>
             </div>
-            <div class="card-content">
+            <div class="card-content" >
                 <a href="${targetPage}?id=${itemId}" style="text-decoration: none; color: inherit;">
-                    <h3 class="card-title" style="font-size: 24px; font-weight: 700; margin-bottom: 15px;">${data.title}</h3>
+                    <h3 class="card-title" style="font-size: 17px; font-weight: 700; margin-bottom: 15px;">${data.title}</h3>
                 </a>
-                <div class="card-meta" style="display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #eee; pt: 15px; margin-top: 10px; padding-top: 15px;">
-                    <p style="font-size: 13px; color: #888; margin: 0; text-transform: uppercase; letter-spacing: 1px;">
-                        <strong style="color: #000;">Category:</strong> ${data.category || 'N/A'}
+                <div class="card-meta" style="display: flex; flex-direction: column; gap: 8px;">
+                    <p style="font-size: 13px; color: #888; margin: 0; letter-spacing: 1px;">
+                         ${data.category || 'N/A'}
                     </p>
-                    <p style="font-size: 13px; color: #888; margin: 0; text-transform: uppercase; letter-spacing: 1px;">
-                        <strong style="color: #000;">Type:</strong> ${data.type || 'N/A'}
+                    <p style="font-size: 13px; color: #888; margin: 0; letter-spacing: 1px;">
+           ${data.type || 'N/A'}
                     </p>
                 </div>
             </div>
