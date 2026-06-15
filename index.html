@@ -13,11 +13,12 @@
         display: flex;
         justify-content: space-around;
         align-items: center;
-        gap: 45px;
+        gap:45px;
         margin-top: 30px;
+        
       }
 
-      .publish {
+      .publish{
         color: black;
         text-decoration: underline;
       }
@@ -27,6 +28,8 @@
         justify-content: center; /* لتوسيط القائمة في الصفحة */
         gap: 30px; /* المسافة بين الكلمات */
 
+       
+        
         font-family: Arial, sans-serif; /* نوع الخط القريب من الصورة */
       }
 
@@ -58,12 +61,12 @@
       }
 
       .slider-container img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover; /* هذا هو الحل الأساسي لمشكلة القص */
-        object-position: center; /* لضمان تركيز الصورة في المنتصف دائماً */
-        flex-shrink: 0; /* لمنع انضغاط الصور */
-      }
+    width: 100%;
+    height: 100%;
+    object-fit: cover;      /* هذا هو الحل الأساسي لمشكلة القص */
+    object-position: center; /* لضمان تركيز الصورة في المنتصف دائماً */
+    flex-shrink: 0;         /* لمنع انضغاط الصور */
+}
 
       .slide {
         position: absolute;
@@ -74,9 +77,7 @@
         opacity: 0;
         visibility: hidden;
         pointer-events: none;
-        transition:
-          opacity 0.8s ease-in-out,
-          visibility 0.8s;
+        transition: opacity 0.8s ease-in-out, visibility 0.8s;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -200,7 +201,7 @@
 
       #interior-container .project-card {
         border: none;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         border-radius: 15px;
         overflow: hidden;
         padding: 0; /* إزالة الحواف الداخلية للمظهر المودرن */
@@ -217,17 +218,20 @@
         align-items: center;
         flex-direction: column;
         margin: 50px;
+
       }
-      .des1 {
-        font-size: 25px;
+      .des1{
+        font-size: 25px;     
         margin: 0;
+      
       }
-      .des2 {
+      .des2{
         font-size: 20px;
-        color: rgb(173, 172, 172);
+        color:rgb(173, 172, 172);
+        
       }
-      .descrition button {
-        margin: 10px;
+      .descrition button{
+        margin:10px;
         padding: 7px 23px;
         color: white;
         background-color: rgb(246, 63, 63);
@@ -238,20 +242,21 @@
       }
 
       /* تنسيق السكشن الرئيسي */
-      .gallery-section {
+    .gallery-section {
         max-width: 1300px;
         margin: 0 auto;
-      }
+     
+    }
 
-      /* تنسيق الشبكة داخل السكشن */
-      .gallery-grid {
+    /* تنسيق الشبكة داخل السكشن */
+    .gallery-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, 1fr); 
         gap: 20px;
-      }
+    }
 
-      /* تنسيق الحاوية للصور */
-      .gallery-item {
+    /* تنسيق الحاوية للصور */
+    .gallery-item {
         position: relative;
         width: 100%;
         height: 400px;
@@ -259,24 +264,24 @@
         border-radius: 8px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         background-color: white; /* خلفية لملء المساحات إذا كانت الصورة أصغر من الإطار */
-      }
+    }
 
-      /* تأثير بسيط عند التمرير بالفأرة */
-      .gallery-item:hover img {
+    /* تأثير بسيط عند التمرير بالفأرة */
+    .gallery-item:hover img {
         transform: scale(1.1);
-      }
+    }
 
-      .gallery-item img {
+    .gallery-item img {
         width: 100%;
         height: 100%;
         object-fit: contain; /* لجعل الصورة تظهر كاملة بدون قص */
         transition: transform 0.5s ease;
         display: block;
         cursor: pointer;
-      }
+    }
 
-      /* طبقة النصوص فوق الصورة */
-      .gallery-overlay {
+    /* طبقة النصوص فوق الصورة */
+    .gallery-overlay {
         position: absolute;
         top: 0; /* نقل النص للأعلى */
         bottom: auto;
@@ -287,34 +292,35 @@
         text-align: left; /* محاذاة النص لليسار */
         direction: ltr; /* اتجاه النص من اليسار لليمين */
         z-index: 2;
-      }
+    }
 
-      .gallery-overlay h4 {
+    .gallery-overlay h4 {
         margin: 0;
         font-size: 22px;
         font-weight: 630;
-      }
+    }
 
-      .gallery-overlay p {
+    .gallery-overlay p {
         margin: 5px 0 0;
         font-size: 14px;
         font-weight: 600;
-
+        
         word-wrap: break-word;
         white-space: pre-wrap; /* لضمان ظهور الأسطر الجديدة والفواصل */
-      }
-      .gallery-overlay button {
-        margin: 10px;
-        padding: 7px 23px;
-        color: white;
-        background-color: rgb(246, 63, 63);
-        font-weight: bold;
-        border-radius: 6px;
-        border: none;
-        cursor: pointer;
-      }
+        
+    }
+    .gallery-overlay button{
+      margin:10px;
+      padding: 7px 23px;
+      color: white;
+      background-color: rgb(246, 63, 63);
+      font-weight: bold;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
       /**/
-      .trends {
+      .trends{
         display: flex;
         justify-content: center;
         align-items: center;
@@ -323,132 +329,93 @@
       }
 
       .Fancy-logo {
-        display: flex;
+        display: flex;  
         align-items: center;
         margin: 0;
+
       }
 
-      .Fancy-logo img {
+       .Fancy-logo img {
         width: 150px;
-      }
+       }
 
-      .Fancy-logo p {
+       .Fancy-logo p {
         font-size: 35px;
         font-family: "Roboto" !important;
         font-weight: 200;
         color: #414040;
         margin: 0;
-      }
+       }
     </style>
 
     <div id="header-placeholder"></div>
 
     <div class="second-header">
-      <nav class="category-nav" id="main-category-nav"></nav>
 
-      <a href="add-brand.html"><p class="publish">Publish your Products</p></a>
+
+
+    <nav class="category-nav" id="main-category-nav"></nav>
+
+    <a href="add-brand.html"><p class="publish">Publish your Products</p></a>
+
     </div>
 
     <section class="hero-slider">
       <div class="slider-container" id="dynamic-slider">
         <!-- صور ثابتة للسلايدر -->
-        <a href="view.html?id=62">
-          <div class="slide active">
-            <div
-              class="slide-bg"
-              style="
-                background-image: url(&quot;imges/hero-img/topslider01.webp&quot;);
-              "
-            ></div>
-            <div class="slide-content">
-              <h1>Cookie Modular Sofa</h1>
-              <p>
-                A playful and inviting seating solurtion that offers endless
-                possibilities for comfort and style.
-              </p>
-            </div>
+         <a href="view.html?id=62">
+        <div class="slide active">
+          <div class="slide-bg" style="background-image: url('imges/hero-img/topslider01.webp');"></div>
+          <div class="slide-content">
+            <h1>Cookie Modular Sofa</h1>
+            <p>A playful and inviting seating solurtion that offers endless possibilities for comfort and style.</p>
           </div>
+        </div>
         </a>
         <a href="view.html?id=57">
-          <div class="slide">
-            <div
-              class="slide-bg"
-              style="
-                background-image: url(&quot;imges/hero-img/topslider04 (1).webp&quot;);
-              "
-            ></div>
-            <div class="slide-content">
-              <h1>The RAIN FLOWER</h1>
-              <p>
-                A modern masterpiece that seamlessly blends comfort and style.
-              </p>
-            </div>
+        <div class="slide">
+          <div class="slide-bg" style="background-image: url('imges/hero-img/topslider04 (1).webp');"></div>
+          <div class="slide-content">
+            <h1>The RAIN FLOWER</h1>
+            <p>A modern masterpiece that seamlessly blends comfort and style.</p>
           </div>
+        </div>
         </a>
         <a href="view.html?id=58">
-          <div class="slide">
-            <div
-              class="slide-bg"
-              style="
-                background-image: url(&quot;imges/hero-img/Artboard1.webp&quot;);
-              "
-            ></div>
-            <div class="slide-content">
-              <h1>SYS Lounge Chair</h1>
-              <p>A striking blend of industrial strength and plush comfort.</p>
-            </div>
+        <div class="slide">
+          <div class="slide-bg" style="background-image: url('imges/hero-img/Artboard1.webp');"></div>
+          <div class="slide-content">
+            <h1>SYS Lounge Chair</h1>
+            <p>A striking blend of industrial strength and plush comfort.</p>
           </div>
+        </div>
         </a>
         <a href="view.html?id=59">
-          <div class="slide">
-            <div
-              class="slide-bg"
-              style="
-                background-image: url(&quot;imges/hero-img/topslider05.webp&quot;);
-              "
-            ></div>
-            <div class="slide-content">
-              <h1>The Koji Sofa</h1>
-              <p>
-                A sculptural seating experience that redefines modern
-                minimalism.
-              </p>
-            </div>
+        <div class="slide">
+          <div class="slide-bg" style="background-image: url('imges/hero-img/topslider05.webp');"></div>
+          <div class="slide-content">
+            <h1>The Koji Sofa</h1>
+            <p>A sculptural seating experience that redefines modern minimalism.</p>
           </div>
+        </div>
         </a>
         <a href="view.html?id=61">
-          <div class="slide">
-            <div
-              class="slide-bg"
-              style="
-                background-image: url(&quot;imges/hero-img/Artboard2.webp&quot;);
-              "
-            ></div>
-            <div class="slide-content">
-              <h1>One-Corner Sofa</h1>
-              <p>
-                A sleek and modern seating solution that combines style and
-                comfort for contemporary living.
-              </p>
-            </div>
+        <div class="slide">
+          <div class="slide-bg" style="background-image: url('imges/hero-img/Artboard2.webp');"></div>
+          <div class="slide-content">
+            <h1>One-Corner Sofa</h1>
+            <p>A sleek and modern seating solution that combines style and comfort for contemporary living.</p>
           </div>
+        </div>
         </a>
         <a href="view.html?id=60">
-          <div class="slide">
-            <div
-              class="slide-bg"
-              style="
-                background-image: url(&quot;imges/hero-img/topslider03.webp&quot;);
-              "
-            ></div>
-            <div class="slide-content">
-              <h1>Flower Sofa</h1>
-              <p>
-                A versatile and inviting seating solution that blooms into
-                endless configurations.
-              </p>
-            </div>
+        <div class="slide">
+          <div class="slide-bg" style="background-image: url('imges/hero-img/topslider03.webp');"></div>
+          <div class="slide-content">
+            <h1>Flower Sofa</h1>
+            <p>A versatile and inviting seating solution that blooms into endless configurations.</p>
           </div>
+        </div>
         </a>
       </div>
       <button class="prev-btn">&#10094;</button>
@@ -463,185 +430,126 @@
       </div>
     </section>
 
+
     <section class="descrition">
-      <p class="des1">
-        Hot solutions by brands and designers inspires you to design and build
-      </p>
-      <p class="des2">
-        Source Ideas for your projects, explore products catalogues, get CAD /
-        3D files and shop design products
-      </p>
+      <p class="des1">Hot solutions by brands and designers inspires you to design and build</p>
+      <p class="des2">Source Ideas for your projects, explore products catalogues, get CAD / 3D files and shop design products</p>
       <button id="join-now-btn">JOIN NOW</button>
     </section>
 
-    <section class="gallery-section">
+      <section class="gallery-section">
       <div class="gallery-grid">
-        <div class="gallery-item">
-          <a href="Fancy_Service.html">
-            <img
-              src="imges/hero-img/1.webp"
-              style="object-fit: cover"
-              alt="منتج 1"
-            />
-            <div class="gallery-overlay">
-              <h4>Fancy</h4>
-              <p>
-                your one-stop solution for all architecture and design product
-                needs.
-              </p>
-              <button class="learn">LEARN MORE</button>
-            </div>
-          </a>
-        </div>
-        <div class="gallery-item" style="grid-column: span 2">
-          <a
-            href="product.category.html?category_name=Furniture&sub_category_name=Sofas"
-            style="text-decoration: none; color: inherit"
-          >
-            <img
-              src="imges/hero-img/2.webp"
-              style="object-fit: cover"
-              alt="Sofas"
-            />
-            <div class="gallery-overlay">
-              <h4>Sofas</h4>
-              <p>
-                With upholstery fabric or leather, the loveseat adds a moderate
-                personality to your individual space.
-              </p>
-            </div>
-          </a>
-        </div>
-        <div class="gallery-item" style="grid-column: span 2">
-          <a
-            href="product.category.html?category_name=Furniture&sub_category_name=Chairs"
-            style="text-decoration: none; color: inherit"
-          >
-            <img src="imges/hero-img/3.webp" alt="منتج 3" />
-            <div class="gallery-overlay" style="color: black">
-              <h4>Upholstered Lounge Chair</h4>
-              <p>
-                With full foam and cinched to give a comfortable Cushion look
-                and feel.
-              </p>
-            </div>
-          </a>
-        </div>
-        <div class="gallery-item">
-          <a href="product.category.html?category_name=Furniture&sub_category_name=Sofas" style="text-decoration: none; color: inherit;">
-          <img
-            src="imges/hero-img/4.webp"
-            style="object-fit: cover"
-            alt="Chairs"
-          />
-          <div class="gallery-overlay" style="color: black">
-            <h4>Sofi Collection</h4>
-            <p>
-              Each piece embraces an organic design aesthetic, with soft curves
-              reminiscent of botanical landscapes.
-            </p>
+          <div class="gallery-item">
+            <a href="Fancy_Service.html">
+              <img src="imges/hero-img/1.webp" style="object-fit: cover;" alt="منتج 1">
+              <div class="gallery-overlay">
+                  <h4>Fancy</h4>
+                  <p>your one-stop solution for all architecture
+and design product needs.</p>
+<button class="learn">LEARN MORE</button>
+              </div>
+              </a>
           </div>
-          </a>
-        </div>
-        <div class="gallery-item" style="grid-row: span 2; height: 400px">
-          <a href="view.html?id=55">
-            <img
-              src="imges/hero-img/5.webp"
-              style="object-fit: cover"
-              alt="منتج 5"
-            />
-          </a>
-          <div class="gallery-overlay">
-            <h4>Kase</h4>
-            <p>
-              The Kase High Back Sofa is a stylish and functional piece that
-              offers both privacy and comfort.
-            </p>
-          </div>
-        </div>
-        <div class="gallery-item" style="grid-row: span 2; height: 400px">
-          <a href="view.html?id=50">
-            <img
-              src="imges/hero-img/6.png"
-              style="object-fit: cover"
-              alt="منتج 6"
-          /></a>
-          <div class="gallery-overlay">
-            <h4>Lake</h4>
-            <p>
-              a combination of high and low tea table, Design comes from the
-              natural of lake.
-            </p>
-          </div>
-        </div>
-        <div class="gallery-item" style="grid-row: span 2; height: 400px">
-          <a href="view.html?id=56">
-            <img
-              src="imges/hero-img/7.png"
-              style="object-fit: cover"
-              alt="منتج 7"
-            />
-          </a>
-          <div class="gallery-overlay">
-            <h4>SWAN</h4>
-            <p>
-              designed for those who appreciate the elegance of classic styles.
-            </p>
-          </div>
-        </div>
-        <div class="gallery-item" style="grid-column: span 2">
-          <a href="view.html?id=64">
-            <img
-              src="imges/hero-img/8.webp"
-              style="object-fit: cover"
-              alt="منتج 8"
-            />
-          </a>
-          <div class="gallery-overlay" style="color: black">
-            <h4>Office Desks</h4>
-            <p>
-              Stylish and functional, providing ample workspace for your office
-              needs.
-            </p>
-          </div>
-        </div>
-        <div class="gallery-item">
-          <a href="view.html?id=65">
-            <img
-              src="imges/hero-img/9.webp"
-              style="object-fit: cover"
-              alt="منتج 9"
-            />
-          </a>
-          <div class="gallery-overlay" style="color: black">
-            <h4>Office chairs</h4>
-            <p>
-              Ergonomic designs that ensure comfort and enhance productivity in
-              any workspace.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
+          <div class="gallery-item" style="grid-column: span 2; ">
+            <a href="product.category.html?category_name=Furniture&sub_category_name=Sofas" style="text-decoration: none; color: inherit;">
+              <img src="imges/hero-img/2.webp" style="object-fit: cover;" alt="Sofas">
+              <div class="gallery-overlay">
+                  <h4>Sofas</h4>
+                  <p>With upholstery fabric or leather, the loveseat adds a moderate
+personality to your individual space.
 
-    <section class="projects-section">
-      <div class="trends">
-        <div class="Fancy-logo">
-          <img
-            src="imges/img/WhatsApp Image 2026-06-08 at 9.44.06 AM.png"
-            alt=""
-          />
-          <p>Selected</p>
-        </div>
-        <p class="des2">Explore Design Projects, News & trends</p>
+</p>
+              </div>
+            </a>
+          </div>
+          <div class="gallery-item" style="grid-column: span 2;">
+              <a href="product.category.html?category_name=Furniture&sub_category_name=Chairs" style="text-decoration: none; color: inherit;">
+              <img src="imges/hero-img/3.webp" alt="منتج 3">
+              <div class="gallery-overlay" style="color: black;">
+                  <h4>Upholstered Lounge Chair</h4>
+                  <p>With full foam and cinched to give a comfortable Cushion look and feel.</p>
+              </div>
+              </a>
+          </div>
+          <div class="gallery-item">
+              <img src="imges/hero-img/4.webp" style="object-fit: cover;"  alt="Chairs">
+              <div class="gallery-overlay" style="color: black;">
+                  <h4>
+Sofi Collection</h4>
+                  <p>Each piece embraces an organic design aesthetic, with soft
+curves reminiscent of botanical landscapes.</p>
+              </div>
+  
+          </div>
+          <div class="gallery-item" style="grid-row: span 2; height: 400px;">
+              <a href="view.html?id=55">
+              <img src="imges/hero-img/5.webp" style="object-fit: cover;" alt="منتج 5">
+              </a>
+              <div class="gallery-overlay">
+                  <h4>Kase</h4>
+                  <p>The Kase High Back Sofa is a stylish and functional piece that
+offers both privacy and comfort.</p>
+              </div>
+          </div>
+          <div class="gallery-item" style="grid-row: span 2; height: 400px;">
+            <a href="view.html?id=50">
+              <img src="imges/hero-img/6.png" style="object-fit: cover;" alt="منتج 6"></a>
+              <div class="gallery-overlay">
+                  <h4>Lake</h4>
+                  <p>a combination of high and low tea table, Design comes from the natural of lake.</p>
+              </div>
+          </div>
+          <div class="gallery-item" style="grid-row: span 2; height: 400px;">
+            <a href="view.html?id=56">
+              <img src="imges/hero-img/7.png" style="object-fit: cover;" alt="منتج 7">
+              </a>
+              <div class="gallery-overlay">
+                  <h4>SWAN</h4>
+                  <p>designed for those who appreciate the elegance of classic styles.</p>
+              </div>
+          </div>
+          <div class="gallery-item" style="grid-column: span 2;">
+            <a href="view.html?id=64">
+              <img src="imges/hero-img/8.webp" style="object-fit: cover;" alt="منتج 8">
+              </a>
+              <div class="gallery-overlay" style="color: black;">
+                  <h4>Office Desks</h4>
+                  <p>Stylish and functional, providing ample workspace
+for your office needs.
+
+</p>
+              </div>
+          </div>
+          <div class="gallery-item">
+            <a href="view.html?id=65">
+              <img src="imges/hero-img/9.webp" style="object-fit: cover;" alt="منتج 9">
+              </a>
+              <div class="gallery-overlay" style="color: black;">
+                  <h4>Office chairs</h4>
+                  <p>Ergonomic designs that ensure comfort and enhance
+productivity in any workspace.</p>
+              </div>
+          </div>
       </div>
-      <div class="container">
+  </section>
+    
+
+
+<section class="projects-section">
+    <div class="trends">
+      <div class="Fancy-logo">
+        <img src="imges/img/WhatsApp Image 2026-06-08 at 9.44.06 AM.png" alt="">
+        <p>Selected</p>
+      </div>
+      <p class="des2">Explore Design Projects, News & trends</p>
+    </div>
+    <div class="container">
         <div id="interior-container" class="projects-grid"></div>
-      </div>
-      <a href="page_interior.html">
-        <div class="read-more"><button>GO TO MAGAZINE</button></div>
-      </a>
-    </section>
+    </div>
+    <a href="page_interior.html">
+    <div class="read-more"><button>GO TO MAGAZINE</button></div>
+    </a>
+</section>
 
     <section class="projects-section">
       <p class="title">products</p>
@@ -745,31 +653,23 @@
         if (!container) return;
         try {
           // استدعاء الـ API الخاص بالمشاريع العامة (المقبولة فقط)
-          const result = await FancyAPI.get("/project/public_projects.php");
+          const result = await FancyAPI.get('/project/public_projects.php');
           if (result.success && result.data && result.data.projects) {
             let projects = result.data.projects;
             if (limit) projects = projects.slice(0, limit);
-
+            
             if (projects.length === 0) {
-              container.innerHTML =
-                '<p style="grid-column: 1/-1; text-align: center;">No magazine entries yet.</p>';
+              container.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">No magazine entries yet.</p>';
               return;
             }
 
-            container.innerHTML = projects
-              .map((p) =>
-                createGenericCardHTML(
-                  {
-                    id: p.id,
-                    title: p.title,
-                    image: getSafeImageUrl(p.cover_image), // استخدام صورة الغلاف
-                    category: p.category,
-                    type: p.type,
-                  },
-                  "magazine",
-                ),
-              )
-              .join("");
+            container.innerHTML = projects.map(p => createGenericCardHTML({
+              id: p.id,
+              title: p.title,
+              image: getSafeImageUrl(p.cover_image), // استخدام صورة الغلاف
+              category: p.category,
+              type: p.type
+            }, 'magazine')).join('');
           }
         } catch (error) {
           console.error("Error loading magazines:", error);
@@ -803,10 +703,10 @@
                 </a>
                 <div class="card-meta" style="display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #eee; pt: 15px; margin-top: 10px; padding-top: 15px;">
                     <p style="font-size: 13px; color: #888; margin: 0; text-transform: uppercase; letter-spacing: 1px;">
-                        <strong style="color: #000;">Category:</strong> ${data.category || "N/A"}
+                        <strong style="color: #000;">Category:</strong> ${data.category || 'N/A'}
                     </p>
                     <p style="font-size: 13px; color: #888; margin: 0; text-transform: uppercase; letter-spacing: 1px;">
-                        <strong style="color: #000;">Type:</strong> ${data.type || "N/A"}
+                        <strong style="color: #000;">Type:</strong> ${data.type || 'N/A'}
                     </p>
                 </div>
             </div>
@@ -819,12 +719,10 @@
     </script>
     <!-- EmailJS SDK - يجب أن يتم تحميله قبل أي سكريبت يستخدم emailjs -->
     <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        document
-          .getElementById("join-now-btn")
-          .addEventListener("click", () => {
-            showAuthModal("register");
-          });
+      document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('join-now-btn').addEventListener('click', () => {
+          showAuthModal('register');
+        });
       });
     </script>
     <script
