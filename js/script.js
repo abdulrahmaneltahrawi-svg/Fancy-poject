@@ -1,5 +1,6 @@
 // تعريف كائن FancyAPI لمعالجة طلبات الـ API بشكل موحد وتجنب تكرار الكود
-const FancyAPI = {
+if (typeof FancyAPI === 'undefined') {
+    window.FancyAPI = {
     // تنبيه هام: GitHub Pages لا يدعم تشغيل ملفات PHP نهائياً.
     // لكي يعمل الموقع على GitHub، يجب رفع مجلد (fancy) على استضافة تدعم PHP 
     // (مثل InfinityFree, 000webhost, أو Hostinger) ثم وضع رابط الـ API الكامل هنا.
@@ -79,7 +80,8 @@ const FancyAPI = {
                 body: isFormData ? data : JSON.stringify(data)
             });
         }
-};
+    };
+}
 
 // دالة عالمية لتصحيح مسار الصور وضمان ظهورها
 function getSafeImageUrl(imagePath) {
