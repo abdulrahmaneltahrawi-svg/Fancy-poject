@@ -115,6 +115,23 @@
         filter: brightness(0) invert(1);
       }
 
+      /* تنسيق قائمة الخدمات */
+      .services-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 15px;
+      }
+      .service-tag {
+        background: #f0f0f0;
+        color: #555;
+        padding: 6px 15px;
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: 500;
+        border: 1px solid #eee;
+      }
+
       
     </style>
   </head>
@@ -149,6 +166,10 @@
                 <img src="imges/icons/website.png" alt="Website">
               </a>
             </div>
+
+            <!-- حاوية الخدمات -->
+            <h4 id="servicesTitle" class="hidden" style="margin-top: 25px; margin-bottom: 5px; font-size: 15px; color: #333; font-weight: 600;">Services</h4>
+            <div class="services-list" id="designerServices"></div>
           </div>
           <div class="brand-actions">
             <a href="#" id="edit-brand-btn" class="btn btn-edit hidden"
@@ -230,6 +251,20 @@
                 if (item.value && item.value !== "" && item.value !== "null" && el) {
                     el.href = item.url(item.value);
                     el.classList.remove('hidden');
+                }
+            }
+
+            // تحديث الخدمات (Services)
+            const servicesContainer = document.getElementById("designerServices");
+            if (servicesContainer && designer.services) {
+                // التأكد من معالجة البيانات سواء كانت مصفوفة نصوص أو كائنات
+                const servicesArray = Array.isArray(designer.services) ? designer.services : [];
+                if (servicesArray.length > 0) {
+                    document.getElementById("servicesTitle")?.classList.remove("hidden");
+                    servicesContainer.innerHTML = servicesArray.map(service => {
+                        const serviceName = typeof service === 'object' ? (service.name || service.service_name) : service;
+                        return `<span class="service-tag">${serviceName}</span>`;
+                    }).join('');
                 }
             }
 
