@@ -86,6 +86,36 @@
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Adjust card width for better fit */
       }
 
+      /* تنسيق أيقونات التواصل الاجتماعي */
+      .social-links {
+        display: flex;
+        gap: 15px;
+        margin-top: 15px;
+      }
+      .social-icon {
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #f8f8f8;
+        border: 1px solid #eee;
+        transition: all 0.3s ease;
+      }
+      .social-icon:hover {
+        background: #000;
+        transform: translateY(-3px);
+      }
+      .social-icon img {
+        width: 35px;
+        height: 35px;
+        object-fit: contain;
+      }
+      .social-icon:hover img {
+        filter: brightness(0) invert(1);
+      }
+
       
     </style>
   </head>
@@ -101,6 +131,25 @@
           <div class="brand-main-info">
             <h1 id="brandName">...</h1>
             <p id="brandLocation"></p>
+            
+            <!-- حاوية أيقونات التواصل الاجتماعي -->
+            <div class="social-links" id="designerSocial">
+              <a id="link-whatsapp" href="#" target="_blank" class="social-icon hidden" title="WhatsApp">
+                <img src="imges/icons/whatsapp.png" alt="WhatsApp">
+              </a>
+              <a id="link-instagram" href="#" target="_blank" class="social-icon hidden" title="Instagram">
+                <img src="imges/icons/instagram.png" alt="Instagram">
+              </a>
+              <a id="link-linkedin" href="#" target="_blank" class="social-icon hidden" title="LinkedIn">
+                <img src="imges/icons/linkedin.png" alt="LinkedIn">
+              </a>
+              <a id="link-email" href="#" class="social-icon hidden" title="Email">
+                <img src="imges/icons/email.png" alt="Email">
+              </a>
+              <a id="link-website" href="#" target="_blank" class="social-icon hidden" title="Website">
+                <img src="imges/icons/website.png" alt="Website">
+              </a>
+            </div>
           </div>
           <div class="brand-actions">
             <a href="#" id="edit-brand-btn" class="btn btn-edit hidden"
@@ -276,6 +325,24 @@
             
             // تحديث الصورة
             document.getElementById("brandLogo").src = getSafeImageUrl(designer.avatar || designer.logo || "imges/img/fancy1.jfif");
+
+            // تحديث روابط التواصل الاجتماعي
+            const socials = {
+                whatsapp: { id: 'link-whatsapp', value: designer.whatsapp_number, url: (v) => `https://wa.me/${v.replace(/\s+/g, '')}` },
+                instagram: { id: 'link-instagram', value: designer.instagram_url, url: (v) => v.startsWith('http') ? v : `https://instagram.com/${v}` },
+                linkedin: { id: 'link-linkedin', value: designer.linkedin_url, url: (v) => v.startsWith('http') ? v : `https://linkedin.com/in/${v}` },
+                email: { id: 'link-email', value: designer.email_contact, url: (v) => `mailto:${v}` },
+                website: { id: 'link-website', value: designer.website_url, url: (v) => v.startsWith('http') ? v : `https://${v}` }
+            };
+
+            for (const key in socials) {
+                const item = socials[key];
+                const el = document.getElementById(item.id);
+                if (item.value && item.value !== "" && item.value !== "null" && el) {
+                    el.href = item.url(item.value);
+                    el.classList.remove('hidden');
+                }
+            }
 
             // التحقق من الملكية لإظهار أزرار التعديل
             const userData = JSON.parse(localStorage.getItem("userData") || "{}");
