@@ -603,6 +603,7 @@ html {
   gap: 10px;
   font-family: Arial, sans-serif;
   padding: 30px 70px;
+  margin-top: 25px; /* دفع الفلاتر للأسفل قليلاً لتجنب الالتصاق بالهيدر */
 }
 
 /* تصميم الأزرار */
@@ -978,3 +979,28 @@ html {
   opacity: 0.8;
   transform: translateY(-1px);
 }
+ .trends {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        margin-bottom: 30px;
+      }
+
+      .Fancy-logo {
+        display: flex;
+        align-items: center;
+        margin: 0;
+      }
+
+      .Fancy-logo img {
+        width: 150px;
+      }
+
+      .Fancy-logo p {
+        font-size: 35px;
+        font-family: "Roboto" !important;
+        font-weight: 200;
+        color: #414040;
+        margin: 0;
+      }
