@@ -49,9 +49,11 @@
           const displayName = designer.user_name || designer.company_type || "Designer";
           const location = [designer.city, designer.country].filter(Boolean).join(', ');
 
-          // البحث عن المشاريع المرتبطة بهذا المصمم تحديداً لاستخراج صور الغلاف
+          // التأكد من أن الفلترة تتم باستخدام designer.id (المعرف الفريد للمصمم)
+          // لضمان عدم تكرار صور مصمم واحد على بقية الكروت
           const designerProjects = allProjects.filter(p => p.designer_id == designer.id);
           const projectImages = designerProjects.map(p => p.cover_image).filter(Boolean);
+          const projectsCount = designerProjects.length;
 
           const mainImg = projectImages.length > 0 ? getSafeImageUrl(projectImages[0]) : getSafeImageUrl(designer.avatar || designer.avatar_url);
           const sideImg1 = projectImages.length > 1 ? getSafeImageUrl(projectImages[1]) : null;
@@ -77,7 +79,7 @@
                   <h3>${displayName}</h3>
                 </a>
                 <p>${designer.company_type || 'Designer'}</p>
-                <span>${location}</span>
+                <span>${location} ${projectsCount > 0 ? `• ${projectsCount} Magazine Entries` : ''}</span>
               </div>
             </div>
           </div>

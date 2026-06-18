@@ -289,7 +289,7 @@
             }
 
             // جلب المشاريع/المقالات الخاصة بهذا المصمم (Magazine Entries)
-            loadDesignerProjects(designer.user_id, isOwner);
+            loadDesignerProjects(designer.id, isOwner);
 
           } else {
             alert("Designer profile not found.");
@@ -299,13 +299,17 @@
           console.error(error);
         }
       }
-      async function loadDesignerProjects(userId, isOwner = false) {
+      async function loadDesignerProjects(designerId, isOwner = false) {
         const grid = document.getElementById("productsGrid");
         try {
-            // استدعاء الـ API الذي حددته لجلب المشاريع
-            const result = await FancyAPI.get(`/project/my_projects.php?user_id=${userId}`);
+            // جلب المشاريع العامة
+            const result = await FancyAPI.get(`/project/public_projects.php`);
             if (result.success && result.data) {
-                const projects = result.data.projects || result.data;
+                let projects = result.data.projects || result.data;
+                
+                // الفلترة لضمان ظهور المجلات التي تنتمي لهذا المصمم فقط بناءً على الـ ID
+                projects = projects.filter(p => p.designer_id == designerId);
+
                 if (projects.length === 0) {
                     grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #999;'>No magazine entries published yet.</p>";
                     return;
