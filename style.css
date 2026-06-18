@@ -602,7 +602,7 @@ html {
   display: flex;
   gap: 10px;
   font-family: Arial, sans-serif;
-  padding: 30px 70px;
+  padding: 30px 70px 10px 70px;
   margin-top: 25px; /* دفع الفلاتر للأسفل قليلاً لتجنب الالتصاق بالهيدر */
 }
 
@@ -617,7 +617,7 @@ html {
   font-size: 14px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 15px;
 }
 
 .arrow.down {
@@ -877,7 +877,7 @@ html {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); /* توحيد العرض ليكون أفقي وعريض */
   gap: 40px;
-  padding: 40px 40px 80px 40px;
+  padding: 10px 40px 80px 40px;
   background-color: #ffffff;
 }
 
