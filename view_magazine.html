@@ -9,9 +9,11 @@
     <style>
       /* التنسيقات الخاصة بالصفحة */
       .view-container {
-        max-width: 2000px;
+        max-width: 1300px;
         margin: 20px auto;
         padding: 0 20px;
+        background-color: white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       }
       .view-content {
         display: flex;
@@ -43,21 +45,17 @@
       
       /* تنسيق بوكس المصمم الجديد */
       .designer-info-box {
-        background: #fff;
-        border: 1px solid #eee;
-        padding: 20px;
-        border-radius: 12px;
         display: flex;
         align-items: center;
         gap: 15px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       }
       .designer-info-box img {
         width: 60px;
         height: 60px;
         border-radius: 50%;
-        object-fit: cover;
+        object-fit: contain;
         background: #eee;
+        border: 3px solid #eee;
       }
       .designer-info-box h3 {
         margin: 0;
@@ -263,18 +261,22 @@
         <!-- جهة المعلومات (اليسار) -->
         <div class="view-details-section">
           <!-- بوكس معلومات المصمم -->
+          
+
+          <h1 id="project-name"></h1>
+          <p id="project-location" style="font-size: 16px; color: #888; margin: 0; display: none;"></p>
+
+
           <div class="designer-info-box">
             <img id="designer-avatar-sidebar" src="imges/img/fancy1.jfif" alt="Designer">
             <div>
-              <p>Post by</p>
+              <p>Design by</p>
               <h3 id="designer-name-sidebar">...</h3>
               <a id="designer-profile-link" href="#" style="color: #000; font-size: 12px; font-weight: bold;">View Profile</a>
             </div>
           </div>
 
           <span id="project-category" class="category-tag"></span>
-          <h1 id="project-name"></h1>
-          <p id="project-location" style="font-size: 16px; color: #888; margin: 0; display: none;"></p>
 
           <div class="description-box">
             <h4 class="overview" style="border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px;">Description</h4>
