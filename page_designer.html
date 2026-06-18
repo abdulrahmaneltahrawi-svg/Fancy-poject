@@ -41,23 +41,42 @@
               grid.innerHTML = designers.map(designer => {
                 const displayName = designer.user_name || designer.company_type || "Designer";
                 const location = [designer.city, designer.country].filter(Boolean).join(', ');
-                const services = Array.isArray(designer.services) 
-                  ? designer.services.join(', ') 
-                  : (designer.services || '');
+                
+                // جلب صور المشاريع (المجلات) الخاصة بالمصمم لعرضها في شبكة الكرت
+                // الأولوية لـ designer.project_images (مصفوفة مباشرة من الروابط)، ثم designer.projects (مصفوفة كائنات)
+                // ملاحظة هامة: لكي تظهر صور المشاريع، يجب أن يقوم الـ API الخاص بـ All_designer.php
+                // بإرسال مصفوفة project_images أو مصفوفة projects تحتوي على cover_image لكل مصمم.
+                // إذا لم يتم إرسال هذه البيانات من الـ API، فستظهر صورة الأفاتار الافتراضية.
+                let projectImages = designer.project_images || [];
+                if (projectImages.length === 0 && designer.projects) {
+                    projectImages = designer.projects.map(p => p.cover_image).filter(Boolean);
+                }
+
+                const mainImg = projectImages.length > 0 ? getSafeImageUrl(projectImages[0]) : getSafeImageUrl(designer.avatar || designer.avatar_url);
+                const sideImg1 = projectImages.length > 1 ? getSafeImageUrl(projectImages[1]) : null;
+                const sideImg2 = projectImages.length > 2 ? getSafeImageUrl(projectImages[2]) : sideImg1; // إذا لم تتوفر الصورة الثالثة، نستخدم الصورة الثانية مرة أخرى لملء الفراغ
 
                 return `
-                <div class="project-card">
-                  <div class="card-image">
-                    <a href="view_designer.html?id=${designer.id || ''}">
-                      <img src="${getSafeImageUrl(designer.avatar || designer.avatar_url)}" alt="${displayName}">
+                <div class="brand-card">
+                  <div class="brand-images-grid ${!sideImg1 ? 'single-layout' : ''}">
+                    <a href="view_designer.html?id=${designer.id || ''}" style="display: block; height: 100%;">
+                      <img src="${mainImg}" alt="${displayName}">
                     </a>
+                    ${sideImg1 ? `
+                    <div class="side-imgs">
+                      <img src="${sideImg1}" alt="">
+                      <img src="${sideImg2 || sideImg1}" alt="">
+                    </div>
+                    ` : ''}
                   </div>
-                  <div class="card-content">
-                    <a href="view_designer.html?id=${designer.id || ''}" style="text-decoration: none; color: inherit;">
-                      <h3 class="card-title">${displayName}</h3>
-                    </a>
-                    <div class="card-meta" style="margin-top: 10px;">
-                      <span class="category" style="color: #999; font-weight: 460; text-transform: uppercase; font-size: 12px;">${designer.company_type || 'Designer'} ${location ? ' | ' + location : ''}</span>
+                  <div class="brand-info">
+                    <img class="brand-logo" src="${getSafeImageUrl(designer.avatar || designer.avatar_url)}" alt="logo">
+                    <div class="brand-text">
+                      <a href="view_designer.html?id=${designer.id || ''}" style="text-decoration: none; color: inherit;">
+                        <h3>${displayName}</h3>
+                      </a>
+                      <p>${designer.company_type || 'Designer'}</p>
+                      <span>${location}</span>
                     </div>
                   </div>
                 </div>
