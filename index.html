@@ -14,12 +14,13 @@
         justify-content: space-around;
         align-items: center;
         gap: 45px;
-        margin-top: 30px;
+        margin-top: 50px; /* تقليل المسافة العلوية من الهيدر الرئيسي */
       }
 
       .publish {
         color: black;
         text-decoration: underline;
+        margin: 0; /* إزالة الهوامش التلقائية للفقرة لتقليل ارتفاع الحاوية */
       }
 
       .category-nav {
@@ -56,7 +57,7 @@
         position: relative;
         width: 95%; /* تحديد العرض بـ 95% من الشاشة لترك مسافة */
         max-width: 1400px; /* منع التمدد المفرط في الشاشات الكبيرة جداً */
-        margin: 20px auto; /* إضافة مسافة عمودية وتوسيط السلايدر أفقياً */
+        margin: 10px auto 30px auto; /* إزالة المسافة العلوية تماماً ليلتصق بشريط التصنيفات */
         height: 80vh; /* يمكنك أيضاً تقليل الارتفاع ليناسب العرض الجديد */
         overflow: hidden;
       }
