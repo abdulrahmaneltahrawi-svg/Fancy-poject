@@ -26,7 +26,7 @@ function createProductCardHTML(data, options = {}) {
                 <a href="view.html?id=${productId}" style="text-decoration: none; color: inherit;">
                     <h3 class="card-title">${brandName || 'Brand'}</h3>
                 </a>
-                <p class="card-product-name" style="font-size: 15px; color: #636161; margin: 5px 0; font-weight: 250;">${productTitle}</p>
+                <p class="card-product-name" style="font-size: 15px; color: #5b5b5b; margin: 5px 0; font-weight: 250; text-transform: uppercase;">${productTitle}</p>
                 <div class="card-meta">
                     <span class="category" style="font-weight: 100; text-transform: uppercase; font-size: 12px;">${productCategory}</span>
                 </div>
