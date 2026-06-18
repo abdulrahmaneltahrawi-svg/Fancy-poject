@@ -11,7 +11,7 @@
       .view-container {
         max-width: 1300px;
         margin: 20px auto;
-        padding: 0 20px;
+        padding:  20px;
         background-color: white;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       }
@@ -20,6 +20,7 @@
         flex-direction: row-reverse; /* لجعل التفاصيل على اليسار والصور على اليمين */
         gap: 40px;
         align-items: flex-start;
+
       }
       .view-image-section {
         flex: 2;
@@ -244,6 +245,36 @@
       .hidden {
         display: none !important;
       }
+
+      /* تنسيق أيقونات التواصل الاجتماعي للمشاركة */
+      .social-links {
+        display: flex;
+        gap: 12px;
+        margin: 10px 0 20px 0;
+      }
+      .social-icon {
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #e2e2e2;
+        border: 1px solid #eee;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+      .social-icon:hover {
+        background: #000;
+      }
+      .social-icon img {
+        width: 20px;
+        height: 20x;
+        object-fit: contain;
+      }
+      .social-icon:hover img {
+        filter: brightness(0) invert(1);
+      }
     </style>
   </head>
   <body>
@@ -277,6 +308,24 @@
           </div>
 
           <span id="project-category" class="category-tag"></span>
+
+          <div class="social-links">
+            <a id="share-fb" href="#" target="_blank" class="social-icon" title="Share on Facebook">
+              <img src="imges/icons/facebook-app-symbol.png" alt="Facebook">
+            </a>
+            <a id="share-tw" href="#" target="_blank" class="social-icon" title="Share on Twitter">
+              <img src="imges/icons/twitter.png" alt="Twitter">
+            </a>
+            <a id="share-ln" href="#" target="_blank" class="social-icon" title="Share on LinkedIn">
+              <img src="imges/icons/linkedin1.png" alt="LinkedIn">
+            </a>
+            <a id="share-pt" href="#" target="_blank" class="social-icon" title="Share on Pinterest">
+              <img src="imges/icons/pinterest.png" alt="Pinterest">
+            </a>
+            <a href="javascript:void(0)" onclick="copyToClipboard()" class="social-icon" title="Copy Link">
+              <img src="imges/icons/link.png" alt="Copy">
+            </a>
+          </div>
 
           <div class="description-box">
             <h4 class="overview" style="border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px;">Description</h4>
@@ -328,6 +377,12 @@
     <script src="js/products.js"></script>
     <script src="js/auth.js"></script>
     <script>
+      function copyToClipboard() {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+          alert("Link copied to clipboard!");
+        });
+      }
+
       // 1. جلب المعرف من الرابط
       const params = new URLSearchParams(window.location.search);
       // البحث عن المعرف سواء كان باسم id أو product_id لضمان التوافق
@@ -392,6 +447,16 @@
 
             // تحديث الوصف الكامل
             document.getElementById('project-desc').innerText = project.description || project.header_description || 'No description available.';
+
+            // تحديث روابط التواصل الاجتماعي للمشاركة
+            const currentUrl = encodeURIComponent(window.location.href);
+            const projectTitle = encodeURIComponent(project.title);
+            const projectImg = encodeURIComponent(resolveImage(project.cover_image_url || project.cover_image));
+
+            document.getElementById('share-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`;
+            document.getElementById('share-tw').href = `https://twitter.com/intent/tweet?url=${currentUrl}&text=${projectTitle}`;
+            document.getElementById('share-ln').href = `https://www.linkedin.com/sharing/share-offsite/?url=${currentUrl}`;
+            document.getElementById('share-pt').href = `https://pinterest.com/pin/create/button/?url=${currentUrl}&media=${projectImg}&description=${projectTitle}`;
 
             // تحديث CBM و SKU للمجلة إذا كانت متوفرة في بيانات المشروع
             if (project.cbm || project.sku) {
