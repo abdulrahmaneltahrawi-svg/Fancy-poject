@@ -2,7 +2,7 @@
 body {
   margin: 0;
   padding: 0;
-  padding-top: 100px; /* تعويض مساحة الهيدر الثابت لكي لا يختفي المحتوى تحته */
+  padding-top: 70px; /* تعويض مساحة الهيدر الثابت لكي لا يختفي المحتوى تحته */
   box-sizing: border-box;
   font-family:
     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
@@ -19,7 +19,6 @@ html {
 
 .main-header {
   width: 100%;
-  border-bottom: 1px solid var(--border-color);
   background: #fff;
   position: fixed;
   top: 0;
