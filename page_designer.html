@@ -25,66 +25,69 @@
 
     <script src="js/script.js"></script>
     <script src="js/auth.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const grid = document.getElementById('designers-grid');
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    const grid = document.getElementById('designers-grid');
 
-        // جلب البيانات وعرضها في الشبكة
-        FancyAPI.get('/admin/All_designer.php')
-          .then(result => {
-            if (result.success && result.data) {
-              const designers = result.data || [];
-              if (designers.length === 0) {
-                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 50px; color: #999;">No designers found at the moment.</p>';
-                return;
-              }
-              grid.innerHTML = designers.map(designer => {
-                const displayName = designer.user_name || designer.company_type || "Designer";
-                const location = [designer.city, designer.country].filter(Boolean).join(', ');
-                
-                // جلب صور المشاريع (المجلات) الخاصة بالمصمم لعرضها في شبكة الكرت
-                // الأولوية لـ designer.project_images (مصفوفة مباشرة من الروابط)، ثم designer.projects (مصفوفة كائنات)
-                // ملاحظة هامة: لكي تظهر صور المشاريع، يجب أن يقوم الـ API الخاص بـ All_designer.php
-                // بإرسال مصفوفة project_images أو مصفوفة projects تحتوي على cover_image لكل مصمم.
-                // إذا لم يتم إرسال هذه البيانات من الـ API، فستظهر صورة الأفاتار الافتراضية.
-                let projectImages = designer.project_images || [];
-                if (projectImages.length === 0 && designer.projects) {
-                    projectImages = designer.projects.map(p => p.cover_image).filter(Boolean);
-                }
+    try {
+      // جلب المصممين والمشاريع العامة لدمج الصور في الكروت (بدون تعديل PHP)
+      const [designersRes, projectsRes] = await Promise.all([
+        FancyAPI.get('/admin/All_designer.php'),
+        FancyAPI.get('/project/public_projects.php')
+      ]);
 
-                const mainImg = projectImages.length > 0 ? getSafeImageUrl(projectImages[0]) : getSafeImageUrl(designer.avatar || designer.avatar_url);
-                const sideImg1 = projectImages.length > 1 ? getSafeImageUrl(projectImages[1]) : null;
-                const sideImg2 = projectImages.length > 2 ? getSafeImageUrl(projectImages[2]) : sideImg1; // إذا لم تتوفر الصورة الثالثة، نستخدم الصورة الثانية مرة أخرى لملء الفراغ
+      if (designersRes.success && designersRes.data) {
+        const designers = designersRes.data || [];
+        const allProjects = (projectsRes.success && projectsRes.data.projects) ? projectsRes.data.projects : [];
 
-                return `
-                <div class="brand-card">
-                  <div class="brand-images-grid ${!sideImg1 ? 'single-layout' : ''}">
-                    <a href="view_designer.html?id=${designer.id || ''}" style="display: block; height: 100%;">
-                      <img src="${mainImg}" alt="${displayName}">
-                    </a>
-                    ${sideImg1 ? `
-                    <div class="side-imgs">
-                      <img src="${sideImg1}" alt="">
-                      <img src="${sideImg2 || sideImg1}" alt="">
-                    </div>
-                    ` : ''}
-                  </div>
-                  <div class="brand-info">
-                    <img class="brand-logo" src="${getSafeImageUrl(designer.avatar || designer.avatar_url)}" alt="logo">
-                    <div class="brand-text">
-                      <a href="view_designer.html?id=${designer.id || ''}" style="text-decoration: none; color: inherit;">
-                        <h3>${displayName}</h3>
-                      </a>
-                      <p>${designer.company_type || 'Designer'}</p>
-                      <span>${location}</span>
-                    </div>
-                  </div>
-                </div>
-              `;}).join('');
-            }
-          })
-          .catch(err => console.error("Error loading designers:", err));
-      });
-    </script>
+        if (designers.length === 0) {
+          grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 50px; color: #999;">No designers found.</p>';
+          return;
+        }
+
+        grid.innerHTML = designers.map(designer => {
+          const displayName = designer.user_name || designer.company_type || "Designer";
+          const location = [designer.city, designer.country].filter(Boolean).join(', ');
+
+          // البحث عن المشاريع المرتبطة بهذا المصمم تحديداً لاستخراج صور الغلاف
+          const designerProjects = allProjects.filter(p => p.designer_id == designer.id);
+          const projectImages = designerProjects.map(p => p.cover_image).filter(Boolean);
+
+          const mainImg = projectImages.length > 0 ? getSafeImageUrl(projectImages[0]) : getSafeImageUrl(designer.avatar || designer.avatar_url);
+          const sideImg1 = projectImages.length > 1 ? getSafeImageUrl(projectImages[1]) : null;
+          const sideImg2 = projectImages.length > 2 ? getSafeImageUrl(projectImages[2]) : sideImg1;
+
+          return `
+          <div class="brand-card">
+            <div class="brand-images-grid ${!sideImg1 ? 'single-layout' : ''}">
+              <a href="view_designer.html?id=${designer.id || ''}" style="display: block; height: 100%;">
+                <img src="${mainImg}" alt="${displayName}">
+              </a>
+              ${sideImg1 ? `
+              <div class="side-imgs">
+                <img src="${sideImg1}" alt="">
+                <img src="${sideImg2 || sideImg1}" alt="">
+              </div>
+              ` : ''}
+            </div>
+            <div class="brand-info">
+              <img class="brand-logo" src="${getSafeImageUrl(designer.avatar || designer.avatar_url)}" alt="logo">
+              <div class="brand-text">
+                <a href="view_designer.html?id=${designer.id || ''}" style="text-decoration: none; color: inherit;">
+                  <h3>${displayName}</h3>
+                </a>
+                <p>${designer.company_type || 'Designer'}</p>
+                <span>${location}</span>
+              </div>
+            </div>
+          </div>
+        `;
+        }).join('');
+      }
+    } catch (err) {
+      console.error("Error loading designers or projects:", err);
+    }
+  });
+</script>
   </body>
 </html>
