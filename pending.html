@@ -73,9 +73,12 @@
             designers.forEach(designer => {
               container.innerHTML += `
                 <div class="brand-card" style="border: 1px solid #eee; padding: 15px; border-radius: 8px;">
-                  <img src="${getSafeImageUrl(designer.avatar)}" style="width:50px; height:50px; border-radius:50%; object-fit: cover;">
-                  <h3>${designer.user_name}</h3>
+                  <a href="view_designer.html?id=${designer.id}" target="_blank" style="text-decoration:none; color:inherit;">
+                    <img src="${getSafeImageUrl(designer.avatar)}" style="width:50px; height:50px; border-radius:50%; object-fit: cover;">
+                    <h3>${designer.user_name}</h3>
+                  </a>
                   <p>${designer.company_type || 'Designer'} - ${designer.country || ''}</p>
+                  <a href="view_designer.html?id=${designer.id}" target="_blank" style="display:block; margin: 5px 0; font-size:12px; color:#007bff; text-decoration:none;">View Profile</a>
                   <div style="display:flex; gap:10px; margin-top:10px;">
                     <button onclick="handleDesignerAction(${designer.id}, 'approve')" style="flex:1; background:#5cb85c; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">accept</button>
                     <button onclick="handleDesignerAction(${designer.id}, 'reject')" style="flex:1; background:#d9534f; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">reject</button>
@@ -97,14 +100,16 @@
             projects.forEach(project => {
               container.innerHTML += `
                 <div class="project-card" style="border: 1px solid #eee; padding: 15px; border-radius: 8px; background:#fff;">
-                  <div class="card-image" style="height: 180px; overflow:hidden;">
-                    <img src="${getSafeImageUrl(project.cover_image)}" style="width:100%; height:100%; object-fit: cover; border-radius: 4px;">
-                  </div>
+                  <a href="view_magazine.html?id=${project.id}" target="_blank" style="text-decoration:none; color:inherit;">
+                    <div class="card-image" style="height: 180px; overflow:hidden;">
+                      <img src="${getSafeImageUrl(project.cover_image)}" style="width:100%; height:100%; object-fit: cover; border-radius: 4px;">
+                    </div>
+                  </a>
                   <div class="card-content">
-                    <h3 style="margin-top:10px; font-size:16px;">${project.title}</h3>
+                    <a href="view_magazine.html?id=${project.id}" target="_blank" style="text-decoration:none; color:inherit;"><h3 style="margin-top:10px; font-size:16px;">${project.title}</h3></a>
                     <p style="font-size:12px; color:#666; margin: 5px 0;">Designer: <b>${project.designer_name || 'N/A'}</b></p>
                     <p style="font-size:11px; color:#888;">Type: ${project.type} | Cat: ${project.category}</p>
-                    <div style="display:flex; gap:10px; margin-top:15px;">
+                      <div style="display:flex; gap:10px; margin-top:15px;">
                       <button onclick="handleProjectAction(${project.id}, 'approve')" style="flex:1; background:#5cb85c; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer; font-weight:bold;">Accept</button>
                       <button onclick="handleProjectAction(${project.id}, 'reject')" style="flex:1; background:#d9534f; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer; font-weight:bold;">Reject</button>
                     </div>
