@@ -94,9 +94,8 @@
           >Overview</a
         >
         <a href="javascript:void(0)" id="tab-brands">Brands</a>
-        <a href="javascript:void(0)" id="tab-products">Products</a>
 
-        <a href="javascript:void(0)" id="tab-designers"> My Designer page</a>
+        <a href="javascript:void(0)" id="tab-designers"> Designer</a>
       </nav>
 
       <!-- حاوية نظرة عامة -->
@@ -134,11 +133,6 @@
       <!-- حاوية عرض البراندات الخاصة بالمستخدم -->
       <div id="brands-tab-content" class="hidden">
         <div id="user-brands-list" class="brands-container"></div>
-      </div>
-
-      <!-- حاوية عرض المنتجات الخاصة بالمستخدم -->
-      <div id="products-tab-content" class="hidden">
-        <div id="user-products-list" class="brands-container"></div>
       </div>
 
       <!-- حاوية عرض المصممين الخاصة بالمستخدم -->
@@ -181,7 +175,6 @@
       // منطق التبديل بين التبويبات
       const tabs = {
         'tab-overview': 'overview-tab-content',
-        'tab-brands': 'brands-tab-content',
         'tab-products': 'products-tab-content',
         'tab-designers': 'designers-tab-content'
       };
@@ -203,7 +196,6 @@
 
           // تحميل البيانات بناءً على التبويب
           if (tabId === 'tab-brands') {
-            displayUserBrands();
           } else if (tabId === 'tab-products') {
             if (typeof loadMyProducts === 'function') loadMyProducts('user-products-list');
           } else if (tabId === 'tab-designers') {
