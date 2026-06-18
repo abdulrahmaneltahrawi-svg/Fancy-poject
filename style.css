@@ -669,7 +669,9 @@ html {
 }
 
 .dropdown-content a:hover {
-  background-color: #f1f1f1;
+  background-color: transparent;
+  text-decoration: underline;
+  color: #000;
 }
 
 /* زر مسح الفلاتر */
