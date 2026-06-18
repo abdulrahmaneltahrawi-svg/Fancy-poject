@@ -13,7 +13,7 @@
       }
       .brand-header {
         background: #fff;
-        padding-left: 200px;
+        padding: 40px 0;
       }
       .cover-photo {
         height: 500px;
@@ -28,6 +28,11 @@
       .brand-profile-bar {
         padding: 0 5%;
         position: relative;
+        display: flex;
+        align-items: flex-start;
+        gap: 30px;
+        max-width: 1400px;
+        margin: 0 auto;
       }
       .brand-logo-container {
         width: 200px;
@@ -37,7 +42,7 @@
         padding: 5px;
         border:  1px solid #d3d2d2;
         margin-right: 20px;
-        margin-top: 20px;
+        flex-shrink: 0;
       }
       .brand-logo-container img {
         width: 100%;
@@ -46,7 +51,6 @@
         object-fit: contain;
       }
       .brand-main-info {
-        padding: 20px;
         flex-grow: 1;
       }
       .brand-actions {
