@@ -21,7 +21,7 @@ $auth = requireAuth();
 $userId = (int)$auth['user_id'];
 
 try {
-    // 3. استقبال البيانات
+    // 3. استقبال البيانات الأساسية
     $projectId         = (int)($_POST['project_id'] ?? 0);
     $title             = trim($_POST['title'] ?? '');
     $headerDescription = trim($_POST['header_description'] ?? '');
@@ -30,6 +30,9 @@ try {
     $type              = trim($_POST['type'] ?? '');
     $city              = trim($_POST['city'] ?? '');
     $state             = trim($_POST['state'] ?? '');
+    
+    // استقبال مسارات الصور المراد حذفها من المعرض (تأتي كنص مفصول بفاصلة مثلاً)
+    $deleteImagesStr   = trim($_POST['delete_images'] ?? ''); 
 
     if (empty($projectId)) {
         jsonResponse(false, "Project ID (project_id) is required", ["code" => "VALIDATION_ERROR"], 422);
@@ -63,12 +66,12 @@ try {
     $city              = !empty($city) ? $city : $project['city'];
     $state             = !empty($state) ? $state : $project['state'];
 
-    // 6. معالجة صورة الغلاف
     $uploadDir = __DIR__ . "/../../uploads/projects/";
     if (!is_dir($uploadDir)) {
         mkdir($uploadDir, 0755, true);
     }
 
+    // 6. معالجة صورة الغلاف الأساسية (Cover Image)
     $coverFile = $_FILES['image'] ?? $_FILES['cover_image'] ?? null;
     $coverImagePath = $project['cover_image'];
 
@@ -88,12 +91,59 @@ try {
                 }
                 $coverImagePath = "uploads/projects/" . $newCoverName;
             }
-        } else {
-            jsonResponse(false, "Invalid image extension.", ["code" => "INVALID_FILE_TYPE"], 422);
         }
     }
 
-    // 7. تحديث قاعدة البيانات (تم إزالة updated_at لتتوافق مع جدولك الحالي)
+    // 7. [جديد] معالجة حذف صور معينة من الـ Gallery
+    if (!empty($deleteImagesStr)) {
+        // الفرونت إند هيبعت المسارات بالشكل ده: "uploads/projects/file1.jpg,uploads/projects/file2.jpg"
+        $imagesToDelete = explode(',', $deleteImagesStr);
+        foreach ($imagesToDelete as $imgUrl) {
+            $imgUrl = trim($imgUrl);
+            
+            // للتأكد من الأمان: تحقّق أن الصورة تخص هذا المشروع فعلياً قبل الحذف
+            $stmtImgCheck = $pdo->prepare("SELECT * FROM project_images WHERE project_id = ? AND image_url = ?");
+            $stmtImgCheck->execute([$projectId, $imgUrl]);
+            if ($stmtImgCheck->fetch()) {
+                // 1. حذف الملف من السيرفر
+                $fileServerPath = __DIR__ . "/../../" . ltrim($imgUrl, '/');
+                if (file_exists($fileServerPath)) {
+                    @unlink($fileServerPath);
+                }
+                // 2. حذف السجل من الداتا بيز
+                $stmtDelDb = $pdo->prepare("DELETE FROM project_images WHERE project_id = ? AND image_url = ?");
+                $stmtDelDb->execute([$projectId, $imgUrl]);
+            }
+        }
+    }
+
+    // 8. [جديد] معالجة رفع صور جديدة وأضافتها للـ Gallery
+    if (isset($_FILES['images'])) {
+        $galleryFiles = $_FILES['images'];
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+
+        if (is_array($galleryFiles['name'])) {
+            for ($i = 0; $i < count($galleryFiles['name']); $i++) {
+                if ($galleryFiles['error'][$i] === UPLOAD_ERR_OK) {
+                    $ext = strtolower(pathinfo($galleryFiles['name'][$i], PATHINFO_EXTENSION));
+                    
+                    if (in_array($ext, $allowedExtensions)) {
+                        $newGalleryName = "gallery_" . time() . "_" . bin2hex(random_bytes(4)) . "." . $ext;
+                        
+                        if (move_uploaded_file($galleryFiles['tmp_name'][$i], $uploadDir . $newGalleryName)) {
+                            $galleryPath = "uploads/projects/" . $newGalleryName;
+                            
+                            // إدخال الصورة الجديدة في جدول الـ project_images
+                            $stmtAddImg = $pdo->prepare("INSERT INTO project_images (project_id, image_url) VALUES (?, ?)");
+                            $stmtAddImg->execute([$projectId, $galleryPath]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // 9. تحديث البيانات الأساسية للمشروع وتحويل حالته لـ pending للمراجعة
     $stmtUpdate = $pdo->prepare("
         UPDATE projects 
         SET title = ?, header_description = ?, description = ?, category = ?, type = ?, city = ?, state = ?, cover_image = ?, status = 'pending'
@@ -112,15 +162,22 @@ try {
         $designerId
     ]);
 
-    jsonResponse(true, "Project updated successfully and is now pending admin review", [
+    // جلب ألبوم الصور الحالي بالكامل بعد التعديلات لإرجاعه في الرد
+    $stmtGetGallery = $pdo->prepare("SELECT image_url FROM project_images WHERE project_id = ?");
+    $stmtGetGallery->execute([$projectId]);
+    $updatedGallery = $stmtGetGallery->fetchAll(PDO::FETCH_COLUMN);
+    
+    $galleryUrls = [];
+    foreach ($updatedGallery as $path) {
+        $galleryUrls[] = rtrim(APP_URL, '/') . '/' . ltrim($path, '/');
+    }
+
+    jsonResponse(true, "Project and Gallery updated successfully", [
         "project_id"         => $projectId,
         "title"              => $title,
         "status"             => "pending",
-        "category"           => $category,
-        "type"               => $type,
-        "city"               => $city,
-        "state"              => $state,
-        "cover_image_url"    => rtrim(APP_URL, '/') . '/' . ltrim($coverImagePath, '/')
+        "cover_image_url"    => rtrim(APP_URL, '/') . '/' . ltrim($coverImagePath, '/'),
+        "gallery_images"     => $galleryUrls
     ], 200);
 
 } catch (Exception $e) {

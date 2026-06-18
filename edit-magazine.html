@@ -11,6 +11,16 @@
       .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; }
       .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; }
       .submit-btn { background: #000; color: white; padding: 15px 25px; border: none; border-radius: 6px; cursor: pointer; width: 100%; font-size: 17px; font-weight: bold; transition: background 0.3s; }
+      .gallery-management { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+      .gallery-item-edit { position: relative; width: 100px; height: 100px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; }
+      .gallery-item-edit img { width: 100%; height: 100%; object-fit: cover; }
+      .btn-delete-img { 
+        position: absolute; top: 2px; right: 2px; background: rgba(255,0,0,0.8); color: white; 
+        border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; 
+        font-size: 12px; display: flex; align-items: center; justify-content: center;
+      }
+      .img-preview-label { font-size: 12px; color: #666; margin-top: 5px; display: block; }
+      .current-cover-preview { width: 150px; height: 100px; object-fit: cover; border-radius: 6px; margin-bottom: 10px; border: 1px solid #eee; }
       .submit-btn:hover { background: #383838; }
     </style>
   </head>
@@ -47,8 +57,23 @@
           </div>
         </div>
         <div class="form-group">
-          <label>Cover Image (Keep empty to keep current):</label>
+          <label>Cover Image:</label>
+          <div id="cover-preview-container" class="hidden">
+            <img id="current-cover" class="current-cover-preview" src="" alt="Current Cover">
+            <span class="img-preview-label">Current Cover Image</span>
+          </div>
           <input type="file" name="image" accept="image/*" />
+          <span class="img-preview-label">Leave empty to keep the current image</span>
+        </div>
+        <div class="form-group">
+          <label>Current Gallery Images:</label>
+          <div id="current-gallery" class="gallery-management"></div>
+          <input type="hidden" name="delete_images" id="delete_images" value="" />
+        </div>
+        <div class="form-group">
+          <label>Add New Gallery Images:</label>
+          <div id="new-gallery-inputs"></div>
+          <button type="button" id="add-more-img-btn" style="background: #eee; border: 1px solid #ccc; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 13px;">+ Add another image</button>
         </div>
         <div class="form-group">
           <label>Header Description:</label>
@@ -65,6 +90,41 @@
     <script src="js/script.js"></script>
     <script src="js/auth.js"></script>
     <script>
+      let imagesToDelete = [];
+
+      function markForDeletion(url, element) {
+        // استخراج المسار النسبي من الرابط الكامل
+        let relativePath = url;
+        if (url.includes('/uploads/')) {
+            relativePath = 'uploads/' + url.split('/uploads/')[1];
+        }
+        
+        if (!imagesToDelete.includes(relativePath)) {
+            imagesToDelete.push(relativePath);
+            document.getElementById('delete_images').value = imagesToDelete.join(',');
+            element.closest('.gallery-item-edit').style.opacity = '0.3';
+            element.closest('.gallery-item-edit').querySelector('.btn-delete-img').innerText = '↺';
+            element.closest('.gallery-item-edit').querySelector('.btn-delete-img').style.background = '#333';
+        } else {
+            imagesToDelete = imagesToDelete.filter(path => path !== relativePath);
+            document.getElementById('delete_images').value = imagesToDelete.join(',');
+            element.closest('.gallery-item-edit').style.opacity = '1';
+            element.closest('.gallery-item-edit').querySelector('.btn-delete-img').innerText = '×';
+            element.closest('.gallery-item-edit').querySelector('.btn-delete-img').style.background = 'rgba(255,0,0,0.8)';
+        }
+      }
+
+      document.getElementById('add-more-img-btn').addEventListener('click', () => {
+        const container = document.getElementById('new-gallery-inputs');
+        const div = document.createElement('div');
+        div.style.display = 'flex';
+        div.style.gap = '10px';
+        div.style.marginBottom = '10px';
+        div.innerHTML = `<input type="file" name="images[]" accept="image/*" />
+                         <button type="button" onclick="this.parentElement.remove()" style="background:none; border:none; color:red; cursor:pointer; font-weight:bold;">×</button>`;
+        container.appendChild(div);
+      });
+
       document.addEventListener('DOMContentLoaded', async () => {
         const params = new URLSearchParams(window.location.search);
         const id = params.get('id');
@@ -75,7 +135,7 @@
         try {
           const result = await FancyAPI.get(`/project/get_project.php?id=${id}`);
           if (result.success) {
-            const p = result.data;
+            const p = result.data.project || result.data;
             document.getElementById('title').value = p.title || '';
             document.getElementById('category').value = p.category || '';
             document.getElementById('type').value = p.type || '';
@@ -83,6 +143,27 @@
             document.getElementById('state').value = p.state || '';
             document.getElementById('header_description').value = p.header_description || '';
             document.getElementById('description').value = p.description || '';
+
+            // عرض صورة الغلاف الحالية
+            if (p.cover_image_url || p.cover_image) {
+              const coverImg = document.getElementById('current-cover');
+              coverImg.src = typeof getSafeImageUrl === 'function' ? getSafeImageUrl(p.cover_image_url || p.cover_image) : (p.cover_image_url || p.cover_image);
+              document.getElementById('cover-preview-container').classList.remove('hidden');
+            }
+
+            // عرض صور المعرض الحالية
+            const galleryContainer = document.getElementById('current-gallery');
+            const galleryImages = p.gallery_images || p.project_images || [];
+            if (galleryImages.length > 0) {
+              galleryContainer.innerHTML = galleryImages.map(imgUrl => `
+                <div class="gallery-item-edit">
+                  <img src="${typeof getSafeImageUrl === 'function' ? getSafeImageUrl(imgUrl) : imgUrl}" alt="Gallery">
+                  <button type="button" class="btn-delete-img" onclick="markForDeletion('${imgUrl}', this)">×</button>
+                </div>
+              `).join('');
+            } else {
+              galleryContainer.innerHTML = '<span style="color:#999; font-size:13px;">No gallery images found.</span>';
+            }
           }
         } catch (e) { console.error(e); }
       });

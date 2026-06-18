@@ -27,7 +27,7 @@ html {
 }
 
 .container {
-  max-width: 1500px;
+  max-width: 1650px;
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -43,7 +43,7 @@ html {
 /* شريط البحث */
 .search-container {
   flex: 1;
-  max-width: 900px;
+  max-width: 1000px;
   margin-right: 40px;
   font-family:
     "Inter",
@@ -385,14 +385,6 @@ html {
   justify-content: flex-start;
   padding-left: 14%;
   gap: 15px; /* مسافة بين الخط والكلمة */
-}
-
-.title::before {
-  content: "";
-  width: 5px;
-  height: 50px;
-  background-color: #000;
-  display: inline-block; /* نغيرها من block إلى inline-block */
 }
 
 .sub-title {
