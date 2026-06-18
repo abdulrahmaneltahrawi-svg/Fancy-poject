@@ -14,14 +14,35 @@
         gap: 40px;
         margin-top: 20px;
       }
+      .load-more-container {
+        text-align: center;
+        margin: 50px 0;
+      }
+      .btn-load-more {
+        background: #000;
+        color: #fff;
+        padding: 12px 40px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 16px;
+        transition: background 0.3s;
+      }
+      .btn-load-more:hover {
+        background: #333;
+      }
     </style>
     
     <div id="header-placeholder"></div>
 
     <section class="projects-section">
-      <div class="container" style="display: flex; align-items: center; justify-content: center; flex-direction: column;">
-        <p class="title" style="display: flex; justify-content: flex-start; align-self: flex-start; padding-left: 50px;">Magazine</p>
+      <p class="title" style="padding-left: 50px;">Magazine</p>
+      <div class="container" style="display: block;">
         <div id="magazine-grid" class="projects-grid"></div>
+        <div id="load-more-container" class="load-more-container hidden">
+          <button id="load-more-btn" class="btn-load-more">Load More</button>
+        </div>
       </div>
     </section>
 
@@ -31,31 +52,54 @@
     <script src="js/brands.js"></script>
     <script src="js/auth.js"></script>
     <script>
+      let allProjects = [];
+      let displayedCount = 0;
+      const limit = 6;
+
       async function loadAllMagazines() {
         const container = document.getElementById("magazine-grid");
+        const loadMoreBtn = document.getElementById("load-more-btn");
+
         if (!container) return;
         try {
           // جلب المشاريع العامة من الـ API
           const result = await FancyAPI.get('/project/public_projects.php');
           if (result.success && result.data && result.data.projects) {
-            const projects = result.data.projects;
+            allProjects = result.data.projects;
             
-            if (projects.length === 0) {
+            if (allProjects.length === 0) {
               container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 50px;">No magazine entries published yet.</p>';
               return;
             }
 
-            // عرض الكروت باستخدام نفس دالة التصميم الموجودة في الصفحة الرئيسية
-            container.innerHTML = projects.map(p => createGenericCardHTML({
-              id: p.id,
-              title: p.title,
-              image: getSafeImageUrl(p.cover_image),
-              category: p.category,
-              type: p.type
-            }, 'magazine')).join('');
+            renderNextBatch();
+            loadMoreBtn.onclick = renderNextBatch;
           }
         } catch (error) {
           console.error("Error loading magazines:", error);
+        }
+      }
+
+      function renderNextBatch() {
+        const container = document.getElementById("magazine-grid");
+        const loadMoreWrapper = document.getElementById("load-more-container");
+        
+        const nextBatch = allProjects.slice(displayedCount, displayedCount + limit);
+        const html = nextBatch.map(p => createGenericCardHTML({
+          id: p.id,
+          title: p.title,
+          image: getSafeImageUrl(p.cover_image),
+          category: p.category,
+          type: p.type
+        }, 'magazine')).join('');
+        
+        container.insertAdjacentHTML('beforeend', html);
+        displayedCount += nextBatch.length;
+
+        if (displayedCount >= allProjects.length) {
+          loadMoreWrapper.classList.add('hidden');
+        } else {
+          loadMoreWrapper.classList.remove('hidden');
         }
       }
 

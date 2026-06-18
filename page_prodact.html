@@ -8,24 +8,90 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <style>
+      .load-more-container {
+        text-align: center;
+        margin: 50px 0;
+      }
+      .btn-load-more {
+        background: #000;
+        color: #fff;
+        padding: 12px 40px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 16px;
+        transition: background 0.3s;
+      }
+      .btn-load-more:hover {
+        background: #333;
+      }
+      .hidden {
+        display: none !important;
+      }
+    </style>
     <div id="header-placeholder"></div>
 
     <section class="projects-section">
       <p class="title">Product</p>
-      <div class="container">
+      <div class="container" style="display: block;">
         <div id="projects-container" class="projects-grid"></div>
+        <div id="load-more-container" class="load-more-container hidden">
+          <button id="load-more-btn" class="btn-load-more">Load More</button>
+        </div>
       </div>
     </section>
 
     <div id="footer-placeholder"></div>
 
     <script>
-      // الاعتماد على الدالة الموحدة في js/products.js لجلب وعرض كافة المنتجات
-      window.addEventListener("load", () => {
-        if (typeof loadProducts === "function") {
-          loadProducts("projects-container");
+      let allProductsList = [];
+      let displayedProductsCount = 0;
+      const productsLimit = 8;
+
+      async function loadAllProductsWithPagination() {
+        const grid = document.getElementById("projects-container");
+        const loadMoreBtn = document.getElementById("load-more-btn");
+
+        try {
+          const result = await FancyAPI.get('/products/public-list.php');
+          if (result.success && result.data && result.data.products) {
+            allProductsList = result.data.products;
+            
+            if (allProductsList.length === 0) {
+              grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 50px;">No products found.</p>';
+              return;
+            }
+
+            renderNextProductBatch();
+            loadMoreBtn.onclick = renderNextProductBatch;
+          }
+        } catch (error) {
+          console.error("Error loading products:", error);
         }
-      });
+      }
+
+      function renderNextProductBatch() {
+        const grid = document.getElementById("projects-container");
+        const loadMoreWrapper = document.getElementById("load-more-container");
+        
+        const nextBatch = allProductsList.slice(displayedProductsCount, displayedProductsCount + productsLimit);
+        
+        // استخدام الدالة الموحدة createProductCardHTML من ملف products.js
+        const html = nextBatch.map(product => createProductCardHTML(product)).join('');
+        
+        grid.insertAdjacentHTML('beforeend', html);
+        displayedProductsCount += nextBatch.length;
+
+        if (displayedProductsCount >= allProductsList.length) {
+          loadMoreWrapper.classList.add('hidden');
+        } else {
+          loadMoreWrapper.classList.remove('hidden');
+        }
+      }
+
+      window.addEventListener("load", loadAllProductsWithPagination);
     </script>
     <script src="js/products.js"></script>
     <script src="js/script.js"></script>
