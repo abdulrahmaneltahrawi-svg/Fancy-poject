@@ -934,24 +934,38 @@ html {
   object-fit: contain;
 }
 
+.brand-text {
+  flex: 1;
+  min-width: 0; /* ضروري جداً لتمكين خاصية ellipsis (النقاط) داخل الـ flexbox */
+}
+
 .brand-text h3 {
   font-size: 16px;
   font-weight: 700;
   margin: 0;
   color: #111;
   text-transform: capitalize;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .brand-text p {
   font-size: 12px;
   color: #888;
   margin: 2px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .brand-text span {
   font-size: 11px;
   color: #aaa;
   display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .header-action-btn.outline {
