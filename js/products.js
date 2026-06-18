@@ -203,22 +203,29 @@ async function loadSingleProductDetails(productId) {
             }
 
             // تحديث معرض الصور (Gallery) في التبويب المخصص
-            const thumbsGrid = document.getElementById('thumbnails');
-            if (thumbsGrid) {
-                const allImages = [];
-                // إظهار صور الفئات فقط كما طلبت (تجاهل الصورة الرئيسية العامة)
-                if (product.options) {
-                    product.options.forEach(o => {
-                        if (o.image_path && !allImages.includes(o.image_path)) {
-                            allImages.push(o.image_path);
-                        }
-                    });
-                }
-
-                thumbsGrid.innerHTML = allImages
-                    .map(img => `<img src="${getSafeImageUrl(img)}" class="thumb-img" onclick="document.getElementById('project-image').src = this.src">`)
-                    .join('');
+           // تحديث معرض الصور (Gallery) في التبويب المخصص
+const thumbsGrid = document.getElementById('thumbnails');
+if (thumbsGrid) {
+    const allImages = [];
+    if (product.options) {
+        product.options.forEach(o => {
+            if (o.image_path && !allImages.includes(o.image_path)) {
+                allImages.push(o.image_path);
             }
+        });
+    }
+
+    thumbsGrid.innerHTML = allImages
+        .map(img => `
+            <img src="${getSafeImageUrl(img)}" 
+                 class="thumb-img" 
+                 onclick="
+                    document.getElementById('project-image').src = this.src;
+                    window.scrollTo({ top: 0, behavior: 'smooth' }); 
+                 ">
+        `)
+        .join('');
+}
 
             const whatsappBtn = document.getElementById('whatsapp-btn');
             // تحديث رابط الواتساب
