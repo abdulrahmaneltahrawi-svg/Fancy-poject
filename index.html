@@ -13,8 +13,7 @@
         display: flex;
         justify-content: space-around;
         align-items: center;
-        gap: 55px;
-        margin-top: 50px; /* تقليل المسافة العلوية من الهيدر الرئيسي */
+        margin-top: 20px; /* تقليل المسافة العلوية من الهيدر الرئيسي */
       }
 
       .nav {
@@ -34,20 +33,7 @@
         text-decoration: none;
       }
 
-      .nav a::after {
-        content: "";
-        display: block;
-        position: absolute;
-        bottom: -9px;
-        left: 0;
-        width: 0;
-        height: 3px;
-        background-color: #333;
-        transition: width 0.3s ease;
-      }
-       nav a:hover::after {
-        width: 100%;
-      }
+
 
 
 
@@ -64,7 +50,7 @@
       .category-nav {
         display: flex;
         justify-content: center; /* لتوسيط القائمة في الصفحة */
-        gap: 30px; /* المسافة بين الكلمات */
+        gap: 20px; /* المسافة بين الكلمات */
         font-family: Arial, sans-serif; /* نوع الخط القريب من الصورة */
       }
 
@@ -102,7 +88,7 @@
       .hero-slider {
         position: relative;
         width: 95%; /* تحديد العرض بـ 95% من الشاشة لترك مسافة */
-        max-width: 1400px; /* منع التمدد المفرط في الشاشات الكبيرة جداً */
+        max-width: 1430px; /* منع التمدد المفرط في الشاشات الكبيرة جداً */
         margin: 10px auto 30px auto; /* إزالة المسافة العلوية تماماً ليلتصق بشريط التصنيفات */
         height: 80vh; /* يمكنك أيضاً تقليل الارتفاع ليناسب العرض الجديد */
         overflow: hidden;
