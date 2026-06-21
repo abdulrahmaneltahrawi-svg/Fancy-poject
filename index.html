@@ -17,10 +17,48 @@
         margin-top: 50px; /* تقليل المسافة العلوية من الهيدر الرئيسي */
       }
 
+      .nav {
+        display: flex;
+        gap: 20PX;
+        align-items: center;
+         font-family: Arial, sans-serif; /* نوع الخط القريب من الصورة */
+      }
+      .nav a{
+        text-decoration: none;
+        color: #333;
+        font-size: 17px;
+        font-weight: 300;
+        transition: color 0.3s ease;
+        position: relative;
+        cursor: pointer;
+        text-decoration: none;
+      }
+
+      .nav a::after {
+        content: "";
+        display: block;
+        position: absolute;
+        bottom: -9px;
+        left: 0;
+        width: 0;
+        height: 3px;
+        background-color: #333;
+        transition: width 0.3s ease;
+      }
+       nav a:hover::after {
+        width: 100%;
+      }
+
+
+
       .publish {
-        color: black;
+        color: #333;
         text-decoration: underline;
         margin: 0; /* إزالة الهوامش التلقائية للفقرة لتقليل ارتفاع الحاوية */
+      }
+
+       .publish:hover {
+        color: #000000;
       }
 
       .category-nav {
@@ -51,6 +89,14 @@
       }
       .category-nav a:hover::after {
         width: 100%;
+      }
+
+            .category-nav::after {
+    content: "|";
+    color: #333;
+    margin-right: 20px; /* مسافة بين الفاصل والـ Furniture/Lighting */
+    font-weight: 600;
+   
       }
 
       .hero-slider {
@@ -321,7 +367,13 @@
     <div id="header-placeholder"></div>
 
     <div class="second-header">
+      <div class="nav"> 
       <nav class="category-nav" id="main-category-nav"></nav>
+      <a href="page_brand.html"><p>Brands</p></a>
+      <a href="page_magazine.html"><p>Magazine</p></a>
+      
+
+      </div>
 
       <a href="add-brand.html"><p class="publish">Publish your Products</p></a>
     </div>
