@@ -67,7 +67,7 @@
 
       <div class="dropdown">
         <button class="dropbtn" id="category-filter-btn" data-original-text="Category">
-          Category <i class="arrow down"></i>
+          All Solutions <i class="arrow down"></i>
         </button>
         <div class="dropdown-content" id="category-filter-content">
           <input type="text" placeholder="Search Category" class="search-input" />
@@ -204,7 +204,7 @@
         try {
           var catRes = await FancyAPI.get('/categories/list.php');
           if (catRes.success && catRes.data && catRes.data.categories) {
-            addOpt('category-filter-content', 'All Categories', function(e) {
+            addOpt('category-filter-content', 'All Solutions', function(e) {
               e.preventDefault();
               document.getElementById('category-filter-btn').innerHTML = 'Category <i class="arrow down"></i>';
               filterCategory = null;
