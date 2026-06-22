@@ -1014,8 +1014,8 @@ html {
 }
 
 .brand-text h3 {
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 600;
   margin: 0;
   color: #111;
   text-transform: capitalize;
@@ -1026,7 +1026,7 @@ html {
 
 .brand-text p {
   font-size: 12px;
-  color: #888;
+  color: #666;
   margin: 2px 0;
   white-space: nowrap;
   overflow: hidden;
@@ -1035,7 +1035,8 @@ html {
 
 .brand-text span {
   font-size: 11px;
-  color: #aaa;
+  font-family: bold;
+  color: #777;
   display: block;
   white-space: nowrap;
   overflow: hidden;
