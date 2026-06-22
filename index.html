@@ -365,6 +365,60 @@
         border: none;
         cursor: pointer;
       }
+
+      /* CSS */
+.newsletter-container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+  gap: 40px;
+  padding: 40px;
+  background-color: #eee;
+  font-family: sans-serif;
+  padding-bottom: 90px;
+}
+
+.newsletter-text h2 {
+  font-size: 16px;
+  color: #333;
+  margin: 0;
+}
+
+.newsletter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-right: 500px;
+  flex-grow: 1;
+  max-width: 600px;
+}
+
+.input-group {
+  display: flex;
+}
+
+.input-group input {
+  padding: 12px;
+  border: 1px solid #ccc;
+  flex-grow: 1;
+}
+
+.input-group button {
+  padding: 12px 24px;
+  background-color: #c50202; /* لون أحمر غامق مشابه للصورة */
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  color: #333;
+}
     </style>
 
     <div id="header-placeholder"></div>
@@ -684,6 +738,25 @@
       </a>
     </section>
 
+    <!-- HTML -->
+<section class="newsletter-container">
+  <div id="newsletterTextContainer" class="newsletter-text">
+    <h2>Keep Updated with the Latest Design News, <br> Projects and products</h2>
+  </div>
+  
+  <div class="newsletter-form">
+    <div class="input-group">
+<input id="emailInput" type="email" placeholder="insert your email address" required>
+      <button id="subscribeBtn" type="submit">Subscribe</button>
+    </div>
+    
+    <label class="checkbox-label">
+      <input type="checkbox" required>
+      <span>I hereby consent to the processing of my personal data to receive offers and commercial communication from FANCY.COM (Privacy Policy).</span>
+    </label>
+  </div>
+</section>
+
     <div id="footer-placeholder"></div>
 
     <script>
@@ -860,6 +933,21 @@
             showAuthModal("register");
           });
       });
+
+      /*Subscribe*/
+      document.getElementById('subscribeBtn').addEventListener('click', function(event) {
+    // لمنع إعادة تحميل الصفحة
+    event.preventDefault(); 
+    
+    // تحديد حقل الإدخال
+    const emailField = document.getElementById('emailInput');
+    
+    // مسح النص المكتوب داخله بجعله قيمة فارغة
+    emailField.value = '';
+    
+    console.log("تم مسح الإيميل من الحقل");
+      });
+      
     </script>
     <script
       type="text/javascript"
