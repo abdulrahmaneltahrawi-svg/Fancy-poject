@@ -788,7 +788,7 @@ html {
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
-  color: #aaa;
+  color: #949494;
   border-bottom: 2px solid transparent;
 }
 .auth-form-toggle button.active {
@@ -833,16 +833,15 @@ html {
 
 /* تنسيق الدائرة التي تحتوي على الحرف الأول من اسم المستخدم */
 .user-initial-avatar {
-  width: 30px; /* حجم الدائرة */
-  height: 30px; /* حجم الدائرة */
+  width: 37px; /* حجم الدائرة */
+  height: 37px; /* حجم الدائرة */
   border-radius: 50%; /* لجعلها دائرية */
-  background-color: #007bff; /* لون خلفية الدائرة */
+  background-color: #6a63e0; /* لون خلفية الدائرة */
   color: #fff; /* لون النص داخل الدائرة */
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  font-size: 14px; /* حجم خط الحرف */
+  font-size: 20px; /* حجم خط الحرف */
 }
 
 /* تنسيق الحاوية الجديدة للأزرار والاسم */
