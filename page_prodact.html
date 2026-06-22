@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fancy Design</title>
+    <title>Fancy Design - Products</title>
     <link rel="icon" href="imges/img/fancy1.jfif" />
     <link rel="stylesheet" href="style.css" />
   </head>
@@ -33,8 +33,47 @@
     </style>
     <div id="header-placeholder"></div>
 
+    <div class="filter-container" style="padding-left: 250px;">
+      <!-- قائمة الأقسام الرئيسية -->
+      <div class="dropdown">
+        <button
+          class="dropbtn"
+          id="main-category-filter-btn"
+          data-original-text="Categories"
+        >
+          Categories <i class="arrow down"></i>
+        </button>
+        <div class="dropdown-content" id="main-category-filter-content">
+          <input
+            type="text"
+            placeholder="Type to filter"
+            class="search-input"
+          />
+        </div>
+      </div>
+
+      <!-- قائمة الأقسام الفرعية -->
+      <div class="dropdown" id="sub-category-dropdown">
+        <button
+          class="dropbtn"
+          id="sub-category-filter-btn"
+          data-original-text="Sub-categories"
+        >
+          Sub-categories <i class="arrow down"></i>
+        </button>
+        <div class="dropdown-content" id="sub-category-filter-content">
+          <input
+            type="text"
+            placeholder="Type to filter"
+            class="search-input"
+          />
+        </div>
+      </div>
+
+      <button class="clear-filters-btn" id="clear-all">Clear All</button>
+    </div>
+
     <section class="projects-section">
-      <p class="title">Product</p>
       <div class="container" style="display: block;">
         <div id="projects-container" class="projects-grid"></div>
         <div id="load-more-container" class="load-more-container hidden">
@@ -48,6 +87,9 @@
     <script>
       let allProductsList = [];
       let displayedProductsCount = 0;
+      let currentFilteredList = [];
+      let selectedCategoryId = null;
+      let selectedSubCategoryId = null;
       const productsLimit = 8;
 
       async function loadAllProductsWithPagination() {
@@ -58,6 +100,7 @@
           const result = await FancyAPI.get('/products/public-list.php');
           if (result.success && result.data && result.data.products) {
             allProductsList = result.data.products;
+            currentFilteredList = [...allProductsList];
             
             if (allProductsList.length === 0) {
               grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 50px;">No products found.</p>';
@@ -76,22 +119,160 @@
         const grid = document.getElementById("projects-container");
         const loadMoreWrapper = document.getElementById("load-more-container");
         
-        const nextBatch = allProductsList.slice(displayedProductsCount, displayedProductsCount + productsLimit);
+        const nextBatch = currentFilteredList.slice(displayedProductsCount, displayedProductsCount + productsLimit);
         
-        // استخدام الدالة الموحدة createProductCardHTML من ملف products.js
         const html = nextBatch.map(product => createProductCardHTML(product)).join('');
         
         grid.insertAdjacentHTML('beforeend', html);
         displayedProductsCount += nextBatch.length;
 
-        if (displayedProductsCount >= allProductsList.length) {
+        if (displayedProductsCount >= currentFilteredList.length) {
           loadMoreWrapper.classList.add('hidden');
         } else {
           loadMoreWrapper.classList.remove('hidden');
         }
       }
 
-      window.addEventListener("load", loadAllProductsWithPagination);
+      function resetPagination() {
+        const grid = document.getElementById("projects-container");
+        const loadMoreWrapper = document.getElementById("load-more-container");
+        grid.innerHTML = '';
+        displayedProductsCount = 0;
+        loadMoreWrapper.classList.remove('hidden');
+        renderNextProductBatch();
+      }
+
+      function applyFilters() {
+        let filtered = [...allProductsList];
+        
+        if (selectedCategoryId) {
+          filtered = filtered.filter(p => p.category_id == selectedCategoryId);
+        }
+        if (selectedSubCategoryId) {
+          filtered = filtered.filter(p => p.sub_category_id == selectedSubCategoryId || p.sub_category_name === selectedSubCategoryId);
+        }
+        
+        currentFilteredList = filtered;
+        resetPagination();
+      }
+
+      function clearSubCategoryOptions() {
+        const container = document.getElementById("sub-category-filter-content");
+        if (!container) return;
+        // Keep only the search input, remove all <a> tags
+        container.querySelectorAll('a').forEach(el => el.remove());
+      }
+
+      // دالة لجلب الأقسام الرئيسية وتعبئة القائمة المنسدلة للفلترة
+      async function loadMainCategoryFilters(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        try {
+          const result = await FancyAPI.get("/categories/list.php");
+          if (result.success && result.data && result.data.categories) {
+            // إضافة "All" option
+            const allLink = document.createElement("a");
+            allLink.href = "#";
+            allLink.textContent = "All Categories";
+            allLink.onclick = (e) => {
+              e.preventDefault();
+              document.getElementById("main-category-filter-btn").innerHTML = `Categories <i class="arrow down"></i>`;
+              document.getElementById("sub-category-filter-btn").innerHTML = `Sub-categories <i class="arrow down"></i>`;
+              clearSubCategoryOptions();
+              selectedCategoryId = null;
+              selectedSubCategoryId = null;
+              applyFilters();
+            };
+            container.appendChild(allLink);
+
+            // إضافة الأقسام للقائمة المنسدلة
+            result.data.categories.forEach(cat => {
+              const a = document.createElement("a");
+              a.href = "#";
+              a.textContent = cat.name;
+              a.onclick = (e) => {
+                e.preventDefault();
+                document.getElementById("main-category-filter-btn").innerHTML = `${cat.name} <i class="arrow down"></i>`;
+                selectedCategoryId = cat.id;
+                selectedSubCategoryId = null;
+                document.getElementById("sub-category-filter-btn").innerHTML = `Sub-categories <i class="arrow down"></i>`;
+                // تحميل الأقسام الفرعية لهذا القسم
+                loadSubCategoryFilters(cat.id, cat.name);
+                applyFilters();
+              };
+              container.appendChild(a);
+            });
+          }
+        } catch (error) {
+          console.error("Error loading category filters:", error);
+        }
+      }
+
+      // دالة لجلب وتعبئة الأقسام الفرعية
+      async function loadSubCategoryFilters(categoryId, categoryName) {
+        const container = document.getElementById("sub-category-filter-content");
+        if (!container) return;
+        
+        try {
+          // إزالة الخيارات القديمة
+          clearSubCategoryOptions();
+          
+          // إضافة "All" option للقسم الفرعي
+          const allLink = document.createElement("a");
+          allLink.href = "#";
+          allLink.textContent = `All ${categoryName}`;
+          allLink.onclick = (e) => {
+            e.preventDefault();
+            document.getElementById("sub-category-filter-btn").innerHTML = `Sub-categories <i class="arrow down"></i>`;
+            selectedSubCategoryId = null;
+            applyFilters();
+          };
+          container.appendChild(allLink);
+
+          const result = await FancyAPI.get(`/categories/get-sub-categories.php?category_id=${categoryId}`);
+          
+          if (result.success && result.data && result.data.sub_categories) {
+            result.data.sub_categories.forEach(sub => {
+              const a = document.createElement("a");
+              a.href = "#";
+              a.textContent = sub.name;
+              a.onclick = (e) => {
+                e.preventDefault();
+                document.getElementById("sub-category-filter-btn").innerHTML = `${sub.name} <i class="arrow down"></i>`;
+                selectedSubCategoryId = sub.name;
+                applyFilters();
+              };
+              container.appendChild(a);
+            });
+          }
+        } catch (error) {
+          console.error("Error loading sub-category filters:", error);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        // تعبئة قائمة الفلاتر
+        loadMainCategoryFilters("main-category-filter-content");
+        
+        // تحميل المنتجات
+        loadAllProductsWithPagination();
+
+        // زر Clear All
+        const clearBtn = document.getElementById("clear-all");
+        if (clearBtn) {
+          clearBtn.addEventListener("click", () => {
+            document.querySelectorAll(".dropbtn").forEach((btn) => {
+              const originalText = btn.getAttribute("data-original-text");
+              btn.innerHTML = `${originalText} <i class="arrow down"></i>`;
+            });
+            clearSubCategoryOptions();
+            selectedCategoryId = null;
+            selectedSubCategoryId = null;
+            currentFilteredList = [...allProductsList];
+            resetPagination();
+          });
+        }
+      });
     </script>
     <script src="js/products.js"></script>
     <script src="js/script.js"></script>
