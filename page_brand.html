@@ -4,27 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="imges/img/fancy1.jfif" />
-    <title>Fancy Design</title>
+    <title>Fancy Design - Brands</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <style>
-
-   
-
-      /* تنسيق الصور الجانبية */
       .side-imgs {
         display: grid;
         grid-template-rows: 1fr 1fr;
         gap: 2px;
       }
 
-      /* حالة الصورة الواحدة الكبيرة (مثل الكرسي في الصورة) */
       .single-layout {
         grid-template-columns: 1fr;
       }
 
-      /* منطقة المعلومات أسفل الصور */
       .brand-info {
         display: flex;
         align-items: center;
@@ -69,18 +63,16 @@
         </button>
         <div class="dropdown-content" id="country-filter-content">
           <input type="text" placeholder="Search Country" class="search-input" />
-          <a href="#" class="all-option">All Countries</a>
         </div>
       </div>
 
-      <!-- فلتر الأقسام (list.php العادي) -->
+      <!-- فلتر الفئات -->
       <div class="dropdown">
         <button class="dropbtn" id="category-filter-btn" data-original-text="Category">
           Category <i class="arrow down"></i>
         </button>
         <div class="dropdown-content" id="category-filter-content">
           <input type="text" placeholder="Search Category" class="search-input" />
-          <a href="#" class="all-option">All Categories</a>
         </div>
       </div>
 
@@ -97,102 +89,163 @@
     <script src="js/brands.js"></script>
     <script src="js/auth.js"></script>
     <script>
+      let allBrands = [];
       let currentFilters = {
         country: null,
-        category_id: null
+        category: null
       };
 
-      function applyFilters() {
-        if (typeof displayAllBrands === "function") {
-          displayAllBrands('brands-container', null, currentFilters);
+      function renderBrands(brands) {
+        const container = document.getElementById('brands-container');
+        if (!container) return;
+
+        if (brands.length === 0) {
+          container.innerHTML = `<p style="text-align: center; grid-column: 1/-1; padding: 50px;">No brands match your filters.</p>`;
+          return;
         }
+
+        container.innerHTML = '';
+
+        brands.forEach(brand => {
+          const hasSideImages = brand.side_img1 || brand.side_img2;
+          const gridClass = hasSideImages ? '' : 'single-layout';
+          const brandId = brand.id || brand.brand_id;
+
+          const brandHtml = `
+            <div class="brand-card">
+              <a href="view_brands.html?brand=${brandId}" style="text-decoration: none; color: inherit;">
+                <div class="brand-images-grid ${gridClass}">
+                  <div class="main-img">
+                    <img src="${getSafeImageUrl(brand.cover_image || brand.main_image)}" alt="${brand.brand_name}" />
+                  </div>
+                  ${hasSideImages ? `
+                  <div class="side-imgs">
+                    ${brand.side_img1 ? `<img src="${getSafeImageUrl(brand.side_img1)}" alt="item" />` : ''}
+                    ${brand.side_img2 ? `<img src="${getSafeImageUrl(brand.side_img2)}" alt="item" />` : ''}
+                  </div>
+                  ` : ''}
+                </div>
+                <div class="brand-info" style="padding: 10px;">
+                  <img src="${getSafeImageUrl(brand.logo)}" alt="logo" class="brand-logo" />
+                  <div class="brand-text">
+                    <h3>${brand.brand_name || brand.name || 'Brand'}</h3>
+                    <p>${brand.country || ''} | ${brand.city || ''}</p>
+                    <span>${brand.brand_type || ''}</span>
+                  </div>
+                </div>
+              </a>
+            </div>
+          `;
+          container.insertAdjacentHTML('beforeend', brandHtml);
+        });
+      }
+
+      function applyFilters() {
+        let filtered = [...allBrands];
+
+        if (currentFilters.country) {
+          filtered = filtered.filter(b => 
+            b.country && b.country.toLowerCase().includes(currentFilters.country.toLowerCase())
+          );
+        }
+
+        if (currentFilters.category) {
+          filtered = filtered.filter(b => 
+            b.brand_type && b.brand_type.toLowerCase().includes(currentFilters.category.toLowerCase())
+          );
+        }
+
+        renderBrands(filtered);
+      }
+
+      function addDropdownOption(containerId, text, onclick) {
+        const content = document.getElementById(containerId);
+        if (!content) return;
+        const a = document.createElement("a");
+        a.href = "#";
+        a.textContent = text;
+        a.onclick = onclick;
+        content.appendChild(a);
       }
 
       document.addEventListener("DOMContentLoaded", async () => {
-        // التحميل الأولي للبراندات
-        applyFilters();
+        // تحميل كل البراندات
+        try {
+          const result = await FancyAPI.get('/brands/public-list.php');
+          if (result.success && result.data && result.data.brands) {
+            allBrands = result.data.brands;
+            renderBrands(allBrands);
+          } else {
+            document.getElementById('brands-container').innerHTML = '<p style="text-align: center; grid-column: 1/-1; padding: 50px;">No brands found.</p>';
+          }
+        } catch (error) {
+          console.error("Error loading brands:", error);
+        }
 
-        // جلب الأقسام من list.php لتعبئة الفلتر
-        await loadCategoryFilters();
-
-        // قائمة دول أكثر شمولاً
+        // 1. تعبئة فلتر الدولة
         const countries = [
-          "Saudi Arabia", "United Arab Emirates", "China", "Italy", "Turkey", 
+          "All Countries", "Saudi Arabia", "United Arab Emirates", "China", "Italy", "Turkey", 
           "USA", "United Kingdom", "France", "Germany", "Spain", "Egypt", 
           "Jordan", "Kuwait", "Oman", "Qatar", "Bahrain", "Lebanon"
         ];
-        const countryContent = document.getElementById("country-filter-content");
+
         countries.forEach(country => {
-          const a = document.createElement("a");
-          a.href = "#";
-          a.textContent = country;
-          a.onclick = (e) => {
+          addDropdownOption("country-filter-content", country, (e) => {
             e.preventDefault();
-            document.getElementById("country-filter-btn").innerHTML = `${country} <i class="arrow down"></i>`;
-            currentFilters.country = country;
+            if (country === "All Countries") {
+              document.getElementById("country-filter-btn").innerHTML = `Country <i class="arrow down"></i>`;
+              currentFilters.country = null;
+            } else {
+              document.getElementById("country-filter-btn").innerHTML = `${country} <i class="arrow down"></i>`;
+              currentFilters.country = country;
+            }
             applyFilters();
-          };
-          countryContent.appendChild(a);
+          });
         });
 
-        // منطق مسح الفلاتر
-        document.getElementById("clear-all").onclick = () => {
-          currentFilters = { country: null, category_id: null };
-          document.getElementById("country-filter-btn").innerHTML = `Country <i class="arrow down"></i>`;
-          document.getElementById("category-filter-btn").innerHTML = `Category <i class="arrow down"></i>`;
-          applyFilters();
-        };
-
-        // تفعيل البحث داخل القوائم المنسدلة
-        document.querySelectorAll(".dropdown-content .search-input").forEach(input => {
-          input.oninput = function() {
-            const val = this.value.toLowerCase();
-            const links = this.parentElement.querySelectorAll("a");
-            links.forEach(link => {
-              if (link.classList.contains('all-option')) return;
-              link.style.display = link.textContent.toLowerCase().includes(val) ? "" : "none";
-            });
-          };
-        });
-
-        // تفعيل خيار "الكل" (All Options)
-        document.querySelectorAll(".all-option").forEach(opt => {
-          opt.onclick = (e) => {
-            e.preventDefault();
-            const btn = opt.closest(".dropdown").querySelector(".dropbtn");
-            btn.innerHTML = `${btn.getAttribute("data-original-text")} <i class="arrow down"></i>`;
-            const filterType = btn.id === "country-filter-btn" ? "country" : "category_id";
-            currentFilters[filterType] = null;
-            applyFilters();
-          };
-        });
-      });
-
-      async function loadCategoryFilters() {
-        const container = document.getElementById("category-filter-content");
-        if (!container) return;
+        // 2. تعبئة فلتر الفئات
         try {
-          // استخدام list.php لجلب التصنيفات المتاحة
           const result = await FancyAPI.get("/categories/list.php");
           if (result.success && result.data && result.data.categories) {
+            addDropdownOption("category-filter-content", "All Categories", (e) => {
+              e.preventDefault();
+              document.getElementById("category-filter-btn").innerHTML = `Category <i class="arrow down"></i>`;
+              currentFilters.category = null;
+              applyFilters();
+            });
+
             result.data.categories.forEach(cat => {
-              const a = document.createElement("a");
-              a.href = "#";
-              a.textContent = cat.name;
-              a.onclick = (e) => {
+              addDropdownOption("category-filter-content", cat.name, (e) => {
                 e.preventDefault();
                 document.getElementById("category-filter-btn").innerHTML = `${cat.name} <i class="arrow down"></i>`;
-                // نستخدم الاسم بدلاً من الـ ID لأن PHP يبحث بالـ Like في حقل brand_type
-                currentFilters.category_id = cat.name; 
+                currentFilters.category = cat.name;
                 applyFilters();
-              };
-              container.appendChild(a);
+              });
             });
           }
         } catch (error) {
           console.error("Error loading category filters:", error);
         }
-      }
+
+        // 3. زر Clear All
+        document.getElementById("clear-all").onclick = () => {
+          currentFilters = { country: null, category: null };
+          document.getElementById("country-filter-btn").innerHTML = `Country <i class="arrow down"></i>`;
+          document.getElementById("category-filter-btn").innerHTML = `Category <i class="arrow down"></i>`;
+          applyFilters();
+        };
+
+        // 4. تفعيل البحث داخل القوائم المنسدلة
+        document.querySelectorAll(".dropdown-content .search-input").forEach(input => {
+          input.oninput = function() {
+            const val = this.value.toLowerCase();
+            const links = this.parentElement.querySelectorAll("a");
+            links.forEach(link => {
+              link.style.display = link.textContent.toLowerCase().includes(val) ? "" : "none";
+            });
+          };
+        });
+      });
     </script>
   </body>
 </html>
