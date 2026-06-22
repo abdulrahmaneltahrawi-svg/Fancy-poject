@@ -133,12 +133,44 @@ async function loadSingleProductDetails(productId) {
             document.getElementById('project-image').src = typeof getSafeImageUrl === 'function' ? getSafeImageUrl(product.main_image) : (product.main_image || 'imges/placeholder.png');
             document.getElementById('project-name').innerText = product.product_name || 'منتج غير معروف';
             document.getElementById('project-desc').innerText = product.description || 'لا يوجد وصف لهذا المنتج.';
-            document.getElementById('project-category').innerText = product.brand_name || "BRAND";
+            document.getElementById('project-category').innerText = product.category_name || product.category || "";
+            const brandNameElem = document.getElementById('brand-name-above');
+            if (brandNameElem && product.brand_name) {
+                brandNameElem.innerText = product.brand_name;
+            }
 
             const locationElem = document.getElementById('project-location');
-            if (locationElem && product.city) {
-                locationElem.innerText = `Made in ${product.city}`;
+            
+            // محاولة جلب المدينة من الـ API في حال لم تكن موجودة في بيانات المنتج
+            async function fetchBrandLocation() {
+                try {
+                    const brandResult = await FancyAPI.get(`/brands/get.php?brand_id=${product.brand_id}`);
+                    if (brandResult && brandResult.success && brandResult.data) {
+                        const brandData = brandResult.data.brand || brandResult.data;
+                        const brandCity = brandData.city || '';
+                        if (locationElem && brandCity) {
+                            locationElem.innerText = `Made in ${brandCity}`;
+                            locationElem.style.display = 'block';
+                        }
+                        // تحديث اسم البراند إذا ما كان موجود
+                        const brandNameElem = document.getElementById('brand-name-above');
+                        if (brandNameElem && !product.brand_name && brandData.brand_name) {
+                            brandNameElem.innerText = brandData.brand_name;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Could not fetch brand location:', e);
+                }
+            }
+            
+            // المدينة من بيانات المنتج نفسه (إن وجدت)
+            const productCity = product.city || product.made_in || product.location || product.country || product.brand_city || '';
+            if (locationElem && productCity) {
+                locationElem.innerText = `Made in ${productCity}`;
                 locationElem.style.display = 'block';
+            } else if (product.brand_id) {
+                // إذا ما في مدينة، نجيبها من API البراند
+                fetchBrandLocation();
             }
 
             // عرض البيانات التقنية والـ SKU
