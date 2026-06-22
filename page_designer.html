@@ -4,17 +4,113 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="imges/img/fancy1.jfif" />
-    <title>Fancy Design</title>
+    <title>Fancy Design - Designers</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    
-
+    <style>
+      .brand-card {
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 20px;
+        margin-bottom: 10px;
+        border: 1px solid rgba(128, 128, 128, 0.068);
+      }
+      .brand-card:hover {
+        transform: none;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-color: #eee;
+      }
+      .brand-images-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2px;
+        height: 230px;
+        background-color: #ffffff;
+        overflow: hidden;
+        border: 1px solid rgba(128, 128, 128, 0.112);
+      }
+      .brand-images-grid img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .side-imgs {
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+        gap: 2px;
+      }
+      .single-layout {
+        grid-template-columns: 1fr;
+      }
+      .brand-info {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+        gap: 12px;
+        padding: 10px;
+      }
+      .brand-logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 4px;
+        object-fit: contain;
+      }
+      .brand-text h3 {
+        font-size: 16px;
+        font-weight: 700;
+        margin: 0;
+        color: #111;
+        text-transform: capitalize;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .brand-text p {
+        font-size: 12px;
+        color: #888;
+        margin: 2px 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .brand-text span {
+        font-size: 11px;
+        color: #aaa;
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    </style>
     <div id="header-placeholder"></div>
+
+    <div class="filter-container" style="padding-left: 250px;">
+      <!-- فلتر النوع (Designer or Design Company) -->
+      <div class="dropdown">
+        <button class="dropbtn" id="type-filter-btn" data-original-text="Type">
+          Type <i class="arrow down"></i>
+        </button>
+        <div class="dropdown-content" id="type-filter-content">
+          <input type="text" placeholder="Search Type" class="search-input" />
+        </div>
+      </div>
+
+      <!-- فلتر الدولة -->
+      <div class="dropdown">
+        <button class="dropbtn" id="country-filter-btn" data-original-text="Country">
+          Country <i class="arrow down"></i>
+        </button>
+        <div class="dropdown-content" id="country-filter-content">
+          <input type="text" placeholder="Search Country" class="search-input" />
+        </div>
+      </div>
+
+      <button class="clear-filters-btn" id="clear-all">Clear All</button>
+    </div>
 
     <section class="projects-section">
       <div class="container" style="display: flex; align-items: flex-start; justify-content: flex-start; flex-direction: column;">
-        <p class="title" style="padding-left: 50px;">Designers</p>
         <div id="designers-grid" class="projects-grid">
           <!-- سيتم تحميل المصممين هنا تلقائياً -->
         </div>
@@ -25,23 +121,19 @@
 
     <script src="js/script.js"></script>
     <script src="js/auth.js"></script>
-<script>
-  document.addEventListener("DOMContentLoaded", async () => {
-    const grid = document.getElementById('designers-grid');
+    <script>
+      let allDesigners = [];
+      let currentFilters = {
+        type: null,
+        country: null
+      };
 
-    try {
-      // جلب المصممين والمشاريع العامة لدمج الصور في الكروت (بدون تعديل PHP)
-      const [designersRes, projectsRes] = await Promise.all([
-        FancyAPI.get('/admin/All_designer.php'),
-        FancyAPI.get('/project/public_projects.php')
-      ]);
-
-      if (designersRes.success && designersRes.data) {
-        const designers = designersRes.data || [];
-        const allProjects = (projectsRes.success && projectsRes.data.projects) ? projectsRes.data.projects : [];
+      function renderDesigners(designers) {
+        const grid = document.getElementById('designers-grid');
+        if (!grid) return;
 
         if (designers.length === 0) {
-          grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 50px; color: #999;">No designers found.</p>';
+          grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 50px; color: #999;">No designers match your filters.</p>';
           return;
         }
 
@@ -49,9 +141,7 @@
           const displayName = designer.user_name || designer.company_type || "Designer";
           const location = [designer.city, designer.country].filter(Boolean).join(', ');
 
-          // التأكد من أن الفلترة تتم باستخدام designer.id (المعرف الفريد للمصمم)
-          // لضمان عدم تكرار صور مصمم واحد على بقية الكروت
-          const designerProjects = allProjects.filter(p => p.designer_id == designer.id);
+          const designerProjects = allDesignerProjects.filter(p => p.designer_id == designer.id);
           const projectImages = designerProjects.map(p => p.cover_image).filter(Boolean);
           const projectsCount = designerProjects.length;
 
@@ -86,10 +176,120 @@
         `;
         }).join('');
       }
-    } catch (err) {
-      console.error("Error loading designers or projects:", err);
-    }
-  });
-</script>
+
+      let allDesignerProjects = [];
+
+      function applyFilters() {
+        let filtered = [...allDesigners];
+
+        if (currentFilters.type) {
+          filtered = filtered.filter(d => 
+            d.company_type && d.company_type.toLowerCase().includes(currentFilters.type.toLowerCase())
+          );
+        }
+
+        if (currentFilters.country) {
+          filtered = filtered.filter(d => 
+            d.country && d.country.toLowerCase().includes(currentFilters.country.toLowerCase())
+          );
+        }
+
+        renderDesigners(filtered);
+      }
+
+      function addDropdownOption(containerId, text, onclick) {
+        const content = document.getElementById(containerId);
+        if (!content) return;
+        const a = document.createElement("a");
+        a.href = "#";
+        a.textContent = text;
+        a.onclick = onclick;
+        content.appendChild(a);
+      }
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        const grid = document.getElementById('designers-grid');
+
+        try {
+          // جلب المصممين والمشاريع
+          const [designersRes, projectsRes] = await Promise.all([
+            FancyAPI.get('/admin/All_designer.php'),
+            FancyAPI.get('/project/public_projects.php')
+          ]);
+
+          if (designersRes.success && designersRes.data) {
+            allDesigners = designersRes.data || [];
+            allDesignerProjects = (projectsRes.success && projectsRes.data.projects) ? projectsRes.data.projects : [];
+
+            if (allDesigners.length === 0) {
+              grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 50px; color: #999;">No designers found.</p>';
+              return;
+            }
+
+            renderDesigners(allDesigners);
+          }
+        } catch (err) {
+          console.error("Error loading designers or projects:", err);
+        }
+
+        // 1. تعبئة فلتر Type (Designer or Design Company فقط)
+        const types = ["All Types", "Designer", "Design Company"];
+        types.forEach(type => {
+          addDropdownOption("type-filter-content", type, (e) => {
+            e.preventDefault();
+            if (type === "All Types") {
+              document.getElementById("type-filter-btn").innerHTML = `Type <i class="arrow down"></i>`;
+              currentFilters.type = null;
+            } else {
+              document.getElementById("type-filter-btn").innerHTML = `${type} <i class="arrow down"></i>`;
+              currentFilters.type = type;
+            }
+            applyFilters();
+          });
+        });
+
+        // 2. تعبئة فلتر الدولة
+        const countries = [
+          "All Countries",
+          "Saudi Arabia", "United Arab Emirates", "Egypt", "Jordan", "Kuwait", 
+          "Oman", "Qatar", "Bahrain", "Lebanon", "Turkey", "Morocco",
+          "USA", "Canada", "United Kingdom", "France", "Germany", "Spain", 
+          "Italy", "Netherlands", "Switzerland", "Sweden", "Norway", "Denmark",
+          "China", "Japan", "South Korea", "India", "Australia", "Brazil"
+        ];
+        countries.forEach(country => {
+          addDropdownOption("country-filter-content", country, (e) => {
+            e.preventDefault();
+            if (country === "All Countries") {
+              document.getElementById("country-filter-btn").innerHTML = `Country <i class="arrow down"></i>`;
+              currentFilters.country = null;
+            } else {
+              document.getElementById("country-filter-btn").innerHTML = `${country} <i class="arrow down"></i>`;
+              currentFilters.country = country;
+            }
+            applyFilters();
+          });
+        });
+
+        // 3. زر Clear All
+        document.getElementById("clear-all").onclick = () => {
+          currentFilters = { type: null, country: null };
+          document.getElementById("type-filter-btn").innerHTML = `Type <i class="arrow down"></i>`;
+          document.getElementById("country-filter-btn").innerHTML = `Country <i class="arrow down"></i>`;
+          applyFilters();
+        };
+
+        // 4. تفعيل البحث داخل القوائم المنسدلة
+        document.querySelectorAll(".dropdown-content .search-input").forEach(input => {
+          input.oninput = function() {
+            const val = this.value.toLowerCase();
+            const links = this.parentElement.querySelectorAll("a");
+            links.forEach(link => {
+              link.style.display = link.textContent.toLowerCase().includes(val) ? "" : "none";
+            });
+          };
+        });
+      });
+    </script>
   </body>
 </html>
