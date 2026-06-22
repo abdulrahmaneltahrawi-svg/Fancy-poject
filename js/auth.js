@@ -1,5 +1,3 @@
-
-
 // وظيفة لتغيير أزرار الهيدر (Login/Join) إلى اسم المستخدم عند تسجيل الدخول
 function updateAuthUI() {
     const authLinks = document.querySelector('.auth-links');
@@ -13,6 +11,15 @@ function updateAuthUI() {
 
             authLinks.innerHTML = `
                 <div class="user-nav-container">
+                    <div class="notification-wrapper">
+                        <button id="notification-btn" class="notification-btn" title="Notifications">
+                              <img src="imges/icons/bell (1).png" alt="Notification" style="width: 25px; height: 25px;">
+                        </button>
+                        <div id="notification-dropdown" class="notification-dropdown">
+                            <div class="notification-dropdown-header">Notifications</div>
+                            <div class="notification-empty">No new notifications</div>
+                        </div>
+                    </div>
 
                     <div class="user-menu-wrapper" style="position: relative;">
                         <button id="user-menu-toggle" class="user-name-btn">
@@ -137,11 +144,10 @@ function updateProfileUI(user) {
     if (statusElem) {
         const status = user.status || 'pending';
         statusElem.textContent = status;
-        // تعيين الألوان بناءً على الحالة
         if (status.toLowerCase() === 'active') {
             statusElem.style.color = 'green';
         } else {
-            statusElem.style.color = 'orange'; // للحالات المعلقة أو التي تتطلب إجراءً
+            statusElem.style.color = 'orange';
         }
     }
     
@@ -159,26 +165,21 @@ function setupProfileTabs(user) {
 
     tabs.forEach(tab => {
         tab.addEventListener('click', function() {
-            // 1. تغيير الخط تحت التبويب (Underline)
             tabs.forEach(t => t.classList.remove('active'));
             this.classList.add('active');
 
-            // إخفاء جميع الأقسام أولاً
             [overviewSection, brandsSection, productsSection, designersSection, createSection].forEach(sec => sec?.classList.add('hidden'));
 
-            // 2. تغيير المحتوى بناءً على التبويب
             if (this.id === 'tab-overview') {
                 overviewSection?.classList.remove('hidden');
             } 
             else if (this.id === 'tab-brands') {
                 brandsSection?.classList.remove('hidden');
                 
-                // استدعاء دالة جلب البراندات عند الضغط على التبويب
                 if (typeof window.displayUserBrands === 'function') {
                     window.displayUserBrands('user-brands-list');
                 }
 
-                // التحقق: إذا كان لدى المستخدم براند، يوجهه لإضافة منتج. وإذا لم يكن لديه، يوجهه لإنشاء براند.
                 if (user.brand_id) {
                     if (createText) createText.textContent = 'Add new product';
                     if (createSection) createSection.href = 'add-product.html';
@@ -192,7 +193,6 @@ function setupProfileTabs(user) {
             else if (this.id === 'tab-products') {
                 productsSection?.classList.remove('hidden');
                 
-                // استدعاء دالة جلب المنتجات عند الضغط على التبويب
                 if (typeof window.loadMyProducts === 'function') {
                     window.loadMyProducts('user-products-list');
                 }
@@ -206,7 +206,6 @@ function setupProfileTabs(user) {
             else if (this.id === 'tab-designers') {
                 designersSection?.classList.remove('hidden');
                 
-                // استدعاء دالة جلب بيانات المصمم (إذا كانت متوفرة)
                 if (typeof window.displayUserDesignerProfile === 'function') {
                     window.displayUserDesignerProfile('user-designers-list');
                 }
@@ -223,12 +222,10 @@ window.loadUserProfile = loadUserProfile;
 
 async function logoutUser() {
     try {
-        // استدعاء API تسجيل الخروج لإنهاء الجلسة في السيرفر
         await FancyAPI.post('/auth/logout.php');
     } catch (error) {
         console.error('Logout error:', error);
     } finally {
-        // مسح بيانات المستخدم محلياً وإعادة التوجيه للرئيسية
         localStorage.removeItem('userData');
         window.location.href = 'index.html';
     }
@@ -243,7 +240,6 @@ async function resendVerificationCode(email) {
         } else {
             displayMessage('emailVerificationMessage', result.message || 'Failed to resend code.', false);
         }
-
     } catch (error) {
         displayMessage('emailVerificationMessage', 'Server connection error.', false);
     }
@@ -262,132 +258,128 @@ function displayMessage(elementId, message, isSuccess) {
     }
 }
 
-// دالة لتهيئة جميع معالجات الأحداث المتعلقة بالمصادقة
 function initializeAuthListeners() {
-    updateAuthUI(); // تحديث واجهة المستخدم فورًا عند التهيئة
+    updateAuthUI();
 
     document.addEventListener('click', function (e) {
-    const modal = document.getElementById('authModal');
-    // console.log('Click event detected:', e.target); // يمكن تفعيل هذا السطر للتصحيح
-    if (e.target.closest('.login-link')) {
-        e.preventDefault();
-        // console.log('Login link clicked!'); // يمكن تفعيل هذا السطر للتصحيح
-        showAuthModal('login');
-    } else if (e.target.closest('.join-link')) {
-        e.preventDefault();
-        // console.log('Join link clicked!'); // يمكن تفعيل هذا السطر للتصحيح
-        showAuthModal('register');
-    } else if (e.target.closest('#user-menu-toggle')) {
-        e.preventDefault();
-        const menu = document.getElementById('user-dropdown-list');
-        menu.classList.toggle('show');
-        e.target.closest('#user-menu-toggle').classList.toggle('active');
-    } else if (e.target.closest('#logout-btn')) {
-        e.preventDefault();
-        logoutUser();
-    } else if (e.target.id === 'resend-code') {
-        e.preventDefault();
-        const emailInput = document.querySelector('#emailVerificationForm input[name="email"]');
-        if (emailInput?.value) resendVerificationCode(emailInput.value);
-    } else if (e.target.classList.contains('close-modal') || e.target === modal) {
-        modal?.classList.remove('show');
-    } else if (e.target.closest('#showLogin') || e.target.closest('#backToLogin')) {
-        e.preventDefault();
-        switchAuthTab('login');
-    } else if (e.target.closest('#showRegister')) {
-        e.preventDefault();
-        switchAuthTab('register');
-    } else if (!e.target.closest('.user-menu-wrapper')) {
-        // إغلاق القائمة عند النقر في أي مكان آخر
-        document.getElementById('user-dropdown-list')?.classList.remove('show');
-        document.getElementById('user-menu-toggle')?.classList.remove('active');
-    }
-}); // نهاية مستمع أحداث النقر
+        const modal = document.getElementById('authModal');
+        
+        if (e.target.closest('.login-link')) {
+            e.preventDefault();
+            showAuthModal('login');
+        } else if (e.target.closest('.join-link')) {
+            e.preventDefault();
+            showAuthModal('register');
+        } else if (e.target.closest('#user-menu-toggle')) {
+            e.preventDefault();
+            const menu = document.getElementById('user-dropdown-list');
+            menu.classList.toggle('show');
+            e.target.closest('#user-menu-toggle').classList.toggle('active');
+        } else if (e.target.closest('#notification-btn')) {
+            e.preventDefault();
+            const dropdown = document.getElementById('notification-dropdown');
+            dropdown.classList.toggle('show');
+        } else if (e.target.closest('#logout-btn')) {
+            e.preventDefault();
+            logoutUser();
+        } else if (e.target.id === 'resend-code') {
+            e.preventDefault();
+            const emailInput = document.querySelector('#emailVerificationForm input[name="email"]');
+            if (emailInput?.value) resendVerificationCode(emailInput.value);
+        } else if (e.target.classList.contains('close-modal') || e.target === modal) {
+            modal?.classList.remove('show');
+        } else if (e.target.closest('#showLogin') || e.target.closest('#backToLogin')) {
+            e.preventDefault();
+            switchAuthTab('login');
+        } else if (e.target.closest('#showRegister')) {
+            e.preventDefault();
+            switchAuthTab('register');
+        } else if (!e.target.closest('.user-menu-wrapper') && !e.target.closest('.notification-wrapper')) {
+            document.getElementById('user-dropdown-list')?.classList.remove('show');
+            document.getElementById('user-menu-toggle')?.classList.remove('active');
+            document.getElementById('notification-dropdown')?.classList.remove('show');
+        }
+    });
 
     document.addEventListener('submit', async (event) => {
-    // التسجيل
-    if (event.target.id === 'registrationForm') {
-        event.preventDefault();
-        const form = event.target;
-        const submitBtn = form.querySelector('button[type="submit"]');
-        const data = Object.fromEntries(new FormData(form).entries());
-        const regMsgId = 'registrationMessage';
+        if (event.target.id === 'registrationForm') {
+            event.preventDefault();
+            const form = event.target;
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const data = Object.fromEntries(new FormData(form).entries());
+            const regMsgId = 'registrationMessage';
 
-        try {
-            if (submitBtn) submitBtn.disabled = true;
-            displayMessage(regMsgId, 'Sending data...', true);
-            const result = await FancyAPI.post('/auth/register.php', data);
-            
-            if (result?.success) {
-                displayMessage(regMsgId, result.message || 'Registration successful! Please check your email.', true);
-                setTimeout(() => {
-                    form.reset();
-                    showAuthModal('verify', data.email);
-                }, 2000);
-            } else {
-                displayMessage('registrationMessage', result.message || 'Registration error', false);
-            }
-        } catch (error) {
-            displayMessage('registrationMessage', 'Server connection error.', false);
-        } finally {
-            if (submitBtn) submitBtn.disabled = false;
-        }
-    }
-
-    // تسجيل الدخول
-    if (event.target.id === 'loginForm') {
-        event.preventDefault();
-        const form = event.target;
-        const submitBtn = form.querySelector('button[type="submit"]');
-        const data = Object.fromEntries(new FormData(form).entries());
-        try {
-            if (submitBtn) submitBtn.disabled = true;
-            displayMessage('loginMessage', 'Logging in...', true);
-            const result = await FancyAPI.post('/auth/login.php', data);
-            console.log('Login API Response:', result); // أضف هذا السطر
-            if (result?.success) {
-                displayMessage('loginMessage', result.message, true);
-                localStorage.setItem('userData', JSON.stringify(result.data.user));
-                setTimeout(() => location.reload(), 1500);
-            } else {
-                // إذا كان السبب هو عدم تفعيل البريد، ننتقل لواجهة التحقق
-                if (result.data?.code === "EMAIL_NOT_VERIFIED") {
-                    showAuthModal('verify', data.email);
-                    displayMessage('emailVerificationMessage', result.message, false);
+            try {
+                if (submitBtn) submitBtn.disabled = true;
+                displayMessage(regMsgId, 'Sending data...', true);
+                const result = await FancyAPI.post('/auth/register.php', data);
+                
+                if (result?.success) {
+                    displayMessage(regMsgId, result.message || 'Registration successful! Please check your email.', true);
+                    setTimeout(() => {
+                        form.reset();
+                        showAuthModal('verify', data.email);
+                    }, 2000);
                 } else {
-                    displayMessage('loginMessage', result.message || 'Login failed', false);
+                    displayMessage('registrationMessage', result.message || 'Registration error', false);
                 }
+            } catch (error) {
+                displayMessage('registrationMessage', 'Server connection error.', false);
+            } finally {
+                if (submitBtn) submitBtn.disabled = false;
             }
-        } catch (error) {
-            displayMessage('loginMessage', 'Server connection error.', false);
-        } finally {
-            if (submitBtn) submitBtn.disabled = false;
         }
-    }
 
-    // التحقق
-    if (event.target.id === 'emailVerificationForm') {
-        event.preventDefault();
-        const form = event.target;
-        const submitBtn = form.querySelector('button[type="submit"]');
-        const data = Object.fromEntries(new FormData(form).entries());
-        try {
-            if (submitBtn) submitBtn.disabled = true;
-            const result = await FancyAPI.post('/auth/verify-email.php', data);
-            if (result.success) {
-                displayMessage('emailVerificationMessage', result.message + '. You can now log in.', true);
-                form.reset();
-                setTimeout(() => switchAuthTab('login'), 2000);
-            } else {
-                displayMessage('emailVerificationMessage', result.message || 'Verification error', false);
+        if (event.target.id === 'loginForm') {
+            event.preventDefault();
+            const form = event.target;
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const data = Object.fromEntries(new FormData(form).entries());
+            try {
+                if (submitBtn) submitBtn.disabled = true;
+                displayMessage('loginMessage', 'Logging in...', true);
+                const result = await FancyAPI.post('/auth/login.php', data);
+                if (result?.success) {
+                    displayMessage('loginMessage', result.message, true);
+                    localStorage.setItem('userData', JSON.stringify(result.data.user));
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    if (result.data?.code === "EMAIL_NOT_VERIFIED") {
+                        showAuthModal('verify', data.email);
+                        displayMessage('emailVerificationMessage', result.message, false);
+                    } else {
+                        displayMessage('loginMessage', result.message || 'Login failed', false);
+                    }
+                }
+            } catch (error) {
+                displayMessage('loginMessage', 'Server connection error.', false);
+            } finally {
+                if (submitBtn) submitBtn.disabled = false;
             }
-        } catch (error) {
-            displayMessage('emailVerificationMessage', 'Server connection error.', false);
-        } finally {
-            if (submitBtn) submitBtn.disabled = false;
         }
-    }
-});
+
+        if (event.target.id === 'emailVerificationForm') {
+            event.preventDefault();
+            const form = event.target;
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const data = Object.fromEntries(new FormData(form).entries());
+            try {
+                if (submitBtn) submitBtn.disabled = true;
+                const result = await FancyAPI.post('/auth/verify-email.php', data);
+                if (result.success) {
+                    displayMessage('emailVerificationMessage', result.message + '. You can now log in.', true);
+                    form.reset();
+                    setTimeout(() => switchAuthTab('login'), 2000);
+                } else {
+                    displayMessage('emailVerificationMessage', result.message || 'Verification error', false);
+                }
+            } catch (error) {
+                displayMessage('emailVerificationMessage', 'Server connection error.', false);
+            } finally {
+                if (submitBtn) submitBtn.disabled = false;
+            }
+        }
+    });
 }
 
-window.initializeAuthListeners = initializeAuthListeners; // جعل الدالة متاحة عالميًا
+window.initializeAuthListeners = initializeAuthListeners;
