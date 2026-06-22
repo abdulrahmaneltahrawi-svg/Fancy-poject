@@ -32,6 +32,23 @@
         cursor: pointer;
         text-decoration: none;
       }
+      .nav-link-underline {
+        position: relative;
+      }
+      .nav-link-underline::after {
+        content: "";
+        display: block;
+        position: absolute;
+        bottom: 10px;
+        left: 0;
+        width: 0;
+        height: 3px;
+        background-color: #333;
+        transition: width 0.3s ease;
+      }
+      .nav-link-underline:hover::after {
+        width: 100%;
+      }
 
 
 
@@ -355,8 +372,8 @@
     <div class="second-header">
       <div class="nav"> 
       <nav class="category-nav" id="main-category-nav"></nav>
-      <a href="page_brand.html"><p>Brands</p></a>
-      <a href="page_magazine.html"><p>Magazine</p></a>
+      <a href="page_brand.html" class="nav-link-underline"><p>Brands</p></a>
+      <a href="page_magazine.html" class="nav-link-underline"><p>Magazine</p></a>
       
 
       </div>
