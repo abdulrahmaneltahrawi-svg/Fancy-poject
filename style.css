@@ -377,20 +377,26 @@ html {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
+.section-header {
+  max-width: 1400px;
+  margin: 0 auto 50px auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
 .title {
   font-family: Roboto;
   font-size: 45px;
-  /* الحل هنا */
-  display: flex;
-  justify-content: flex-start;
-  padding-left: 14%;
-  gap: 15px; /* مسافة بين الخط والكلمة */
+  margin: 0;
+  padding: 0;
+  margin-left: 50px;
 }
 
 .sub-title {
-  padding-left: 14%;
+  margin-left: 50px;
   color: #b6b5b5;
-  margin-bottom: 40px;
+  margin-top: 5px;
+  padding: 0;
   font-size: 22px;
 }
 .magazine-grid {
@@ -960,6 +966,7 @@ html {
   padding-bottom: 20px;
   margin-bottom: 10px;
   border: 1px solid rgba(128, 128, 128, 0.068);
+  text-align: left;
   
 }
 .brand-card:hover {
@@ -995,10 +1002,12 @@ html {
 
 .brand-info {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
+  justify-content: flex-start;
   margin-top: 10px;
-  gap: 12px;
+  gap: 10px;
   padding: 10px;
+
 }
 
 .brand-logo {

@@ -189,9 +189,12 @@
         }
 
         if (currentFilters.country) {
-          filtered = filtered.filter(d => 
-            d.country && d.country.toLowerCase().includes(currentFilters.country.toLowerCase())
-          );
+          const filterCountry = currentFilters.country.toLowerCase();
+          filtered = filtered.filter(d => {
+            const designerCountry = d.country ? d.country.toLowerCase() : '';
+            const designerCity = d.city ? d.city.toLowerCase() : '';
+            return designerCountry.includes(filterCountry) || designerCity.includes(filterCountry);
+          });
         }
 
         renderDesigners(filtered);

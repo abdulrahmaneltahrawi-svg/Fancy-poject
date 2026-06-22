@@ -63,7 +63,7 @@ async function displayAllBrands(containerId = 'brands-container', limit = null, 
                                 </div>
                                 ` : ''}
                             </div>
-                            <div class="brand-info" style="padding: 10px;">
+                            <div class="brand-info">
                                 <img
                                     src="${getSafeImageUrl(brand.logo)}"
                                     alt="logo"
