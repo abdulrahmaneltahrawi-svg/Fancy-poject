@@ -9,81 +9,364 @@
   </head>
   <body>
     <style>
-        .categories-section {
-            padding: 40px 20px;
-            font-family: sans-serif;
-        }
+      /* === قسم البطاقات (الكروت) === */
+      .categories-section {
+        padding: 40px 20px;
+        font-family: sans-serif;
+      }
 
-        .categories-title {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
+      .categories-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
 
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 35px;
-        }
+      .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 35px;
+      }
 
-        .category-card {
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-        }
+      .category-card {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+        cursor: pointer;
+      }
 
-        .category-card:hover {
-            transform: translateY(-5px);
-        }
+      .category-card:hover {
+        transform: translateY(-5px);
+      }
 
-        .category-card img {
-            width: 100%;
-            height: 320px;
-            object-fit: cover;
-        }
+      .category-card img {
+        width: 100%;
+        height: 320px;
+        object-fit: cover;
+      }
 
-        .category-title {
-            padding: 15px;
-            background: #f8f8f8;
-            margin: 0;
-            font-size: 18px;
-        }
+      .category-card .category-title {
+        padding: 15px;
+        background: #f8f8f8;
+        margin: 0;
+        font-size: 18px;
+      }
+
+      .category-card.active-category {
+        border: 3px solid #000;
+      }
+
+      /* === منتجات القسم المختار === */
+      .products-section {
+        padding: 40px 20px;
+        font-family: sans-serif;
+      }
+
+      .products-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .products-header h2 {
+        margin: 0;
+        font-size: 24px;
+      }
+
+      .clear-filter-link {
+        background: none;
+        border: none;
+        color: #000;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: underline;
+        font-size: 14px;
+        padding: 8px 16px;
+        border-radius: 5px;
+        transition: background 0.3s;
+      }
+
+      .clear-filter-link:hover {
+        background: #f0f0f0;
+      }
+
+      .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 25px;
+      }
+
+      .product-card {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+        background: #fff;
+      }
+
+      .product-card:hover {
+        transform: translateY(-4px);
+      }
+
+      .product-card a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .product-card img {
+        width: 100%;
+        height: 260px;
+        object-fit: cover;
+      }
+
+      .product-card .card-content {
+        padding: 15px;
+      }
+
+      .product-card .card-content h3 {
+        margin: 0 0 8px 0;
+        font-size: 18px;
+      }
+
+      .product-card .card-content p {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #555;
+        font-size: 14px;
+      }
+
+      .load-more-container {
+        text-align: center;
+        margin: 50px 0;
+      }
+
+      .btn-load-more {
+        background: #000;
+        color: #fff;
+        padding: 12px 40px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 16px;
+        transition: background 0.3s;
+      }
+
+      .btn-load-more:hover {
+        background: #333;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .no-products {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 50px;
+        color: #888;
+        font-size: 18px;
+      }
     </style>
+
     <div id="header-placeholder"></div>
 
-
+    <!-- ========== بطاقات الأقسام (Categories) ========== -->
     <section class="categories-section">
-    <h2 class="categories-title">Products Categories</h2>
-    <div class="categories-grid">
-        <div class="category-card">
-    <a href="page_prodact.html?category=Furniture">
-        <img src="imges/prodact/product/Furniture.png" alt="Furniture">
-    </a>
-    <h3 class="category-title">Furniture</h3>
+      <h2 class="categories-title">Products Categories</h2>
+      <div class="categories-grid">
+        <div class="category-card" data-category-id="1">
+          <img src="imges/prodact/product/Furniture.png" alt="Furniture" />
+          <h3 class="category-title">Furniture</h3>
+        </div>
+        <div class="category-card" data-category-id="2">
+          <img src="imges/prodact/product/Lighting.png" alt="Lighting" />
+          <h3 class="category-title">Lighting</h3>
+        </div>
+        <div class="category-card" data-category-id="3">
+          <img src="imges/prodact/product/Finishes.png" alt="Finishes" />
+          <h3 class="category-title">Finishes</h3>
+        </div>
+        <div class="category-card" data-category-id="4">
+          <img src="imges/prodact/product/Wellness.png" alt="Wellness" />
+          <h3 class="category-title">Wellness</h3>
+        </div>
+        <div class="category-card" data-category-id="5">
+          <img src="imges/prodact/product/Decore.png" alt="Decore" />
+          <h3 class="category-title">Decore</h3>
+        </div>
       </div>
-        <div class="category-card">
-            <img src="imges/prodact/product/Lighting.png" alt="Lighting">
-            <h3 class="category-title">Lighting</h3>
-        </div>
-        <div class="category-card">
-            <img src="imges/prodact/product/Finishes.png" alt="Lighting">
-            <h3 class="category-title">Finishes</h3>
-        </div>
-        <div class="category-card">
-            <img src="imges/prodact/product/Wellness.png" alt="Finishes">
-            <h3 class="category-title">Wellness</h3>
-        </div>
-        <div class="category-card">
-            <img src="imges/prodact/product/Decore.png" alt="Wellness">
-            <h3 class="category-title">Decore</h3>
-        </div>
-    </div>
-</section>
+    </section>
 
+    <!-- ========== قسم عرض المنتجات المفلترة ========== -->
+    <section class="products-section" id="products-section">
+      <div class="products-header">
+        <h2 id="products-section-title">All Products</h2>
+        <button class="clear-filter-link" id="clear-filter-btn">Clear Filter ✕</button>
+      </div>
+      <div id="products-container" class="products-grid">
+        <p class="no-products">Loading products...</p>
+      </div>
+      <div id="load-more-container" class="load-more-container hidden">
+        <button id="load-more-btn" class="btn-load-more">Load More</button>
+      </div>
+    </section>
 
     <div id="footer-placeholder"></div>
 
-    
+    <script>
+      let allProductsList = [];
+      let filteredProductsList = [];
+      let displayedCount = 0;
+      let selectedCategoryId = null;
+      const perPage = 8;
+
+      // دالة إنشاء HTML لبطاقة المنتج
+      function createProductCardHTML(product) {
+        const mainImage = product.main_image || 'imges/img/placeholder.jpg';
+        const brandLogo = product.brand_logo
+          ? `<img src="${product.brand_logo}" alt="${product.brand_name}" style="width:30px;height:30px;object-fit:contain;border-radius:50%;" />`
+          : '';
+
+        return `
+          <div class="product-card">
+            <a href="view.html?id=${product.id}">
+              <img src="${mainImage}" alt="${product.product_name}" loading="lazy" />
+              <div class="card-content">
+                <h3>${product.product_name}</h3>
+                <p>${brandLogo} <span>${product.brand_name || ''}</span></p>
+              </div>
+            </a>
+          </div>
+        `;
+      }
+
+      // عرض الدفعة التالية من المنتجات
+      function renderNextBatch() {
+        const container = document.getElementById("products-container");
+        const loadMoreWrapper = document.getElementById("load-more-container");
+
+        const batch = filteredProductsList.slice(displayedCount, displayedCount + perPage);
+        const html = batch.map(p => createProductCardHTML(p)).join('');
+        container.insertAdjacentHTML('beforeend', html);
+        displayedCount += batch.length;
+
+        if (displayedCount >= filteredProductsList.length) {
+          loadMoreWrapper.classList.add('hidden');
+        } else {
+          loadMoreWrapper.classList.remove('hidden');
+        }
+      }
+
+      // إعادة تعيين الترقيم وعرض من جديد
+      function resetProductsDisplay() {
+        const container = document.getElementById("products-container");
+        const loadMoreWrapper = document.getElementById("load-more-container");
+        container.innerHTML = '';
+        displayedCount = 0;
+        loadMoreWrapper.classList.add('hidden');
+
+        if (filteredProductsList.length === 0) {
+          container.innerHTML = '<p class="no-products">No products found for this category.</p>';
+          return;
+        }
+
+        renderNextBatch();
+      }
+
+      // فلترة حسب القسم
+      function filterByCategory(categoryId) {
+        selectedCategoryId = categoryId;
+
+        // إخفاء / إظهار الكروت
+        document.querySelectorAll('.category-card').forEach(c => {
+          if (categoryId) {
+            // إخفاء كل الكروت إلا الكارد المختار
+            if (c.getAttribute('data-category-id') == categoryId) {
+              c.style.display = 'block';
+              c.classList.add('active-category');
+            } else {
+              c.style.display = 'none';
+              c.classList.remove('active-category');
+            }
+          } else {
+            // إظهار كل الكروت
+            c.style.display = 'block';
+            c.classList.remove('active-category');
+          }
+        });
+
+        // تحديث عنوان القسم
+        const titleEl = document.getElementById("products-section-title");
+        if (categoryId) {
+          const card = document.querySelector(`.category-card[data-category-id="${categoryId}"]`);
+          const catName = card ? card.querySelector('.category-title').textContent : 'Products';
+          titleEl.textContent = `${catName} Products`;
+          document.getElementById("products-section").style.display = 'block';
+        } else {
+          titleEl.textContent = 'All Products';
+          document.getElementById("products-section").style.display = 'none';
+        }
+
+        // تطبيق الفلتر
+        filteredProductsList = categoryId
+          ? allProductsList.filter(p => p.category_id == categoryId)
+          : [...allProductsList];
+
+        resetProductsDisplay();
+      }
+
+      // تحميل كل المنتجات
+      async function loadAllProducts() {
+        const container = document.getElementById("products-container");
+
+        try {
+          const result = await FancyAPI.get('/products/public-list.php');
+          if (result.success && result.data && result.data.products) {
+            allProductsList = result.data.products;
+            filteredProductsList = [...allProductsList];
+            resetProductsDisplay();
+          } else {
+            container.innerHTML = '<p class="no-products">No products available.</p>';
+          }
+        } catch (error) {
+          console.error("Error loading products:", error);
+          container.innerHTML = '<p class="no-products">Failed to load products.</p>';
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        // إخفاء قسم المنتجات في البداية
+        document.getElementById("products-section").style.display = 'none';
+
+        // تحميل كل المنتجات
+        loadAllProducts();
+
+        // عند الضغط على أي كارد قسم
+        document.querySelectorAll('.category-card').forEach(card => {
+          card.addEventListener('click', function () {
+            const catId = this.getAttribute('data-category-id');
+            if (selectedCategoryId == catId) {
+              // إذا كان نفس القسم مضغوط عليه، إلغاء التحديد
+              filterByCategory(null);
+            } else {
+              filterByCategory(catId);
+            }
+          });
+        });
+
+        // زر Clear Filter
+        document.getElementById("clear-filter-btn").addEventListener("click", () => {
+          filterByCategory(null);
+        });
+
+        // زر Load More
+        document.getElementById("load-more-btn").addEventListener("click", renderNextBatch);
+      });
+    </script>
+
     <script src="js/products.js"></script>
     <script src="js/script.js"></script>
     <script src="js/auth.js"></script>
