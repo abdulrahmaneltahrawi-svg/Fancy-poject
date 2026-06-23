@@ -168,41 +168,35 @@
   <script src="js/auth.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      if (typeof loadUserProfile === "function") {
-        loadUserProfile();
-      }
+    // 1. تحميل بيانات البروفايل عند فتح الصفحة
+    if (typeof loadUserProfile === "function") {
+      loadUserProfile();
+    }
 
-      // منطق التبديل بين التبويبات
-      const tabs = {
-        'tab-overview': 'overview-tab-content',
-        'tab-products': 'products-tab-content',
-        'tab-designers': 'designers-tab-content'
-      };
+    // 2. منطق التبديل بين التبويبات
+    const tabLinks = document.querySelectorAll('.tabs a');
+    const contents = {
+      'tab-overview': 'overview-tab-content',
+      'tab-brands': 'brands-tab-content',
+      'tab-designers': 'designers-tab-content'
+    };
 
-      Object.keys(tabs).forEach(tabId => {
-        const tabLink = document.getElementById(tabId);
-        if (!tabLink) return; // تخطي العنصر إذا لم يكن موجوداً لتجنب الأخطاء
+    tabLinks.forEach(link => {
+      link.addEventListener('click', function() {
+        // إخفاء الكل
+        document.querySelectorAll('.tab-content, .hidden').forEach(c => c.style.display = 'none');
+        // إزالة active
+        tabLinks.forEach(t => t.classList.remove('active'));
 
-        tabLink.addEventListener('click', function() {
-          // إزالة الحالة النشطة من جميع الروابط وإخفاء المحتويات
-          Object.keys(tabs).forEach(id => {
-            document.getElementById(id)?.classList.remove('active');
-            document.getElementById(tabs[id])?.classList.add('hidden');
-          });
-
-          // تفعيل التبويب المختار
-          this.classList.add('active');
-          document.getElementById(tabs[tabId])?.classList.remove('hidden');
-
-          // تحميل البيانات بناءً على التبويب
-          if (tabId === 'tab-brands') {
-          } else if (tabId === 'tab-products') {
-            if (typeof loadMyProducts === 'function') loadMyProducts('user-products-list');
-          } else if (tabId === 'tab-designers') {
-            if (typeof displayUserDesignerProfile === 'function') displayUserDesignerProfile();
-          }
-        });
+        // تفعيل المختار
+        this.classList.add('active');
+        const contentId = contents[this.id];
+        if (contentId) {
+          const el = document.getElementById(contentId);
+          if (el) el.style.display = 'block';
+        }
       });
     });
+  });
   </script>
 </html>

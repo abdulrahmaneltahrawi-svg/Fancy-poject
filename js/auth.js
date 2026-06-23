@@ -331,32 +331,44 @@ function initializeAuthListeners() {
         }
 
         if (event.target.id === 'loginForm') {
-            event.preventDefault();
-            const form = event.target;
-            const submitBtn = form.querySelector('button[type="submit"]');
-            const data = Object.fromEntries(new FormData(form).entries());
-            try {
-                if (submitBtn) submitBtn.disabled = true;
-                displayMessage('loginMessage', 'Logging in...', true);
-                const result = await FancyAPI.post('/auth/login.php', data);
-                if (result?.success) {
-                    displayMessage('loginMessage', result.message, true);
-                    localStorage.setItem('userData', JSON.stringify(result.data.user));
-                    setTimeout(() => location.reload(), 1500);
-                } else {
-                    if (result.data?.code === "EMAIL_NOT_VERIFIED") {
-                        showAuthModal('verify', data.email);
-                        displayMessage('emailVerificationMessage', result.message, false);
-                    } else {
-                        displayMessage('loginMessage', result.message || 'Login failed', false);
-                    }
-                }
-            } catch (error) {
-                displayMessage('loginMessage', 'Server connection error.', false);
-            } finally {
-                if (submitBtn) submitBtn.disabled = false;
+    event.preventDefault();
+    const form = event.target;
+    const data = Object.fromEntries(new FormData(form).entries());
+
+    try {
+        const result = await FancyAPI.post('/auth/login.php', data);
+
+        if (result?.success) {
+            // 1. حفظ البيانات الأولية
+            localStorage.setItem('userData', JSON.stringify(result.data.user));
+            
+            // 2. إغلاق المودال
+            const modal = document.getElementById('authModal');
+            if (modal) modal.classList.remove('show');
+
+            // 3. التعديل الأهم: منع المتصفح من استخدام بيانات قديمة (Cache)
+            // نستخدم طابع زمني (timestamp) لجعل الرابط يبدو مختلفاً في كل مرة
+            const timestamp = new Date().getTime();
+            
+            // نطلب البيانات من السيرفر مجدداً وكأنها طلب جديد تماماً
+            const freshData = await FancyAPI.get(`/auth/me.php?cache_bust=${timestamp}`);
+
+            if (freshData && freshData.success) {
+                const updatedUser = freshData.data.user || freshData.data;
+                // تحديث الـ LocalStorage بالبيانات التي تحتوي التاريخ الجديد
+                localStorage.setItem('userData', JSON.stringify(updatedUser));
+                
+                // تحديث الواجهة فوراً
+                updateAuthUI();
+                updateProfileUI(updatedUser);
             }
+        } else {
+            displayMessage('loginMessage', result.message || 'فشل الدخول', false);
         }
+    } catch (error) {
+        console.error("خطأ:", error);
+    }
+}
 
         if (event.target.id === 'emailVerificationForm') {
             event.preventDefault();
