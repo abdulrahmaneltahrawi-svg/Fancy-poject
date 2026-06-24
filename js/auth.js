@@ -13,7 +13,7 @@ function updateAuthUI() {
                 <div class="user-nav-container">
                     <div class="notification-wrapper">
                         <button id="notification-btn" class="notification-btn" title="Notifications">
-                              <img src="imges/icons/bell (1).png" alt="Notification" style="width: 25px; height: 25px;">
+                              <img src="imges/icons/bell (1).png" alt="Notification" style="width: 23px; height: 23px;">
                         </button>
                         <div id="notification-dropdown" class="notification-dropdown">
                             <div class="notification-dropdown-header">Notifications</div>
