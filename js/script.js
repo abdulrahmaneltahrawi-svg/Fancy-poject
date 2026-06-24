@@ -88,8 +88,21 @@ function getSafeImageUrl(imagePath) {
     if (!imagePath || imagePath === "null" || imagePath === "") {
         return "imges/img/fancy1.jfif"; // صورة افتراضية من شعار الموقع
     }
-    // إذا كان الرابط خارجياً بالفعل
-    if (imagePath.startsWith('data:') || imagePath.startsWith('http')) return imagePath;
+    // إذا كان رابط data: نرجعه كما هو
+    if (imagePath.startsWith('data:')) return imagePath;
+
+    // إذا كان الرابط يبدأ بـ http (قد يكون من API بـ APP_URL خطأ)
+    if (imagePath.startsWith('http')) {
+        // نحاول استخراج المسار النسبي من الرابط (أي شيء بعد /fancy/)
+        const match = imagePath.match(/\/fancy\/(.+)$/);
+        if (match) {
+            // إعادة بناء الرابط باستخدام baseUrl الصحيح من FancyAPI
+            const apiBase = FancyAPI.baseUrl.replace(/\/api\/?$/, ''); // يحذف /api من النهاية ليبقى /fancy
+            return `${apiBase}/${match[1]}`;
+        }
+        // إذا لم نتمكن من استخراج مسار نسبي، نرجع الرابط كما هو
+        return imagePath;
+    }
 
     // تنظيف المسار لضمان عدم وجود سلاش بادئة
     const cleanPath = imagePath.replace(/^\//, '');
@@ -121,6 +134,10 @@ function loadHeader() {
             // استدعاء تحديث الواجهة إذا كان ملف auth.js محلاً
             if (typeof window.initializeAuthListeners === 'function') {
                 window.initializeAuthListeners(); // استدعاء دالة تهيئة المصادقة
+            }
+            // تهيئة البحث العام بعد تحميل الهيدر
+            if (typeof window.initGlobalSearch === 'function') {
+                window.initGlobalSearch();
             }
         })
         .catch(error => {
@@ -192,3 +209,156 @@ document.addEventListener('input', function (e) {
         });
     }
 });
+
+// ================================================================
+// 🌍 البحث العام (Global Search) عبر API
+// ================================================================
+// متغير لمنع إعادة تهيئة البحث أكثر من مرة (يمنع تكرار الأحداث)
+let globalSearchInitialized = false;
+
+function initGlobalSearch() {
+    // إذا تمت التهيئة مسبقاً، لا تفعل شيئاً
+    if (globalSearchInitialized) return;
+
+    const searchInput = document.getElementById('search-input');
+    const searchResults = document.getElementById('search-results');
+
+    if (!searchInput || !searchResults) {
+        // إذا لم تكن العناصر موجودة بعد (لأن الهيدر لم يُحمّل)، نعيد المحاولة لاحقاً
+        setTimeout(initGlobalSearch, 500);
+        return;
+    }
+
+    // منع التهيئة المتكررة
+    globalSearchInitialized = true;
+    let debounceTimer = null;
+
+    // إخفاء القائمة عند النقر خارجها
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.classList.remove('show');
+        }
+    });
+
+    // الاستماع لحدث الإدخال
+    searchInput.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        const query = searchInput.value.trim();
+
+        if (query.length < 2) {
+            searchResults.classList.remove('show');
+            return;
+        }
+
+        debounceTimer = setTimeout(function() {
+            performGlobalSearch(query);
+        }, 300); // تأخير 300ms لتجنب الطلبات المتكررة
+    });
+
+    // الاستماع لمفتاح Escape لإغلاق النتائج
+    searchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            searchResults.classList.remove('show');
+            searchInput.blur();
+        }
+    });
+
+    async function performGlobalSearch(query) {
+        try {
+            const response = await FancyAPI.get(`Home/global_search.php?q=${encodeURIComponent(query)}`);
+            
+            if (!response.success) {
+                searchResults.innerHTML = `<div class="search-result-error">${response.message || 'No results found'}</div>`;
+                searchResults.classList.add('show');
+                return;
+            }
+
+            const data = response.data || response;
+            const brands = data.brands || [];
+            const projects = data.projects || [];
+            const products = data.products || [];
+
+            // التحقق من وجود نتائج
+            const total = brands.length + projects.length + products.length;
+            if (total === 0) {
+                searchResults.innerHTML = `<div class="search-result-empty">No results found for "<strong>${escapeHtml(query)}</strong>"</div>`;
+                searchResults.classList.add('show');
+                return;
+            }
+
+            // بناء HTML النتائج
+            let html = '';
+
+            // عرض البراندات
+            if (brands.length > 0) {
+                html += '<div class="search-result-category"><span>Brands</span></div>';
+                brands.forEach(function(item) {
+                    html += renderSearchItem(item, 'brand');
+                });
+            }
+
+            // عرض المشاريع
+            if (projects.length > 0) {
+                html += '<div class="search-result-category"><span>Projects</span></div>';
+                projects.forEach(function(item) {
+                    html += renderSearchItem(item, 'project');
+                });
+            }
+
+            // عرض المنتجات
+            if (products.length > 0) {
+                html += '<div class="search-result-category"><span>Products</span></div>';
+                products.forEach(function(item) {
+                    html += renderSearchItem(item, 'product');
+                });
+            }
+
+            searchResults.innerHTML = html;
+            searchResults.classList.add('show');
+
+        } catch (error) {
+            console.error('Search error:', error);
+            searchResults.innerHTML = '<div class="search-result-error">Something went wrong</div>';
+            searchResults.classList.add('show');
+        }
+    }
+
+    function renderSearchItem(item, type) {
+        // استخدام getSafeImageUrl لتصحيح مسار الصورة تلقائياً
+        const imageUrl = getSafeImageUrl(item.image_url || item.image || '');
+        const name = escapeHtml(item.name || 'Unknown');
+        const pageLink = getPageLink(item, type);
+
+        return `<a href="${pageLink}" class="search-result-item">
+            <img src="${imageUrl}" alt="${name}" class="search-result-img" onerror="this.src='imges/img/fancy1.jfif'">
+            <div class="search-result-info">
+                <div class="search-result-name">${name}</div>
+                <div class="search-result-type">${type}</div>
+            </div>
+        </a>`;
+    }
+
+    function getPageLink(item, type) {
+        switch (type) {
+            case 'brand':
+                return `page_brand.html?id=${item.id}`;
+            case 'project':
+                return `page_magazine.html?id=${item.id}`;
+            case 'product':
+                return `page_prodact.html?id=${item.id}`;
+            default:
+                return '#';
+        }
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.appendChild(document.createTextNode(text));
+        return div.innerHTML;
+    }
+}
+
+// في حال تم تحميل الصفحة بدون الهيدر (مثل بعض الصفحات التي لا تستخدم header-placeholder)
+// نحاول تهيئة البحث بعد تأخير بسيط
+setTimeout(initGlobalSearch, 500);

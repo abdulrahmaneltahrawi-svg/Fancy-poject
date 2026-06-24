@@ -45,6 +45,7 @@
         padding: 10px;
         border: 1px solid #ccc;
         border-radius: 4px;
+        box-sizing: border-box;
       }
       .submit-btn {
         background: #000;
@@ -76,6 +77,120 @@
         cursor: pointer;
         font-weight: bold;
       }
+
+      /* ===== أنماط زر الإضافة السريعة للفئة الفرعية ===== */
+      .select-with-add {
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+      }
+      .select-with-add select {
+        flex: 1;
+      }
+      .btn-add-inline {
+        flex-shrink: 0;
+        width: 40px;
+        height: 40px;
+        background: #000;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        font-size: 22px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.3s;
+        line-height: 1;
+      }
+      .btn-add-inline:hover {
+        background: #333;
+      }
+
+      /* ===== الفورم المنبثق السريع ===== */
+      .quick-add-form {
+        display: none;
+        margin-top: 10px;
+        padding: 15px;
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+      }
+      .quick-add-form.open {
+        display: block;
+      }
+      .quick-add-form .form-group {
+        margin-bottom: 10px;
+      }
+      .quick-add-form .form-group:last-child {
+        margin-bottom: 0;
+      }
+      .quick-add-form .form-group input,
+      .quick-add-form .form-group select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 13px;
+      }
+      .quick-add-form .form-group label {
+        font-size: 13px;
+        margin-bottom: 3px;
+      }
+      .quick-add-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .quick-add-actions button {
+        flex: 1;
+        padding: 8px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: bold;
+      }
+      .quick-add-actions .btn-save {
+        background: #5cb85c;
+        color: #fff;
+      }
+      .quick-add-actions .btn-save:hover {
+        background: #4cae4c;
+      }
+      .quick-add-actions .btn-cancel {
+        background: #eee;
+        color: #333;
+      }
+      .quick-add-actions .btn-cancel:hover {
+        background: #ddd;
+      }
+      .quick-add-actions .btn-save:disabled {
+        background: #999;
+        cursor: not-allowed;
+      }
+      .quick-add-message {
+        margin-top: 8px;
+        padding: 8px;
+        border-radius: 4px;
+        text-align: center;
+        font-size: 13px;
+        display: none;
+      }
+      .quick-add-message.success {
+        display: block;
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+      .quick-add-message.error {
+        display: block;
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
     </style>
   </head>
   <body>
@@ -93,18 +208,42 @@
             required
           />
         </div>
+
+        <!-- ===== Category (بدون إضافة سريعة) ===== -->
         <div class="form-group">
           <label>Category:</label>
           <select name="category_id" id="category_select" required>
             <option value="">Choose category...</option>
           </select>
         </div>
+
+        <!-- ===== Sub Category مع زر إضافة سريعة ===== -->
         <div class="form-group">
           <label>Sub Category:</label>
-          <select name="sub_category_id" id="sub_category_select" required>
-            <option value="">Choose category first...</option>
-          </select>
+          <div class="select-with-add">
+            <select name="sub_category_id" id="sub_category_select" required>
+              <option value="">Choose category first...</option>
+            </select>
+            <button type="button" class="btn-add-inline" id="btnAddSubCategory" title="Add new sub category">+</button>
+          </div>
+          <!-- الفورم السريع لإضافة فئة فرعية جديدة -->
+          <div class="quick-add-form" id="quickAddSubCategory">
+            <div class="form-group">
+              <label>New sub category name:</label>
+              <input type="text" id="newSubCatName" placeholder="e.g. Sofas, Chairs..." />
+            </div>
+            <div class="form-group">
+              <label>Sort order:</label>
+              <input type="number" id="newSubCatSort" value="1" min="1" />
+            </div>
+            <div class="quick-add-actions">
+              <button type="button" class="btn-save" id="btnSaveSubCategory">Save</button>
+              <button type="button" class="btn-cancel" id="btnCancelSubCategory">Cancel</button>
+            </div>
+            <div class="quick-add-message" id="quickSubCatMessage"></div>
+          </div>
         </div>
+
         <div class="form-group">
           <label>Main product image:</label>
           <input type="file" name="main_image" accept="image/*" required />
@@ -232,6 +371,7 @@
         try {
           const result = await FancyAPI.get("/categories/list.php");
           if (result.success && result.data && result.data.categories) {
+            catSelect.innerHTML = '<option value="">Choose category...</option>';
             result.data.categories.forEach((cat) => {
               catSelect.add(new Option(cat.name, cat.id));
             });
@@ -245,12 +385,11 @@
         .getElementById("category_select")
         .addEventListener("change", async function () {
           const subSelect = document.getElementById("sub_category_select");
-          const catId = this.value; // استخدام المعرف (ID) بدلاً من الاسم
+          const catId = this.value;
 
           subSelect.innerHTML = '<option value="">Loading...</option>';
 
           if (catId) {
-            // استدعاء الأقسام الفرعية بناءً على القسم الرئيسي المختار
             const subCats = await loadSubCategoriesForFilter(catId);
             subSelect.innerHTML =
               '<option value="">Choose sub category...</option>';
@@ -263,6 +402,111 @@
           }
         });
 
+      // ============================================================
+      // 🚀 الإضافة السريعة للفئة الفرعية فقط (Sub Category)
+      // ============================================================
+      const btnAddSubCategory = document.getElementById("btnAddSubCategory");
+      const quickAddSubCategory = document.getElementById("quickAddSubCategory");
+      const btnCancelSubCategory = document.getElementById("btnCancelSubCategory");
+      const btnSaveSubCategory = document.getElementById("btnSaveSubCategory");
+      const newSubCatName = document.getElementById("newSubCatName");
+      const newSubCatSort = document.getElementById("newSubCatSort");
+      const quickSubCatMessage = document.getElementById("quickSubCatMessage");
+
+      // فتح/إغلاق فورم الإضافة السريعة للفئة الفرعية
+      btnAddSubCategory.addEventListener("click", () => {
+        const catId = document.getElementById("category_select").value;
+        if (!catId) {
+          alert("Please select a parent category first.");
+          return;
+        }
+        quickAddSubCategory.classList.toggle("open");
+        if (quickAddSubCategory.classList.contains("open")) {
+          newSubCatName.focus();
+          quickSubCatMessage.style.display = "none";
+          quickSubCatMessage.className = "quick-add-message";
+        }
+      });
+
+      btnCancelSubCategory.addEventListener("click", () => {
+        quickAddSubCategory.classList.remove("open");
+        newSubCatName.value = "";
+        newSubCatSort.value = "1";
+        quickSubCatMessage.style.display = "none";
+        quickSubCatMessage.className = "quick-add-message";
+      });
+
+      // حفظ الفئة الفرعية الجديدة
+      btnSaveSubCategory.addEventListener("click", async () => {
+        const catId = document.getElementById("category_select").value;
+        const name = newSubCatName.value.trim();
+
+        if (!catId) {
+          quickSubCatMessage.className = "quick-add-message error";
+          quickSubCatMessage.textContent = "❌ Please select a parent category first.";
+          quickSubCatMessage.style.display = "block";
+          return;
+        }
+
+        if (!name) {
+          quickSubCatMessage.className = "quick-add-message error";
+          quickSubCatMessage.textContent = "❌ Please enter a sub category name.";
+          quickSubCatMessage.style.display = "block";
+          return;
+        }
+
+        btnSaveSubCategory.disabled = true;
+        btnSaveSubCategory.textContent = "Saving...";
+
+        const formData = new FormData();
+        formData.append("category_id", catId);
+        formData.append("name", name);
+        formData.append("sort_order", newSubCatSort.value || 1);
+
+        try {
+          const result = await FancyAPI.post("/admin/create_sub_category.php", formData);
+
+          if (result.success) {
+            quickSubCatMessage.className = "quick-add-message success";
+            quickSubCatMessage.textContent = `✅ "${name}" created!`;
+            quickSubCatMessage.style.display = "block";
+
+            // إعادة تحميل قائمة الفئات الفرعية واختيار الجديدة
+            const subCats = await loadSubCategoriesForFilter(catId);
+            const subSelect = document.getElementById("sub_category_select");
+            subSelect.innerHTML = '<option value="">Choose sub category...</option>';
+            subCats.forEach((sub) => {
+              subSelect.add(new Option(sub.name, sub.id));
+            });
+            subSelect.value = result.data?.sub_category_id || "";
+
+            // إغلاق الفورم بعد نجاح
+            setTimeout(() => {
+              quickAddSubCategory.classList.remove("open");
+              newSubCatName.value = "";
+              newSubCatSort.value = "1";
+              quickSubCatMessage.style.display = "none";
+              quickSubCatMessage.className = "quick-add-message";
+            }, 1500);
+          } else {
+            quickSubCatMessage.className = "quick-add-message error";
+            quickSubCatMessage.textContent = "❌ " + (result.message || "Error creating sub category");
+            quickSubCatMessage.style.display = "block";
+          }
+        } catch (error) {
+          quickSubCatMessage.className = "quick-add-message error";
+          quickSubCatMessage.textContent = "❌ Connection error.";
+          quickSubCatMessage.style.display = "block";
+          console.error("Error:", error);
+        } finally {
+          btnSaveSubCategory.disabled = false;
+          btnSaveSubCategory.textContent = "Save";
+        }
+      });
+
+      // ============================================================
+      // إرسال المنتج (كما هو)
+      // ============================================================
       document
         .getElementById("productForm")
         .addEventListener("submit", function (e) {
