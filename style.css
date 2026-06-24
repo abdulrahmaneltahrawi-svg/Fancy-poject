@@ -1194,7 +1194,7 @@ html {
       }
 
 /* ================================================
-   🚀 تحسينات شاملة للهاتف (موبايل)
+   🚀 تحسينات شاملة للهاتف (موبايل) - شاشات 480px فأقل
    ================================================ */
 @media (max-width: 480px) {
   body {
@@ -1204,7 +1204,8 @@ html {
   /* ===== الهيدر ===== */
   .main-header .container {
     flex-wrap: wrap;
-    padding: 6px 8px;
+    padding: 8px 8px;
+    margin-bottom: 10px;
     gap: 3px;
     justify-content: space-between;
   }
@@ -1242,7 +1243,7 @@ html {
   }
 
   .notification-btn {
-    padding: 3px;
+    padding: 5px;
   }
 
   .notification-btn::after {
@@ -1655,9 +1656,334 @@ html {
   }
 
   .notification-dropdown {
-    min-width: 240px;
+    min-width: 200px;
     left: auto;
     right: 0;
     transform: none;
+  }
+
+  /* ========================================
+     🛠 إصلاحات إضافية لصفحات محددة
+     ======================================== */
+
+  /* ---- صفحة المصمم (view_designer.html) ---- */
+  .brand-header {
+    padding: 15px 0 !important;
+  }
+  .brand-profile-bar {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    padding: 0 15px !important;
+    gap: 15px !important;
+  }
+  .brand-logo-container {
+    width: 100px !important;
+    height: 100px !important;
+    margin-right: 0 !important;
+  }
+  .brand-main-info {
+    width: 100% !important;
+  }
+  .brand-main-info h1 {
+    font-size: 20px !important;
+  }
+  .brand-actions {
+    width: 100% !important;
+    justify-content: center !important;
+    padding-bottom: 10px !important;
+  }
+  .brand-actions .btn {
+    font-size: 11px !important;
+    padding: 6px 12px !important;
+  }
+  .social-links {
+    justify-content: center !important;
+  }
+  .services-list {
+    justify-content: center !important;
+  }
+  .cover-photo {
+    height: 180px !important;
+  }
+  .view_designer .title,
+  .view_designer .title,
+  .brand-content .title {
+    margin-left: 15px !important;
+    font-size: 22px !important;
+  }
+  #brandAbout {
+    margin-left: 15px !important;
+    margin-right: 15px !important;
+    padding: 15px !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* ---- صفحة عرض المجلة (view_magazine.html & view.html) ---- */
+  .view-container {
+    margin: 15px auto !important;
+    padding: 15px !important;
+  }
+  .view-content {
+    flex-direction: column !important;
+    gap: 20px !important;
+  }
+  .view-image-section {
+    width: 100% !important;
+  }
+  .view-image-section img {
+    max-height: 300px !important;
+  }
+  .view-details-section {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+  .view-details-section h1 {
+    font-size: 20px !important;
+  }
+  .designer-info-box img {
+    width: 45px !important;
+    height: 45px !important;
+  }
+  .designer-info-box h3 {
+    font-size: 15px !important;
+  }
+  .price-btn {
+    font-size: 14px !important;
+    padding: 10px 15px !important;
+    justify-content: center !important;
+  }
+  .price-btn img {
+    width: 22px !important;
+  }
+  .back-link {
+    font-size: 15px !important;
+  }
+  .related-grid {
+    margin: 15px 0 !important;
+    grid-template-columns: 1fr !important;
+  }
+  .related-section {
+    margin-top: 40px !important;
+  }
+  .specs-section {
+    font-size: 18px !important;
+  }
+  .tab-btn {
+    font-size: 13px !important;
+    padding: 8px !important;
+  }
+  .tab-pane {
+    padding: 10px !important;
+  }
+  .thumbnails-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)) !important;
+    gap: 6px !important;
+  }
+  .thumb-img {
+    height: 80px !important;
+  }
+  .options-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  /* ---- صفحة البراندات الرئيسية (page_brand.html) ---- */
+  .page_brand .filter-container,
+  .filter-container {
+    padding: 8px 8px 5px 8px !important;
+    margin-top: 5px !important;
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .page_brand .brands-container,
+  .brands-container {
+    padding: 10px 15px 30px 15px !important;
+    gap: 15px !important;
+  }
+  .brand-images-grid {
+    height: 170px !important;
+  }
+
+  /* ---- صفحة المنتجات (page_prodact.html) ---- */
+  .page_prodact .filter-container,
+  .products-section .filter-container {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  /* ---- الصفحة الرئيسية (index.html) ---- */
+  .second-header {
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin-top: 5px !important;
+    padding: 0 10px !important;
+  }
+  .nav {
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+  }
+  .nav a {
+    font-size: 12px !important;
+  }
+  .nav a p {
+    margin: 3px 0 !important;
+  }
+  .publish {
+    font-size: 12px !important;
+    text-align: center !important;
+  }
+  .hero-slider {
+    height: 35vh !important;
+    width: 100% !important;
+    margin: 5px auto 10px auto !important;
+  }
+  .slide-content h1 {
+    font-size: 1.2rem !important;
+  }
+  .slide-content p {
+    font-size: 0.7rem !important;
+  }
+  .prev-btn,
+  .next-btn {
+    padding: 5px 8px !important;
+    font-size: 14px !important;
+  }
+  .descrition {
+    margin: 15px !important;
+  }
+  .des1 {
+    font-size: 16px !important;
+    text-align: center !important;
+  }
+  .des2 {
+    font-size: 13px !important;
+    text-align: center !important;
+  }
+  .gallery-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    padding: 0 10px !important;
+  }
+  .gallery-item {
+    height: 200px !important;
+    grid-column: auto !important;
+    grid-row: auto !important;
+  }
+  .gallery-overlay h4 {
+    font-size: 15px !important;
+  }
+  .gallery-overlay p {
+    font-size: 11px !important;
+  }
+  .newsletter-container {
+    flex-direction: column !important;
+    padding: 20px !important;
+    gap: 15px !important;
+    padding-bottom: 30px !important;
+  }
+  .newsletter-form {
+    margin-right: 0 !important;
+    max-width: 100% !important;
+  }
+  .newsletter-text h2 {
+    font-size: 13px !important;
+    text-align: center !important;
+  }
+  .input-group input {
+    padding: 8px !important;
+    font-size: 12px !important;
+  }
+  .input-group button {
+    padding: 8px 14px !important;
+    font-size: 12px !important;
+  }
+  .checkbox-label {
+    font-size: 11px !important;
+  }
+
+  /* ---- تعديلات شاملة لجميع الصفحات (منع التمرير الأفقي) ---- */
+  html, body {
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+  * {
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+  .hide-on-mobile {
+    display: none !important;
+  }
+  .container {
+    justify-content: space-between !important;
+    padding: 0 8px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .projects-section .container,
+  .section-header .container {
+    display: block !important;
+    width: 100% !important;
+    padding: 0 5px !important;
+    max-width: 100% !important;
+  }
+
+  /* ---- كروت المنتجات (أكبر وأوضح) ---- */
+  .project-card {
+    padding: 12px !important;
+    margin: 0 !important;
+  }
+  .card-image {
+    height: 220px !important;
+    margin-bottom: 12px !important;
+  }
+  .card-title {
+    font-size: 15px !important;
+    margin: 8px 0 4px 0 !important;
+    min-height: 20px !important;
+  }
+  .card-desc-short {
+    font-size: 13px !important;
+    margin: 4px 0 10px 0 !important;
+    min-height: 20px !important;
+  }
+
+  /* ---- كروت الماجازين (أكبر وأوضح) ---- */
+  .magazine-card {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 12px !important;
+  }
+  .magazine-card .card-image {
+    height: 220px !important;
+  }
+  .magazine-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .projects-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ---- البراندات كرت ----- */
+  .brand-card {
+    margin: 0 !important;
+    padding-bottom: 15px !important;
+  }
+  .brand-images-grid {
+    height: 200px !important;
+  }
+
+  /* ---- صفحة عرض المجلة ---- */
+  .view-container {
+    margin: 10px 0 !important;
+    padding: 12px !important;
+    width: 100% !important;
+  }
+  .view-image-section img {
+    max-height: 280px !important;
   }
 }
