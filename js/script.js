@@ -14,14 +14,23 @@ if (typeof FancyAPI === 'undefined') {
             return 'https://your-remote-php-server.com/fancy/api'; // استبدل هذا برابط سيرفر الـ PHP الحقيقي
         }
 
-        // 2. إذا كان الموقع يعمل محلياً (Localhost) في مجلد فرعي مثل Fancy-Design
-        // نقوم باستخراج اسم المجلد الأول من المسار تلقائياً
-        const pathSegments = pathname.split('/').filter(segment => segment.length > 0);
-        if ((hostname === 'localhost' || hostname === '127.0.0.1') && pathSegments.length > 0 && !pathSegments[0].includes('.')) {
-            return `${origin}/${pathSegments[0]}/fancy/api`;
+        // استخراج أجزاء المسار (نحذف اسم الملف HTML من النهاية)
+        const fullPath = pathname.replace(/\/[^/]+\.html$/, '').replace(/\/$/, '');
+        const pathSegments = fullPath.split('/').filter(segment => segment.length > 0);
+
+        // 2. إذا كان الموقع يعمل محلياً (Localhost) أو عبر ngrok/tunnel في مجلد فرعي
+        // نبحث عن مجلد المشروع (أول جزء في المسار لا يحتوي على نقطة)
+        let projectFolder = '';
+        if (pathSegments.length > 0 && !pathSegments[0].includes('.')) {
+            projectFolder = pathSegments[0];
         }
 
-        // 3. الوضع الافتراضي (إذا كان الموقع في الجذر Root أو على استضافة مباشرة)
+        // 3. إذا وجدنا مجلد مشروع، نستخدمه. وإلا نستخدم المسار المباشر.
+        if (projectFolder) {
+            return `${origin}/${projectFolder}/fancy/api`;
+        }
+
+        // 4. الوضع الافتراضي (إذا كان الموقع في الجذر Root أو على استضافة مباشرة)
         return `${origin}/fancy/api`;
     })(),
 
