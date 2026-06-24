@@ -251,14 +251,121 @@
         background: #000000;
       }
 
-      /* تحسين استجابة قائمة الأقسام للموبايل */
+      /* تحسين استجابة الموقع بالكامل للموبايل */
       @media (max-width: 600px) {
+        .second-header {
+          flex-direction: column;
+          gap: 10px;
+          margin-top: 10px;
+          padding: 0 10px;
+        }
+
+        .nav {
+          gap: 10px;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+
+        .nav a {
+          font-size: 13px;
+        }
+
+        .nav a p {
+          margin: 5px 0;
+        }
+
         .category-nav {
-          gap: 27px; /* تقليل المسافة بين الروابط */
-          padding: 15px; /* تقليل الحشوة */
-          flex-wrap: wrap; /* السماح للعناصر بالانتقال إلى سطر جديد */
-          justify-content: flex-start; /* محاذاة العناصر إلى البداية عند الالتفاف */
+          gap: 12px;
+          padding: 5px 5px;
+          flex-wrap: wrap;
+          justify-content: center;
           font-size: 5px;
+        }
+
+        .publish {
+          font-size: 13px;
+          text-align: center;
+          margin: 5px 0;
+        }
+
+        .hero-slider {
+          height: 40vh;
+          width: 100%;
+          margin: 5px auto 15px auto;
+        }
+
+        .slide-content h1 {
+          font-size: 1.8rem;
+        }
+
+        .slide-content p {
+          font-size: 1rem;
+        }
+
+        .prev-btn,
+        .next-btn {
+          padding: 6px 10px;
+          font-size: 16px;
+        }
+
+        .descrition {
+          margin: 20px 15px;
+        }
+
+        .des1 {
+          font-size: 18px;
+          text-align: center;
+        }
+
+        .des2 {
+          font-size: 14px;
+          text-align: center;
+        }
+
+        .gallery-grid {
+          grid-template-columns: 1fr !important;
+          gap: 10px;
+          padding: 0 10px;
+        }
+
+        .gallery-item {
+          height: 250px !important;
+          grid-column: auto !important;
+          grid-row: auto !important;
+        }
+
+        .gallery-overlay h4 {
+          font-size: 16px;
+        }
+
+        .gallery-overlay p {
+          font-size: 12px;
+        }
+
+        .newsletter-container {
+          flex-direction: column;
+          padding: 20px;
+          gap: 15px;
+        }
+
+        .newsletter-form {
+          margin-right: 0;
+          max-width: 100%;
+        }
+
+        .newsletter-text h2 {
+          font-size: 14px;
+          text-align: center;
+        }
+
+        .input-group input {
+          padding: 8px;
+          font-size: 13px;
+        }
+
+        .input-group button {
+          padding: 8px 16px;
+          font-size: 13px;
         }
       }
 

@@ -1192,3 +1192,472 @@ html {
         color: #414040;
         margin: 0;
       }
+
+/* ================================================
+   🚀 تحسينات شاملة للهاتف (موبايل)
+   ================================================ */
+@media (max-width: 480px) {
+  body {
+    padding-top: 120px;
+  }
+
+  /* ===== الهيدر ===== */
+  .main-header .container {
+    flex-wrap: wrap;
+    padding: 6px 8px;
+    gap: 3px;
+    justify-content: space-between;
+  }
+
+  .logo img {
+    width: 70px;
+    margin-left: 0;
+  }
+
+  .auth-links {
+    display: flex;
+    gap: 2px;
+    align-items: center;
+  }
+
+  .auth-links a {
+    margin-left: 0;
+    font-size: 10px;
+    padding: 3px 5px;
+    white-space: nowrap;
+  }
+
+  .header-action-btn {
+    font-size: 10px;
+    padding: 3px 6px;
+  }
+
+  .user-name-btn {
+    font-size: 10px;
+    padding: 3px 4px;
+  }
+
+  .user-nav-container {
+    gap: 3px;
+  }
+
+  .notification-btn {
+    padding: 3px;
+  }
+
+  .notification-btn::after {
+    display: none;
+  }
+
+  .user-initial-avatar {
+    width: 25px;
+    height: 25px;
+    font-size: 14px;
+  }
+
+  .header-bottom-part {
+    order: 3;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 8px;
+  }
+
+  .search-box {
+    padding: 2px 8px;
+  }
+
+  .search-box input {
+    padding: 5px 6px;
+    font-size: 12px;
+  }
+
+  .category-select {
+    gap: 4px;
+    padding-right: 6px;
+  }
+
+  #selected-text {
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .arrow-down {
+    padding: 2px;
+    margin-left: 2px;
+  }
+
+  .dropdown-menu {
+    min-width: 100px;
+    left: -5px;
+    top: 160%;
+  }
+
+  .dropdown-menu li {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .search-results-dropdown {
+    max-height: 300px;
+  }
+
+  /* تعديل عنوان الصفحة */
+  .title {
+    font-size: 24px;
+    margin-left: 15px;
+  }
+
+  .sub-title {
+    font-size: 16px;
+    margin-left: 15px;
+    margin-top: 3px;
+  }
+
+  /* تعديل أزرار الفلتر */
+  .filter-container {
+    padding: 8px 8px 5px 8px;
+    margin-top: 10px;
+    gap: 4px;
+  }
+
+  .dropbtn,
+  .filter-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+    gap: 6px;
+  }
+
+  .dropdown-content {
+    min-width: 140px;
+  }
+
+  /* تعديل كروت المشاريع */
+  .projects-section {
+    padding: 30px 0;
+  }
+
+  .projects-grid {
+    gap: 15px;
+    width: 100%;
+    padding: 0 10px;
+    box-sizing: border-box;
+  }
+
+  .project-card {
+    padding: 8px;
+  }
+
+  .card-image {
+    height: 180px;
+    margin-bottom: 10px;
+  }
+
+  .card-title {
+    font-size: 14px;
+    margin: 5px 0;
+  }
+
+  .card-desc-short {
+    font-size: 13px;
+    margin: 3px 0 10px 0;
+  }
+
+  .card-meta span {
+    font-size: 11px;
+  }
+
+  /* تعديل كروت الماجازين */
+  .projects-section .container {
+    display: block !important;
+    width: 100%;
+    padding: 0 10px;
+    box-sizing: border-box;
+  }
+
+  .magazine-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding: 0;
+    box-sizing: border-box;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .magazine-card {
+    max-width: 100%;
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+  }
+
+  .magazine-card .card-image {
+    height: 200px;
+  }
+
+  /* تعديل section-header عشان المحتوى ما يروح يسار */
+  .section-header .container {
+    display: block !important;
+    width: 100%;
+    padding: 0 10px;
+    box-sizing: border-box;
+  }
+
+  /* تعديل كروت البراندات */
+  .brands-container {
+    grid-template-columns: 1fr;
+    padding: 10px 15px 40px 15px;
+    gap: 20px;
+  }
+
+  .brand-images-grid {
+    height: 180px;
+  }
+
+  .brand-info {
+    padding: 5px;
+    gap: 8px;
+  }
+
+  .brand-text h3 {
+    font-size: 13px;
+  }
+
+  .brand-text p {
+    font-size: 11px;
+  }
+
+  /* تعديل الفوتر */
+  .footer-main {
+    padding: 30px 0;
+  }
+
+  .grid-columns {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .footer-col h4 {
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+
+  .footer-col ul li {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  .contact-item a,
+  .contact-item span {
+    font-size: 12px;
+  }
+
+  .contact-item img {
+    width: 28px;
+  }
+
+  .footer-bottom {
+    padding: 15px 0;
+  }
+
+  .bottom-flex {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+
+  .bottom-links a {
+    margin-left: 10px;
+    font-size: 12px;
+  }
+
+  /* تعديل صفحة عرض التفاصيل (view) */
+  .view-container {
+    padding: 0 10px;
+    margin-top: 10px;
+  }
+
+  .view-content {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .view-details-section h1 {
+    font-size: 22px;
+  }
+
+  .tab-btn {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .tab-pane {
+    padding: 12px;
+  }
+
+  .price-btn {
+    font-size: 14px;
+    padding: 10px 15px;
+  }
+
+  .thumbnails-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+  }
+
+  .thumb-img {
+    height: 100px;
+  }
+
+  /* تعديل الفورم */
+  .form-container {
+    margin: 20px 10px;
+    padding: 20px;
+  }
+
+  .form-container h2 {
+    font-size: 20px;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .submit-btn {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  /* تعديل صفحة البروفايل */
+  .profile-container {
+    padding: 20px 15px;
+  }
+
+  /* تعديل نافذة التسجيل */
+  .modal-content {
+    max-width: 95%;
+    padding: 20px;
+    margin: 10px;
+  }
+
+  .auth-form-toggle button {
+    font-size: 14px;
+    padding: 8px 0;
+  }
+
+  .auth-links .join-link {
+    display: none;
+  }
+
+  /* تعديل صفحة الادمن */
+  .dashboard-container {
+    padding: 0 10px;
+    margin: 20px auto;
+  }
+
+  .dashboard-title {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .forms-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .form-card {
+    padding: 15px;
+  }
+
+  .form-card h3 {
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+
+  .admin-nav {
+    gap: 5px;
+  }
+
+  .admin-nav a {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  /* إخفاء السهم في "التسجيل" */
+  .read-more button {
+    margin-top: 40px;
+    padding: 12px 20px;
+    font-size: 12px;
+  }
+
+  /* تعديل الـ trends */
+  .trends {
+    margin-bottom: 15px;
+  }
+
+  .Fancy-logo img {
+    width: 100px;
+  }
+
+  .Fancy-logo p {
+    font-size: 24px;
+  }
+
+  /* صفحة المنتج */
+  .options-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+  }
+
+  .opt-name-box {
+    font-size: 12px;
+    padding: 6px;
+  }
+
+  .opt-type-box {
+    font-size: 12px;
+    padding: 6px;
+    min-width: 80px;
+  }
+
+  /* تحسين اختيار الفئة */
+  .select-with-add {
+    gap: 5px;
+  }
+
+  .btn-add-inline {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+
+  .quick-add-form {
+    padding: 10px;
+  }
+
+  .quick-add-form .form-group input {
+    font-size: 12px;
+  }
+
+  .quick-add-actions button {
+    font-size: 12px;
+    padding: 6px;
+  }
+
+  /* تعديلات خفيفة للهيدر للشاشات الصغيرة جداً */
+  .user-dropdown {
+    min-width: 140px !important;
+    left: auto !important;
+    right: 0 !important;
+    transform: none !important;
+  }
+
+  .notification-dropdown {
+    min-width: 240px;
+    left: auto;
+    right: 0;
+    transform: none;
+  }
+}

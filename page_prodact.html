@@ -6,8 +6,6 @@
     <title>Fancy Design - Products</title>
     <link rel="icon" href="imges/img/fancy1.jfif" />
     <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
     <style>
       .load-more-container {
         text-align: center;
@@ -31,9 +29,11 @@
         display: none !important;
       }
     </style>
+  </head>
+  <body>
     <div id="header-placeholder"></div>
 
-    <div class="filter-container" style="padding-left: 250px;">
+    <div class="filter-container">
       <!-- قائمة الأقسام الرئيسية -->
       <div class="dropdown">
         <button
@@ -159,18 +159,15 @@
       function clearSubCategoryOptions() {
         const container = document.getElementById("sub-category-filter-content");
         if (!container) return;
-        // Keep only the search input, remove all <a> tags
         container.querySelectorAll('a').forEach(el => el.remove());
       }
 
-      // دالة لجلب الأقسام الرئيسية وتعبئة القائمة المنسدلة للفلترة
       async function loadMainCategoryFilters(containerId) {
         const container = document.getElementById(containerId);
         if (!container) return;
         try {
           const result = await FancyAPI.get("/categories/list.php");
           if (result.success && result.data && result.data.categories) {
-            // إضافة "All" option
             const allLink = document.createElement("a");
             allLink.href = "#";
             allLink.textContent = "All Categories";
@@ -185,7 +182,6 @@
             };
             container.appendChild(allLink);
 
-            // إضافة الأقسام للقائمة المنسدلة
             result.data.categories.forEach(cat => {
               const a = document.createElement("a");
               a.href = "#";
@@ -196,7 +192,6 @@
                 selectedCategoryId = cat.id;
                 selectedSubCategoryId = null;
                 document.getElementById("sub-category-filter-btn").innerHTML = `Sub-categories <i class="arrow down"></i>`;
-                // تحميل الأقسام الفرعية لهذا القسم
                 loadSubCategoryFilters(cat.id, cat.name);
                 applyFilters();
               };
@@ -208,16 +203,13 @@
         }
       }
 
-      // دالة لجلب وتعبئة الأقسام الفرعية
       async function loadSubCategoryFilters(categoryId, categoryName) {
         const container = document.getElementById("sub-category-filter-content");
         if (!container) return;
         
         try {
-          // إزالة الخيارات القديمة
           clearSubCategoryOptions();
           
-          // إضافة "All" option للقسم الفرعي
           const allLink = document.createElement("a");
           allLink.href = "#";
           allLink.textContent = `All ${categoryName}`;
@@ -251,13 +243,9 @@
       }
 
       document.addEventListener("DOMContentLoaded", async () => {
-        // تعبئة قائمة الفلاتر
         loadMainCategoryFilters("main-category-filter-content");
-        
-        // تحميل المنتجات
         loadAllProductsWithPagination();
 
-        // زر Clear All
         const clearBtn = document.getElementById("clear-all");
         if (clearBtn) {
           clearBtn.addEventListener("click", () => {
