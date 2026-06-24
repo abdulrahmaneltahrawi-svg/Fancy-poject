@@ -119,7 +119,7 @@ async function displayUserDesignerProfile(containerId = 'user-designers-list') {
             if (createWrapper) createWrapper.classList.add('hidden');
 
             container.innerHTML = `
-                <div class="designer-profile-card" style="grid-column: 1/-1; max-width: 800px; margin: 0 auto; background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 25px; text-align: left;">
+                <div class="designer-profile-card" style="grid-column: 1/-1; max-width: 600px; margin: 0 auto; background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 25px; text-align: left; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
                     <div style="display: flex; align-items: center; gap: 20px; border-bottom: 1px solid #f5f5f5; padding-bottom: 20px; margin-bottom: 20px;">
                         <img src="${getSafeImageUrl(designer.avatar || designer.avatar_url)}" alt="Avatar" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #f0f0f0;">
                         <div>

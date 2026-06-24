@@ -473,7 +473,7 @@ html {
 .card-image {
   position: relative; /* مهم جداً */
   width: 100%;
-  height: 350px; /* تعديل الارتفاع ليتناسب مع التوزيع الأفقي */
+  height: 250px; /* تعديل الارتفاع ليتناسب مع التوزيع الأفقي */
   overflow: hidden;
   margin-bottom: 15px;
 }
@@ -495,7 +495,7 @@ html {
 .card-image img {
   width: 100%;
   height: 100%;
-  object-fit: contain; /* لملء المساحة بشكل احترافي */
+  
   transition: transform 0.5s ease;
 }
 .project-card:hover .card-image img {
