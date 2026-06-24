@@ -15,6 +15,20 @@
         background: #fff;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
       }
+
+      @media (max-width: 768px) {
+        .form-container {
+          margin: 30px 15px;
+          padding: 20px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .form-container {
+          margin: 20px 10px;
+          padding: 15px;
+        }
+      }
       .form-header {
         text-align: center;
         margin-bottom: 30px;
@@ -88,6 +102,15 @@
             <input type="text" name="city" />
           </div>
         </div>
+
+        <style>
+          @media (max-width: 480px) {
+            div[style*="display: flex; gap: 35px"] {
+              flex-direction: column !important;
+              gap: 0 !important;
+            }
+          }
+        </style>
         <div class="form-group">
           <label>Brand Email:</label>
           <input type="email" name="email" placeholder="brand@example.com" />
