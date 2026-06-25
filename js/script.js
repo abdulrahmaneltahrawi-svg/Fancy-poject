@@ -4,35 +4,7 @@ if (typeof FancyAPI === 'undefined') {
     // تنبيه هام: GitHub Pages لا يدعم تشغيل ملفات PHP نهائياً.
     // لكي يعمل الموقع على GitHub، يجب رفع مجلد (fancy) على استضافة تدعم PHP 
     // (مثل InfinityFree, 000webhost, أو Hostinger) ثم وضع رابط الـ API الكامل هنا.
-    baseUrl: (() => {
-        const hostname = window.location.hostname;
-        const origin = window.location.origin;
-        const pathname = window.location.pathname;
-
-        // 1. إذا كان الموقع مرفوعاً على GitHub Pages
-        if (hostname.includes('github.io')) {
-            return 'https://your-remote-php-server.com/fancy/api'; // استبدل هذا برابط سيرفر الـ PHP الحقيقي
-        }
-
-        // استخراج أجزاء المسار (نحذف اسم الملف HTML من النهاية)
-        const fullPath = pathname.replace(/\/[^/]+\.html$/, '').replace(/\/$/, '');
-        const pathSegments = fullPath.split('/').filter(segment => segment.length > 0);
-
-        // 2. إذا كان الموقع يعمل محلياً (Localhost) أو عبر ngrok/tunnel في مجلد فرعي
-        // نبحث عن مجلد المشروع (أول جزء في المسار لا يحتوي على نقطة)
-        let projectFolder = '';
-        if (pathSegments.length > 0 && !pathSegments[0].includes('.')) {
-            projectFolder = pathSegments[0];
-        }
-
-        // 3. إذا وجدنا مجلد مشروع، نستخدمه. وإلا نستخدم المسار المباشر.
-        if (projectFolder) {
-            return `${origin}/${projectFolder}/fancy/api`;
-        }
-
-        // 4. الوضع الافتراضي (إذا كان الموقع في الجذر Root أو على استضافة مباشرة)
-        return `${origin}/fancy/api`;
-    })(),
+    baseUrl: `${window.location.origin}/Fancy-Design/fancy/api`,
 
     async request(endpoint, options = {}) {
         // تنظيف المسار لضمان عدم وجود سلاش مزدوج
